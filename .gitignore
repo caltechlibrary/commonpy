@@ -60,7 +60,7 @@ TAGS
 
 *.pyc
 __pycache__
-
+.cache
 
 # Project-specific things to ignore:
 # .............................................................................
