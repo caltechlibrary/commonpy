@@ -1,5 +1,5 @@
-Commonpy: useful common Python functions and utilities
-======================================================
+Commonpy: useful Python functions and utilities
+===============================================
 
 This is a collection of common utility functions and classes that we at the Caltech Library have found useful in our other Python projects.
 
