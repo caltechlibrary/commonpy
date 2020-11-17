@@ -91,7 +91,7 @@ print-instructions:;
 	@echo ""
 
 update-doi: 
-	sed -i .bak -e 's|DOI-.*-blue|DOI-$(doi)-blue|' README.md
+	sed -i .bak -e 's|/api/record/[0-9]\{1,\}|/api/record/$(doi_tail)|' README.md
 	sed -i .bak -e 's|caltech.edu/records/[0-9]\{1,\}|caltech.edu/records/$(doi_tail)|' README.md
 	git add README.md
 	git diff-index --quiet HEAD README.md || git commit -m"Update DOI" README.md && git push -v --all
