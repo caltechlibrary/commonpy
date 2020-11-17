@@ -6,7 +6,8 @@ This is a collection of common utility functions and classes that we at the Calt
 [![Latest release](https://img.shields.io/github/v/release/caltechlibrary/handprint.svg?style=flat-square&color=b44e88&label=Latest%20release)](https://github.com/caltechlibrary/handprint/releases)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square)](https://choosealicense.com/licenses/bsd-3-clause)
 [![Python](https://img.shields.io/badge/Python-3.6+-brightgreen.svg?style=flat-square)](http://shields.io)
-
+[![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&color=gray&query=$.metadata.doi&uri=https://data.caltech.edu/api/record/1673)](https://data.caltech.edu/records/1673)
+[![PyPI](https://img.shields.io/pypi/v/commonpy.svg?style=flat-square&color=orange)](https://pypi.org/project/commonpy/)
 
 Table of contents
 -----------------
@@ -58,6 +59,16 @@ if readable('/path/to/some/file'):
 The following subsections describe the different modules available.
 
 ### `data_utils`
+
+| Function           | Purpose |
+|--------------------|---------|
+| `unique(list)`     | Take a list and return a version without duplicates |
+| `ordinal(integer)` | Return a string with the number followed by "st", "nd, "rd", or "th" |
+| `slice(list, n)`   | Yield `n` number of slices from the `list` |
+| `timestamp()`      | Return a string for an easily-readable form of the current time and date |
+| `parse_datetime(string)` | Return a date object representing the given date string |
+| `plural(word, n)`  | Simplistic function to append "s" to `word` if `n > 1` |
+| `expand_range(string)` | Given a string of the form "X-Y", return the list of integers it represents |
 
 ### `file_utils`
 
