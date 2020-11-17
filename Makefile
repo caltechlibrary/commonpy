@@ -107,7 +107,8 @@ pypi: create-dist
 	python3 -m twine upload --verbose dist/*
 
 clean:;
-	-rm -rf dist build $(name).egg-info
+	-rm -rf dist build $(name).egg-info codemeta.json.bak $(init_file).bak \
+	README.md.bak
 
 .PHONY: release release-on-github update-init-file update-codemeta-file \
 	print-instructions create-dist clean test-pypi pypi
