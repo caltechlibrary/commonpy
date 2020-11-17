@@ -1,4 +1,3 @@
-
 import os
 import pytest
 import sys
@@ -10,8 +9,8 @@ try:
 except:
     sys.path.append('..')
 
-from commonpy import http_code
+from commonpy.http_code import *
 
 class TestClass:
     def test_http_meanings(self, capsys):
-        assert http_code.description(200) == "The request has succeeded."
+        assert http_code_meaning(200) == "The request has succeeded."
