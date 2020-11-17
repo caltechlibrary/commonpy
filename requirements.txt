@@ -1,0 +1,5 @@
+pytest==6.1.2
+boltons==20.2.1
+dateparser==1.0.0
+python_dateutil==2.8.1
+PyYAML==5.3.1
