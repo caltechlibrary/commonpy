@@ -3,7 +3,7 @@ Commonpy: useful Python functions and utilities
 
 This is a collection of common utility functions and classes that we at the Caltech Library have found useful in our other Python projects.
 
-[![Latest release](https://img.shields.io/github/v/release/caltechlibrary/handprint.svg?style=flat-square&color=b44e88&label=Latest%20release)](https://github.com/caltechlibrary/handprint/releases)
+[![Latest release](https://img.shields.io/github/v/release/caltechlibrary/commonpy.svg?style=flat-square&color=b44e88&label=Latest%20release)](https://github.com/caltechlibrary/commonpy/releases)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square)](https://choosealicense.com/licenses/bsd-3-clause)
 [![Python](https://img.shields.io/badge/Python-3.6+-brightgreen.svg?style=flat-square)](http://shields.io)
 [![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&color=gray&query=$.metadata.doi&uri=https://data.caltech.edu/api/record/1673)](https://data.caltech.edu/records/1673)
