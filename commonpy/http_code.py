@@ -4,8 +4,24 @@ http_code: provide explanations of each possible HTTP status code
 This module grew out of frustration with the standard Python HTTPStatus module,
 which provides codes and short meanings but not enough detail to serve as
 explanations.  It also does not contain all codes that servers may return.
-This http_meanings module offers longer explanations of http
-status codes.
+This http_meanings module offers longer explanations of http status codes.
+
+Example usage:
+
+    from commonpy.http_code import http_code_meaning
+    print(http_code_meaning(200))
+
+Authors
+-------
+
+Michael Hucka <mhucka@caltech.edu> -- Caltech Library
+
+Copyright
+---------
+
+Copyright (c) 2018-2020 by the California Institute of Technology.  This code
+is open-source software released under a 3-clause BSD license.  Please see the
+file "LICENSE" for more information.
 '''
 
 from http import HTTPStatus
@@ -148,7 +164,7 @@ http_meanings = {
 # Utility functions.
 # .............................................................................
 
-def description(status_code):
+def http_code_meaning(status_code):
     '''Return a textual description of the given status_code value.'''
     if not isinstance(status_code, int):
         raise ValueError('Status code must be an integer')
