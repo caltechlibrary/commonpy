@@ -58,7 +58,10 @@ if readable('/path/to/some/file'):
 
 The following subsections describe the different modules available.
 
+
 ### `data_utils`
+
+This module provides a number of miscellaneous simple functions for some common operations on data of various kinds.
 
 | Function           | Purpose |
 |--------------------|---------|
@@ -70,9 +73,19 @@ The following subsections describe the different modules available.
 | `plural(word, n)`  | Simplistic function to append "s" to `word` if `n > 1` |
 | `expand_range(string)` | Given a string of the form "X-Y", return the list of integers it represents |
 
+
 ### `file_utils`
 
+This module provides a number of miscellaneous simple functions for some common operations on files and directories.
+
+
 ### `http_code`
+
+
+### `interrupt`
+
+This module includes `wait(...)`, a replacement for `sleep(...)` that is interruptible and works with multiple threads.  It also provides methods to cause an interruption (including doing it by issuing a <kbd>^C</kbd> to the program), check whether an interruption occurred, and other related operations.
+
 
 ### `system_utils`
 
