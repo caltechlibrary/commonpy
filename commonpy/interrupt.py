@@ -43,8 +43,8 @@ __exception = KeyboardInterrupt
 # Main functions.
 # .............................................................................
 
-def config_interrupt(on_signal = signal.SIGINT, callback = None,
-                     exception = KeyboardInterrupt):
+def config_interrupt(callback = None, raise_exception = KeyboardInterrupt,
+                     on_signal = signal.SIGINT):
     '''Configure handling of interruptions.
 
     This function can be used to attach a signal handler that will do the
@@ -54,22 +54,22 @@ def config_interrupt(on_signal = signal.SIGINT, callback = None,
       2. optionally call the function "callback" given as argument
       3. raise the given "exception" (default: KeyboardInterrupt)
 
+    Parameter "callback" assigns a function to be called after calling
+    interrupt() when the signal is received.  If no value is given for
+    "callback", no callback function is called.
+
+    Parameter "raise_exception" determines the exception that is raised after
+    calling the callback function.
+
     Parameter "signal" determines the signal to which the handler is bound.
     By default, signal.SIGINT is used, which is ^C on Unix-like systems.
     Note that changing this to something *other* than SIGINT means that ^C
     will then trigger the normal Python keyboard interrupt signal handling
     instead of invoking this signal handler.
-
-    Parameter "callback" assigns a function to be called after calling
-    interrupt() when the signal is received.  If no value is given for
-    "callback", no callback function is called.
-
-    Parameter "exception" determines the exception that is raised after
-    calling the callback function.
     '''
 
     global __exception
-    __exception = exception
+    __exception = raise_exception
 
     def interrupt_handler(signum, frame):
         if __debug__: log('interrupt_handler invoked')
@@ -77,7 +77,7 @@ def config_interrupt(on_signal = signal.SIGINT, callback = None,
         if callback:
             if __debug__: log(f'invoking callback {callback}')
             callback()
-        if __debug__: log(f'raising {exception}')
+        if __debug__: log(f'raising {raise_exception}')
         raise __exception
 
     if __debug__: log(f'setting handler on {on_signal}, exception {__exception}')
