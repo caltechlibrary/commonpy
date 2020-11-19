@@ -138,14 +138,14 @@ def rename_existing(file):
         # If we fail, we just give up instead of throwing an exception.
         try:
             os.rename(f, backup)
-            if __debug__: log('renamed {} to {}', file, backup)
+            if __debug__: log(f'renamed {file} to {backup}')
         except:
             try:
                 delete_existing(backup)
                 os.rename(f, backup)
             except:
-                if __debug__: log('failed to delete {}', backup)
-                if __debug__: log('failed to rename {} to {}', file, backup)
+                if __debug__: log(f'failed to delete {backup}')
+                if __debug__: log(f'failed to rename {file} to {backup}')
 
     if path.exists(file):
         rename(file)
@@ -160,17 +160,17 @@ def delete_existing(file):
     '''Delete the given file.'''
     # Check if it's actually a directory.
     if path.isdir(file):
-        if __debug__: log('doing rmtree on directory {}', file)
+        if __debug__: log(f'doing rmtree on directory {file}')
         try:
             shutil.rmtree(file)
         except:
-            if __debug__: log('unable to rmtree {}; will try renaming', file)
+            if __debug__: log(f'unable to rmtree {file}; will try renaming')
             try:
                 rename_existing(file)
             except:
-                if __debug__: log('unable to rmtree or rename {}', file)
+                if __debug__: log(f'unable to rmtree or rename {file}')
     else:
-        if __debug__: log('doing os.remove on file {}', file)
+        if __debug__: log(f'doing os.remove on file {file}')
         os.remove(file)
 
 
@@ -192,14 +192,14 @@ def file_in_use(file):
 
 def copy_file(src, dst):
     '''Copies a file from "src" to "dst".'''
-    if __debug__: log('copying file {} to {}', src, dst)
+    if __debug__: log(f'copying file {src} to {dst}')
     shutil.copy2(src, dst, follow_symlinks = True)
 
 
 def open_file(file):
     '''Opens document with default application in Python.'''
     # Code originally from https://stackoverflow.com/a/435669/743730
-    if __debug__: log('opening file {}', file)
+    if __debug__: log(f'opening file {file}')
     if sys.platform.startswith('darwin'):
         subprocess.call(('open', file))
     elif os.name == 'nt':
@@ -211,5 +211,5 @@ def open_file(file):
 def open_url(url):
     '''Opens the given 'url' in a web browser using the current platform's
     default approach.'''
-    if __debug__: log('opening url {}', url)
+    if __debug__: log(f'opening url {url}')
     webbrowser.open(url)

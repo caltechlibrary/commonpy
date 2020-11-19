@@ -68,12 +68,12 @@ def installation_path(module_name = __package__):
             key = OpenKey(HKEY_LOCAL_MACHINE, reg_path)
             value, regtype = QueryValueEx(key, 'Path')
             CloseKey(key)
-            if __debug__: log('path to windows installation: {}'.format(value))
+            if __debug__: log(f'path to windows installation: {value}')
             return value
         except WindowsError:
             # Kind of a problem. Punt and return a default value.
             default_path = path.abspath('C:\Program Files\{}'.format(module_name))
-            if __debug__: log('defaulting to {}', default_path)
+            if __debug__: log(f'defaulting to {default_path}')
             return default_path
     else:
         return path.abspath(path.join(module_path(module_name), '..'))
