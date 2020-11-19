@@ -1,6 +1,15 @@
 Change log for Commonpy
 =======================
 
+Version 0.0.7
+-------------
+
+* Fix bug in `filename_basename(...)`.
+* Improve `plural(...)` by using `pluralize(...)` from [Boltons](https://github.com/mahmoud/boltons) package.
+* Remove tests for removed module http_code.
+* Miscellaneous other minor fixes and tweaks.
+
+
 Version 0.0.6
 -------------
 
