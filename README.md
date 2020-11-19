@@ -1,4 +1,4 @@
-Commonpy: useful Python functions and utilities
+CommonPy: useful Python functions and utilities
 ===============================================
 
 This is a collection of common utility functions and classes that we at the Caltech Library have found useful in our other Python projects.
@@ -128,7 +128,7 @@ If you find an issue, please submit it in [the GitHub issue tracker](https://git
 Contributing
 ------------
 
-We would be happy to receive your help and participation with enhancing Commonpy!  Please visit the [guidelines for contributing](CONTRIBUTING.md) for some tips on getting started.
+We would be happy to receive your help and participation with enhancing CommonPy!  Please visit the [guidelines for contributing](CONTRIBUTING.md) for some tips on getting started.
 
 
 License

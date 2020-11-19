@@ -1,5 +1,5 @@
 '''
-Commonpy: an assortment of Python helper functions and utility classes
+CommonPy: an assortment of Python helper functions and utility classes
 
 Authors
 -------

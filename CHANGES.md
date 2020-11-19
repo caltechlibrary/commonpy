@@ -1,4 +1,4 @@
-Change log for Commonpy
+Change log for CommonPy
 =======================
 
 Version 0.0.7
