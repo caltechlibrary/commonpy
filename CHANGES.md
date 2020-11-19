@@ -6,6 +6,7 @@ Version 0.0.5
 
 * Add a new module, `module_utils`.
 * Add functions to the `file_utils` module.
+* The package `__init__.py` file no longer imports the individual modules.  (Users are expected to use the approach `from commonpy.modulename import functionname`.)
 
 
 Version 0.0.4
