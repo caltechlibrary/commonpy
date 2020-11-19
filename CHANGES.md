@@ -1,6 +1,14 @@
 Change log for Commonpy
 =======================
 
+Version 0.0.6
+-------------
+
+* Add a new module, `network_utils`.
+* Start a collection of exceptions that may be returned by this package.
+* Add additional dependency requirements to `requirements.txt`.
+
+
 Version 0.0.5
 -------------
 
