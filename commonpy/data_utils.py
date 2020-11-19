@@ -14,6 +14,7 @@ is open-source software released under a 3-clause BSD license.  Please see the
 file "LICENSE" for more information.
 '''
 
+from   boltons.strutils import pluralize
 import dateparser
 import datetime
 from   datetime import datetime as dt
@@ -82,15 +83,20 @@ function with predefined settings.'''
 
 
 def plural(word, count):
-    '''Simple pluralization; adds "s" to the end of "word" if count > 1.'''
+    '''Pluralize the "word" if "count" is > 1 or has length > 1.
+
+    This function is useful in f-strings when words refer to a number of items
+    whose total or length is only known at run time.  For example,
+
+       f"Uploading {len(files_list)} {plural('file', files_list) to server."
+    '''
+
     if isinstance(count, int):
         num = count
     elif isinstance(count, (list, set, dict)) or type(count) is {}.values().__class__:
         num = len(count)
     else:
-        # If we don't recognize the kind of thing it is, return it unchanged.
+        # If we can't figure out what kind of thing we're counting, we can't
+        # pluralize, so just return the word as-is.
         return word
-    if num > 1:
-        return word + 's' if not word.endswith('s') else word
-    else:
-        return word
+    return pluralize(word) if num > 1 else word

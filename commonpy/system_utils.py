@@ -31,6 +31,10 @@ def system_profile(anonymize = False, as_dict = False):
     of '-' for certain identifiable information.  This includes current working
     directory, hostname, Python executable path, command-line arguments, and
     username.
+
+    The output of this function is identical to that of "get_profile" from the
+    Boltons ecoutils module, reformatted and returned as a string that can be
+    printed for human consumption.
     '''
 
     details = ecoutils.get_profile(scrub = anonymize)

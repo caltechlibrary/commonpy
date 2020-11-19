@@ -235,7 +235,7 @@ def net(method, url, client = None, handle_rate = True,
         error = AuthenticationFailure(addurl('Access is forbidden'))
     elif code in [404, 410] and not polling:
         error = NoContent(addurl("No content found"))
-    elif code in [405, 406, 409, 411, 412, 414, 417, 428, 431, 505, 510]:
+    elif code in [405, 406, 409, 411, 412, 413, 414, 417, 428, 431, 505, 510]:
         error = InternalError(addurl(f'Server returned code {code} ({reason})'))
     elif code in [415, 416]:
         error = ServiceFailure(addurl('Server rejected the request ({reason})'))

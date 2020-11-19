@@ -50,4 +50,7 @@ def test_plural():
     assert plural('flower', 2) == 'flowers'
     assert plural('error', [1]) == 'error'
     assert plural('error', [1, 2]) == 'errors'
-    assert plural('words', 3) == 'words'
+    assert plural('word', 3) == 'words'
+    assert plural('bus', 3) == 'buses'
+    assert plural('theory', 2) == 'theories'
+    assert plural('dictionary', 2) == 'dictionaries'

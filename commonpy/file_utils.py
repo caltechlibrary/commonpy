@@ -85,7 +85,7 @@ def files_in_directory(dir, extensions = None, recursive = True):
 def filename_basename(file):
     parts = file.rpartition('.')
     if len(parts) > 1:
-        return ''.join(parts[:-1]).rstrip('.')
+        return ''.join(parts[:-1]).rstrip('.') if parts[0] else file
     else:
         return file
 
