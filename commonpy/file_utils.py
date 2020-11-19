@@ -17,8 +17,14 @@ file "LICENSE" for more information.
 import inspect
 import os
 from   os import path
+import shutil
+import subprocess
 import sys
 import tempfile
+import webbrowser
+
+if __debug__:
+    from sidetrack import log
 
 
 # Main functions.
@@ -64,6 +70,7 @@ def files_in_directory(dir, extensions = None, recursive = True):
         return []
     if not readable(dir):
         return []
+    if __debug__: log(f'reading directory {dir}')
     files = []
     for item in os.listdir(dir):
         full_path = path.join(dir, item)
@@ -121,3 +128,88 @@ def relative(file):
         return candidate
     else:
         return path.realpath(candidate)
+
+
+def rename_existing(file):
+    '''Renames 'file' to 'file.bak'.'''
+
+    def rename(f):
+        backup = f + '.bak'
+        # If we fail, we just give up instead of throwing an exception.
+        try:
+            os.rename(f, backup)
+            if __debug__: log('renamed {} to {}', file, backup)
+        except:
+            try:
+                delete_existing(backup)
+                os.rename(f, backup)
+            except:
+                if __debug__: log('failed to delete {}', backup)
+                if __debug__: log('failed to rename {} to {}', file, backup)
+
+    if path.exists(file):
+        rename(file)
+        return
+    full_path = path.join(os.getcwd(), file)
+    if path.exists(full_path):
+        rename(full_path)
+        return
+
+
+def delete_existing(file):
+    '''Delete the given file.'''
+    # Check if it's actually a directory.
+    if path.isdir(file):
+        if __debug__: log('doing rmtree on directory {}', file)
+        try:
+            shutil.rmtree(file)
+        except:
+            if __debug__: log('unable to rmtree {}; will try renaming', file)
+            try:
+                rename_existing(file)
+            except:
+                if __debug__: log('unable to rmtree or rename {}', file)
+    else:
+        if __debug__: log('doing os.remove on file {}', file)
+        os.remove(file)
+
+
+def file_in_use(file):
+    '''Returns True if the given 'file' appears to be in use.  Note: this only
+    works on Windows, currently.
+    '''
+    if not path.exists(file):
+        return False
+    if sys.platform.startswith('win'):
+        # This is a hack, and it really only works for this purpose on Windows.
+        try:
+            os.rename(file, file)
+            return False
+        except:
+            return True
+    return False
+
+
+def copy_file(src, dst):
+    '''Copies a file from "src" to "dst".'''
+    if __debug__: log('copying file {} to {}', src, dst)
+    shutil.copy2(src, dst, follow_symlinks = True)
+
+
+def open_file(file):
+    '''Opens document with default application in Python.'''
+    # Code originally from https://stackoverflow.com/a/435669/743730
+    if __debug__: log('opening file {}', file)
+    if sys.platform.startswith('darwin'):
+        subprocess.call(('open', file))
+    elif os.name == 'nt':
+        os.startfile(file)
+    elif os.name == 'posix':
+        subprocess.call(('xdg-open', file))
+
+
+def open_url(url):
+    '''Opens the given 'url' in a web browser using the current platform's
+    default approach.'''
+    if __debug__: log('opening url {}', url)
+    webbrowser.open(url)
