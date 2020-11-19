@@ -29,16 +29,6 @@ __email__       = 'mhucka@caltech.edu'
 __license__     = 'BSD 3-clause'
 
 
-# Main exports.
-# .............................................................................
-
-from .data_utils import *
-from .file_utils import *
-from .http_code import *
-from .module_utils import *
-from .system_utils import *
-
-
 # Miscellaneous utilities.
 # .............................................................................
 
