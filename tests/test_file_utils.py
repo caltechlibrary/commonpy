@@ -36,3 +36,15 @@ def test_basenames_and_extensions():
     assert filename_extension('/foo/bar.txt') == '.txt'
     assert filename_extension('foo') == ''
     assert alt_extension('/foo.app/bar.txt', 'zip') == '/foo.app/bar.zip'
+
+
+def test_copy_rename_delete_files(tmpdir):
+    tmpfile1 = tmpdir.join('test1.txt')
+    with open(tmpfile1, 'w') as f:
+        f.write('foo\n')
+    copy_file(tmpfile1, 'copy1.txt')
+    assert readable('copy1.txt')
+    rename_existing('copy1.txt')
+    assert readable('copy1.txt.bak')
+    delete_existing('copy1.txt.bak')
+    assert not readable('copy1.txt.bak')
