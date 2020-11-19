@@ -1,7 +1,14 @@
 Change log for Commonpy
 =======================
 
-Version 0.0.3
+Version 0.0.5
+-------------
+
+* Add a new module, `module_utils`.
+* Add functions to the `file_utils` module.
+
+
+Version 0.0.4
 -------------
 
 Changed the order of arguments to function `config_interrupt` in the `interrupt` module to be in a more convenient order for most use cases.

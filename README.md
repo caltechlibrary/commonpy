@@ -87,6 +87,8 @@ This module provides a number of miscellaneous simple functions for some common 
 This module includes `wait(...)`, a replacement for `sleep(...)` that is interruptible and works with multiple threads.  It also provides methods to cause an interruption (including doing it by issuing a <kbd>^C</kbd> to the program), check whether an interruption occurred, and other related operations.
 
 
+### `module_utils`
+
 ### `system_utils`
 
 
