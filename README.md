@@ -70,13 +70,30 @@ This module provides a number of miscellaneous simple functions for some common 
 | `slice(list, n)`   | Yield `n` number of slices from the `list` |
 | `timestamp()`      | Return a string for an easily-readable form of the current time and date |
 | `parse_datetime(string)` | Return a date object representing the given date string |
-| `plural(word, n)`  | Simplistic function to append "s" to `word` if `n > 1` |
+| `plural(word, n)`  | Simple function return a plural version of `word` if `n > 1` |
 | `expand_range(string)` | Given a string of the form "X-Y", return the list of integers it represents |
 
 
 ### `file_utils`
 
 This module provides a number of miscellaneous simple functions for some common operations on files and directories.
+
+| Function           | Purpose |
+|--------------------|---------|
+| `readable(dest)`   | Return `True` if file or directory `dest` is accessible and readable |
+| `writable(dest)`   | Return `True` if file or directory `dest` can be written |
+| `nonempty(dest)`   | Return `True` if file `dest` is not empty |
+| `relative(file)`   | Return a path string for `file` relative to the current directory |
+| `filename_basename(file)` | Return `file` without any extensions |
+| `filename_extension(file)` | Return the extension of filename `file` |
+| `alt_extension(file, ext)` | Return `file` with the extension replaced by `ext` |
+| `rename_existing(file)` | Rename `file` to `file.bak` |
+| `delete_existing(file)` | Delete the given `file` |
+| `copy_file(src, dst)` | Copy file from `src` to `dst` |
+| `open_file(file)` | Open the `file` by calling the equivalent of "open" on this system |
+| `open_url(url)` | Open the `url` in the user's default web browser |
+| `filter_by_extensions(item_list, endings)` | |
+| `files_in_directory(dir, ext, recursive)` | |
 
 
 ### `interrupt`
@@ -86,9 +103,20 @@ This module includes `wait(...)`, a replacement for `sleep(...)` that is interru
 
 ### `module_utils`
 
+| Function           | Purpose |
+|--------------------|---------|
+| `module_path(module_name)` | Return the path to the installed module |
+| `installation_path(module_name)` | Return the path to module's installation directory |
+| `datadir_path(module_name)` | Return the path to the `/data` subdirectory of the module |
+
+
 ### `network_utils`
 
 ### `system_utils`
+
+| Function           | Purpose |
+|--------------------|---------|
+| `system_profile()` | Return a string describing the system running this Python program. |
 
 
 Getting help
