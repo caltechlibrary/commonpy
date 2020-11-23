@@ -1,4 +1,4 @@
-CommonPy: useful Python functions and utilities
+CommonPy: useful Python functions and utilities<img width="12%" align="right" src="https://github.com/caltechlibrary/commonpy/raw/main/.graphics/commonpy-icon.png">
 ===============================================
 
 This is a collection of common utility functions and classes that we at the Caltech Library have found useful in our other Python projects.
@@ -6,7 +6,7 @@ This is a collection of common utility functions and classes that we at the Calt
 [![Latest release](https://img.shields.io/github/v/release/caltechlibrary/commonpy.svg?style=flat-square&color=b44e88&label=Latest%20release)](https://github.com/caltechlibrary/commonpy/releases)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square)](https://choosealicense.com/licenses/bsd-3-clause)
 [![Python](https://img.shields.io/badge/Python-3.6+-brightgreen.svg?style=flat-square)](http://shields.io)
-[![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&color=gray&query=$.metadata.doi&uri=https://data.caltech.edu/api/record/1681)](https://data.caltech.edu/records/1681)
+[![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&color=lightgray&query=$.metadata.doi&uri=https://data.caltech.edu/api/record/1681)](https://data.caltech.edu/records/1681)
 [![PyPI](https://img.shields.io/pypi/v/commonpy.svg?style=flat-square&color=orange)](https://pypi.org/project/commonpy/)
 
 Table of contents
@@ -204,6 +204,8 @@ Acknowledgments
 ---------------
 
 This work was funded by the California Institute of Technology Library.
+
+The [vector artwork](https://thenounproject.com/term/toolbox/3030990/) of a toolbox, used as the icon for this repository, was created by [priyanka](https://thenounproject.com/term/toolbox/3030990) from the Noun Project.  It is licensed under the Creative Commons [CC-BY 3.0](https://creativecommons.org/licenses/by/3.0/) license.
 
 CommonPy makes use of numerous open-source packages, without which it would have been effectively impossible to develop CommonPy with the resources we had.  I want to acknowledge this debt.  In alphabetical order, the packages are:
 
