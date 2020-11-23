@@ -65,13 +65,13 @@ This module provides a number of miscellaneous simple functions for some common 
 
 | Function           | Purpose |
 |--------------------|---------|
-| `unique(list)`     | Take a list and return a version without duplicates |
-| `ordinal(integer)` | Return a string with the number followed by "st", "nd, "rd", or "th" |
-| `slice(list, n)`   | Yield `n` number of slices from the `list` |
-| `timestamp()`      | Return a string for an easily-readable form of the current time and date |
-| `parse_datetime(string)` | Return a date object representing the given date string |
-| `plural(word, n)`  | Simple function return a plural version of `word` if `n > 1` |
-| `expand_range(string)` | Given a string of the form "X-Y", return the list of integers it represents |
+| `unique(list)`     | Takes a list and return a version without duplicates |
+| `ordinal(integer)` | Returns a string with the number followed by "st", "nd, "rd", or "th" |
+| `slice(list, n)`   | Yields `n` number of slices from the `list` |
+| `timestamp()`      | Returns a string for an easily-readable form of the current time and date |
+| `parsed_datetime(string)` | Returns a date object representing the given date string |
+| `pluralized(word, n, include_num)`  | Returns a plural version of `word` if `n > 1` |
+| `expanded_range(string)` | Given a string of the form "X-Y", returns the list of integers it represents |
 
 
 ### `file_utils`
@@ -80,18 +80,18 @@ This module provides a number of miscellaneous simple functions for some common 
 
 | Function           | Purpose |
 |--------------------|---------|
-| `readable(dest)`   | Return `True` if file or directory `dest` is accessible and readable |
-| `writable(dest)`   | Return `True` if file or directory `dest` can be written |
-| `nonempty(dest)`   | Return `True` if file `dest` is not empty |
-| `relative(file)`   | Return a path string for `file` relative to the current directory |
-| `filename_basename(file)` | Return `file` without any extensions |
-| `filename_extension(file)` | Return the extension of filename `file` |
-| `alt_extension(file, ext)` | Return `file` with the extension replaced by `ext` |
-| `rename_existing(file)` | Rename `file` to `file.bak` |
-| `delete_existing(file)` | Delete the given `file` |
-| `copy_file(src, dst)` | Copy file from `src` to `dst` |
-| `open_file(file)` | Open the `file` by calling the equivalent of "open" on this system |
-| `open_url(url)` | Open the `url` in the user's default web browser |
+| `readable(dest)`   | Returns `True` if file or directory `dest` is accessible and readable |
+| `writable(dest)`   | Returns `True` if file or directory `dest` can be written |
+| `nonempty(file)`   | Returns `True` if file `file` is not empty |
+| `relative(file)`   | Returns a path string for `file` relative to the current directory |
+| `filename_basename(file)` | Returns `file` without any extensions |
+| `filename_extension(file)` | Returns the extension of filename `file` |
+| `alt_extension(file, ext)` | Returns `file` with the extension replaced by `ext` |
+| `rename_existing(file)` | Renames `file` to `file.bak` |
+| `delete_existing(file)` | Deletes the given `file` |
+| `copy_file(src, dst)` | Copies file from `src` to `dst` |
+| `open_file(file)` | Opens the `file` by calling the equivalent of "open" on this system |
+| `open_url(url)` | Opens the `url` in the user's default web browser |
 | `filter_by_extensions(item_list, endings)` | |
 | `files_in_directory(dir, ext, recursive)` | |
 
@@ -100,23 +100,80 @@ This module provides a number of miscellaneous simple functions for some common 
 
 This module includes `wait(...)`, a replacement for `sleep(...)` that is interruptible and works with multiple threads.  It also provides methods to cause an interruption (including doing it by issuing a <kbd>^C</kbd> to the program), check whether an interruption occurred, and other related operations.
 
+| Function           | Purpose |
+|--------------------|---------|
+| `config_interrupt(callback, raise_exception, on_signal)` | Sets up a callback function |
+| `wait(duration)` | Waits for `duration` in an interruptible fashion |
+| `interrupt()` | Interrupts any `wait` in progress |
+| `interrupted() ` | Returns `True` if an interruption has been called |
+| `raise_for_interrupts()` | Raises an exception if `interrupt()` has been invoked |
+| `reset()` | Resets the interruption flag |
+
 
 ### `module_utils`
 
+This collection of functions is useful for working with paths related to a running module, for example to find internal data files that might be needed for normal operation.
+
 | Function           | Purpose |
 |--------------------|---------|
-| `module_path(module_name)` | Return the path to the installed module |
-| `installation_path(module_name)` | Return the path to module's installation directory |
-| `datadir_path(module_name)` | Return the path to the `/data` subdirectory of the module |
+| `module_path(module_name)` | Returns the path to the installed module |
+| `installation_path(module_name)` | Returns the path to module's installation directory |
+| `datadir_path(module_name)` | Returns the path to the `/data` subdirectory of the module |
 
 
 ### `network_utils`
+
+This module provides several functions that are useful when performing network operations.
+
+| Function           | Purpose |
+|--------------------|---------|
+| `network_available()` | Returns `True` if external hosts are reacheable over the network |
+| `scheme(url)` | Returns the protocol portion of the url; e.g., "https" |
+| `hostname(url)` | Returns the hostname portion of a URL |
+| `netlock(url)` | Returns the hostname, port number (if any), and login info (if any) |
+| `net(...)` | See below |
+
+#### _`net`_
+
+The `net` function in the `network_utils` module implements a fairly high-level network operation interface that internally handles timeouts, rate limits, polling, HTTP/2, and more. The function signature is:
+
+```python
+net(method, url, client = None, handle_rate = True, polling = False, recursing = 0, **kwargs)
+```
+
+The `method` parameter should have a value such as `'get'`, `'post'`, `'head'`, or similar.  The function returns a tuple of (response, exception), where the first element is the response from the get or post HTTP call, and the second element is an exception object if an exception occurred.  If no exception occurred, the second element will be `None`.  This allows the caller to inspect the response even in cases where exceptions are raised.
+
+If keyword `client` is not `None`, it's assumed to be a [Python HTTPX Client](https://www.python-httpx.org) object to use for the network call.  Settings such as timeouts should be done by the caller creating appropriately-configured [Client](https://www.python-httpx.org/api/#client) objects.
+
+If keyword `handle_rate` is `True`, this function will automatically pause and retry if it receives an HTTP code 429 ("too many requests") from the server.  If `False`, it will return the exception `CommonPy.RateLimitExceeded` instead.
+
+If keyword `polling` is `True`, certain statuses like 404 are ignored and the response is returned; otherwise, they are considered errors.  The behavior when `True` is useful in situations where a URL does not exist until something is ready at the server, and the caller is repeatedly checking the URL.  It is up to the caller to implement the polling schedule and call this function (with `polling = True`) as needed.
+
+This method always passes the argument `allow_redirects = True` to the underlying Python HTTPX library network calls.
+
+
 
 ### `system_utils`
 
 | Function           | Purpose |
 |--------------------|---------|
-| `system_profile()` | Return a string describing the system running this Python program. |
+| `system_profile()` | Returns a string describing the system running this Python program. |
+
+
+### Exceptions
+
+The CommonPy module defines a number of exceptions that it may return.  (Most of the exceptions are potentially thrown by `net`, discussed above.)
+
+| Exception          | Meaning |
+|--------------------|---------|
+| `CommonPyException` | Base class for CommonPy exceptions |
+| `Interrupted` | The user elected to cancel/quit the program |
+| `NetworkFailure` | Unrecoverable problem involving net | 
+| `ServiceFailure` | Unrecoverable problem involving a remote service
+| `AuthenticationFailure` | Problem obtaining or using authentication credentials |
+| `NoContent` | No content found at the given location |
+| `RateLimitExceeded` | The service flagged reports that its rate limits have been exceeded |
+| `InternalError` | Unrecoverable problem involving CommonPy itself |
 
 
 Getting help
@@ -147,6 +204,20 @@ Acknowledgments
 ---------------
 
 This work was funded by the California Institute of Technology Library.
+
+CommonPy makes use of numerous open-source packages, without which it would have been effectively impossible to develop CommonPy with the resources we had.  I want to acknowledge this debt.  In alphabetical order, the packages are:
+
+* [boltons](https://github.com/mahmoud/boltons/) &ndash; package of miscellaneous Python utilities
+* [dateparser](https://pypi.org/project/dateparser/) &ndash; parse dates in almost any string format
+* [h2](https://pypi.org/project/h2) &ndash; HTTP/2 support library used by [HTTPX](https://www.python-httpx.org)
+* [httpx](https://www.python-httpx.org) &ndash; Python HTTP client library that supports HTTP/2
+* [humanize](https://github.com/jmoiron/humanize) &ndash; make numbers more easily readable by humans
+* [ipdb](https://github.com/gotcha/ipdb) &ndash; the IPython debugger
+* [pytest](https://docs.pytest.org/en/stable/) &ndash; testing framework for Python
+* [python_dateutil](https://pypi.org/project/python-dateutil) &ndash; date utilities
+* [PyYAML](https://pyyaml.org) &ndash; Python YAML parser
+* [sidetrack](https://github.com/caltechlibrary/sidetrack) &ndash; simple debug logging/tracing package
+* [tldextract](https://github.com/john-kurkowski/tldextract) &ndash; module to parse domains from URLs
 
 <div align="center">
   <br>
