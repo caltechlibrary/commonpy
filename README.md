@@ -1,4 +1,4 @@
-CommonPy: useful Python functions and utilities<img width="12%" align="right" src="https://github.com/caltechlibrary/commonpy/raw/main/.graphics/commonpy-icon.png">
+CommonPy<img width="12%" align="right" src="https://github.com/caltechlibrary/commonpy/raw/main/.graphics/commonpy-icon.png">
 ===============================================
 
 This is a collection of common utility functions and classes that we at the Caltech Library have found useful in our other Python projects.
