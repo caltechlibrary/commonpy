@@ -92,7 +92,7 @@ The `file_utils` module provides a number of miscellaneous simple functions for 
 | `copy_file(src, dst)` | Copies file from `src` to `dst` |
 | `open_file(file)` | Opens the `file` by calling the equivalent of "open" on this system |
 | `open_url(url)` | Opens the `url` in the user's default web browser |
-| `filter_by_extensions(item_list, endings)` | |
+| `filter_by_extensions(list, endings)` | |
 | `files_in_directory(dir, ext, recursive)` | |
 
 
@@ -102,7 +102,7 @@ The `interrupt` module includes `wait(...)`, a replacement for `sleep(...)` that
 
 | Function           | Purpose |
 |--------------------|---------|
-| `config_interrupt(callback, raise_exception, on_signal)` | Sets up a callback function |
+| `config_interrupt(callback, raise_ex, signal)` | Sets up a callback function |
 | `wait(duration)` | Waits for `duration` in an interruptible fashion |
 | `interrupt()` | Interrupts any `wait` in progress |
 | `interrupted() ` | Returns `True` if an interruption has been called |
