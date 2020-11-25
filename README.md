@@ -59,9 +59,9 @@ if readable('/path/to/some/file'):
 The following subsections describe the different modules available.
 
 
-### `data_utils`
+### Data utilities
 
-This module provides a number of miscellaneous simple functions for some common operations on data of various kinds.
+The `data_utils` module provides a number of miscellaneous simple functions for some common operations on data of various kinds.
 
 | Function           | Purpose |
 |--------------------|---------|
@@ -74,9 +74,9 @@ This module provides a number of miscellaneous simple functions for some common 
 | `expanded_range(string)` | Given a string of the form "X-Y", returns the list of integers it represents |
 
 
-### `file_utils`
+### File utilities
 
-This module provides a number of miscellaneous simple functions for some common operations on files and directories.
+The `file_utils` module provides a number of miscellaneous simple functions for some common operations on files and directories.
 
 | Function           | Purpose |
 |--------------------|---------|
@@ -96,9 +96,9 @@ This module provides a number of miscellaneous simple functions for some common 
 | `files_in_directory(dir, ext, recursive)` | |
 
 
-### `interrupt`
+### Interruptible wait and interruption handling utilities
 
-This module includes `wait(...)`, a replacement for `sleep(...)` that is interruptible and works with multiple threads.  It also provides methods to cause an interruption (including doing it by issuing a <kbd>^C</kbd> to the program), check whether an interruption occurred, and other related operations.
+The `interrupt` module includes `wait(...)`, a replacement for `sleep(...)` that is interruptible and works with multiple threads.  It also provides methods to cause an interruption (including doing it by issuing a <kbd>^C</kbd> to the program), check whether an interruption occurred, and other related operations.
 
 | Function           | Purpose |
 |--------------------|---------|
@@ -110,9 +110,9 @@ This module includes `wait(...)`, a replacement for `sleep(...)` that is interru
 | `reset()` | Resets the interruption flag |
 
 
-### `module_utils`
+### Module utilities
 
-This collection of functions is useful for working with paths related to a running module, for example to find internal data files that might be needed for normal operation.
+The `module_utils` collection of functions is useful for working with paths related to a running module, for example to find internal data files that might be needed for normal operation.
 
 | Function           | Purpose |
 |--------------------|---------|
@@ -121,9 +121,9 @@ This collection of functions is useful for working with paths related to a runni
 | `datadir_path(module_name)` | Returns the path to the `/data` subdirectory of the module |
 
 
-### `network_utils`
+### Network utilities
 
-This module provides several functions that are useful when performing network operations.
+The `network_utils` module provides several functions that are useful when performing network operations.
 
 | Function           | Purpose |
 |--------------------|---------|
@@ -153,7 +153,7 @@ This method always passes the argument `allow_redirects = True` to the underlyin
 
 
 
-### `system_utils`
+### System utilities
 
 | Function           | Purpose |
 |--------------------|---------|
