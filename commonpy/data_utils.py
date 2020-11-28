@@ -19,6 +19,7 @@ import dateparser
 import datetime
 from   datetime import datetime as dt
 from   dateutil import tz
+from   humanize import intcomma
 
 
 # Constants.
@@ -54,7 +55,7 @@ def ordinal(n):
     return '{}{}'.format(n, 'tsnrhtdd'[(n/10%10!=1)*(n%10<4)*n%10::4])
 
 
-def expand_range(text):
+def expanded_range(text):
     '''Return individual numbers for a range expressed as X-Y.'''
     # This makes the range 1-100 be 1, 2, ..., 100 instead of 1, 2, ..., 99
     if '-' in text:
@@ -76,19 +77,26 @@ def timestamp():
     return dt.now(tz = tz.tzlocal()).strftime(DATE_FORMAT)
 
 
-def parse_datetime(string):
+def parsed_datetime(string):
     '''Parse a human-written time/date string using dateparser's parse()
 function with predefined settings.'''
     return dateparser.parse(string, settings = {'RETURN_AS_TIMEZONE_AWARE': True})
 
 
-def plural(word, count):
+def pluralized(word, count, include_number = False):
     '''Pluralize the "word" if "count" is > 1 or has length > 1.
+
+    If "include_number" is true, then the value of "count" will be prepended
+    before the string:
+
+        files_list = ['one.txt', 'two.txt', 'three.txt']
+        plural('file', files_list)       --> 'files'
+        plural('file', files_list, True) --> '3 files'
 
     This function is useful in f-strings when words refer to a number of items
     whose total or length is only known at run time.  For example,
 
-       f"Uploading {len(files_list)} {plural('file', files_list) to server."
+       f"Uploading {pluralized('file', files_list, True)} to server."
     '''
 
     if isinstance(count, int):
@@ -99,4 +107,8 @@ def plural(word, count):
         # If we can't figure out what kind of thing we're counting, we can't
         # pluralize, so just return the word as-is.
         return word
-    return pluralize(word) if num > 1 else word
+    text = pluralize(word) if num > 1 else word
+    if include_number:
+        return f'{intcomma(num)} {text}'
+    else:
+        return text

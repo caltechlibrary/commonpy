@@ -1,5 +1,22 @@
-Change log for Commonpy
+Change log for CommonPy
 =======================
+
+Version 0.0.7
+-------------
+
+* Fix bug in `filename_basename(...)`.
+* Improve `plural(...)` by using `pluralize(...)` from [Boltons](https://github.com/mahmoud/boltons) package.
+* Remove tests for removed module http_code.
+* Miscellaneous other minor fixes and tweaks.
+
+
+Version 0.0.6
+-------------
+
+* Add a new module, `network_utils`.
+* Start a collection of exceptions that may be returned by this package.
+* Add additional dependency requirements to `requirements.txt`.
+
 
 Version 0.0.5
 -------------
