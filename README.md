@@ -152,6 +152,12 @@ If keyword `polling` is `True`, certain statuses like 404 are ignored and the re
 This method always passes the argument `allow_redirects = True` to the underlying Python HTTPX library network calls.
 
 
+### String utilities
+
+| Function           | Purpose |
+|--------------------|---------|
+| `antiformat(s)`      | Quote instances of `{` and `}` in `s` so it can be passed to format. |
+
 
 ### System utilities
 
