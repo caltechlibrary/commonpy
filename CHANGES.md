@@ -1,6 +1,21 @@
 Change log for CommonPy
 =======================
 
+Version 1.1.0
+-------------
+
+This version adds a start at a module of string utilities, and introduces `antiformat(..)`: a function that will quote instances of `{` and `}` braces in a string so that the string can be passed safely to `format`.
+
+
+Version 1.0.0
+-------------
+
+* Rename a few functions to follow a more consistent naming convention.
+* Update `requirements.txt` file.
+* Add more documentation.
+* Call this a 1.0.0 release.
+
+
 Version 0.0.7
 -------------
 
