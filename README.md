@@ -156,7 +156,7 @@ This method always passes the argument `allow_redirects = True` to the underlyin
 
 | Function           | Purpose |
 |--------------------|---------|
-| `safe_str(s)`      | Quote instances of `{` and `}` in `s` so it can be passed to format. |
+| `antiformat(s)`      | Quote instances of `{` and `}` in `s` so it can be passed to format. |
 
 
 ### System utilities

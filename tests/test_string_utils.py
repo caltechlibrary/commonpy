@@ -11,7 +11,10 @@ except:
 
 from commonpy.string_utils import *
 
-def test_safe_str(tmpdir):
-    assert safe_str('foo') == 'foo'
-    assert safe_str('foo {bar') == 'foo {{{{bar'
-    assert safe_str('foo {bar').format('bar') == 'foo {{bar'
+def test_antiformat(tmpdir):
+    assert antiformat('foo') == 'foo'
+    assert antiformat('foo {bar') == 'foo {{bar'
+    assert antiformat('foo {bar').format('bar') == 'foo {bar'
+    assert antiformat('foo {bar}') == 'foo {{bar}}'
+    assert antiformat('foo {bar}').format('bar') == 'foo {bar}'
+    assert antiformat('foo {bar}').format(bar = 'biff') == 'foo {bar}'
