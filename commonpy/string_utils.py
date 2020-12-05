@@ -25,6 +25,7 @@ def antiformat(s):
     # Kristján Valur (2019-12-17): https://stackoverflow.com/a/59371315/743730
     # "clickbait" (2018-07-31): https://stackoverflow.com/a/51623363/743730
 
+    s = str(s)
     s = s.replace('{{', '⁌').replace('}}', '⁍')
     s = s.replace('{', '{{').replace('}', '}}')
     return s.replace('⁌', '{').replace('⁍', '}')

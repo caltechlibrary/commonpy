@@ -1,6 +1,12 @@
 Change log for CommonPy
 =======================
 
+Version 1.1.1
+-------------
+
+This version makes `antiformat(...)` more robust against values that are not strings, by applying `str(...)` to the incoming value.
+
+
 Version 1.1.0
 -------------
 
