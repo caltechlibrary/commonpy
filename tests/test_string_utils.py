@@ -18,3 +18,5 @@ def test_antiformat(tmpdir):
     assert antiformat('foo {bar}') == 'foo {{bar}}'
     assert antiformat('foo {bar}').format('bar') == 'foo {bar}'
     assert antiformat('foo {bar}').format(bar = 'biff') == 'foo {bar}'
+    assert antiformat(Exception('test exception')) == 'test exception'
+    assert antiformat(b'foo') == "b'foo'"
