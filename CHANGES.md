@@ -1,6 +1,13 @@
 Change log for CommonPy
 =======================
 
+Version 1.2.0
+-------------
+
+* Added new function `config_path(...)`
+* Added more unit tests
+
+
 Version 1.1.1
 -------------
 

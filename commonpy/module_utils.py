@@ -72,8 +72,17 @@ def installation_path(module_name = __package__):
             return value
         except WindowsError:
             # Kind of a problem. Punt and return a default value.
-            default_path = path.abspath('C:\Program Files\{}'.format(module_name))
+            default_path = path.abspath('C:\\Program Files\\{}'.format(module_name))
             if __debug__: log(f'defaulting to {default_path}')
             return default_path
     else:
         return path.abspath(path.join(module_path(module_name), '..'))
+
+
+def config_path(module_name = __package__):
+    '''Returns the path to ~/.config or equivalent.'''
+    if sys.platform.startswith('win'):
+        config_root = path.join(os.environ['USERPROFILE'], 'AppData', 'Local')
+    else:
+        config_root = path.join(path.expanduser('~'), '.config')
+    return path.join(config_root, module_name)

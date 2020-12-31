@@ -116,9 +116,13 @@ The `module_utils` collection of functions is useful for working with paths rela
 
 | Function           | Purpose |
 |--------------------|---------|
+| `desktop_path()`   | Returns the path to the user's Desktop directory on this system |
 | `module_path(module_name)` | Returns the path to the installed module |
 | `installation_path(module_name)` | Returns the path to module's installation directory |
 | `datadir_path(module_name)` | Returns the path to the `/data` subdirectory of the module |
+| `config_path(module_name)` | Returns the path to local config data directory for the module |
+
+Function `config_path(...)` is useful to use in conjunction with Python's [`configparser`](https://docs.python.org/3/library/configparser.html) module.  It returns `~/.config/modulename/` on Unix-like systems.
 
 
 ### Network utilities
