@@ -1,6 +1,12 @@
 Change log for CommonPy
 =======================
 
+Version 1.3.0
+-------------
+
+* Changed name `filter_by_extension(...)` to `filtered_by_extension(...)` to follow the style of other functions that return values.
+
+
 Version 1.2.0
 -------------
 

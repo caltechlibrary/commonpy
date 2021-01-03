@@ -105,7 +105,7 @@ def alt_extension(filepath, ext):
     return path.splitext(filepath)[0] + '.' + ext
 
 
-def filter_by_extensions(item_list, endings):
+def filtered_by_extensions(item_list, endings):
     if not item_list:
         return []
     if not endings:
