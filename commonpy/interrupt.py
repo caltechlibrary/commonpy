@@ -112,7 +112,7 @@ def interrupted():
 
 
 def raise_for_interrupts():
-    '''Check whether an interrupt occurred; if so, raise UserCancelled.'''
+    '''Check whether an interrupt occurred; if so, raise an exception.'''
     if interrupted():
         if __debug__: log(f'raising {__exception}')
         raise __exception

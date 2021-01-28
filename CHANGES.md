@@ -1,6 +1,15 @@
 Change log for CommonPy
 =======================
 
+Version 1.3.0
+-------------
+
+* Fixed issue #2: httpx Timeout needs a default value.
+* Bump the required version of [httpx](https://www.python-httpx.org) to 0.16.
+* Changed name `filter_by_extension(...)` to `filtered_by_extension(...)` to follow the style of other functions that return values.
+* Made trivial changes to the Makefile
+
+
 Version 1.2.0
 -------------
 

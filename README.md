@@ -92,7 +92,7 @@ The `file_utils` module provides a number of miscellaneous simple functions for 
 | `copy_file(src, dst)` | Copies file from `src` to `dst` |
 | `open_file(file)` | Opens the `file` by calling the equivalent of "open" on this system |
 | `open_url(url)` | Opens the `url` in the user's default web browser |
-| `filter_by_extensions(list, endings)` | |
+| `filtered_by_extensions(list, endings)` | |
 | `files_in_directory(dir, ext, recursive)` | |
 
 

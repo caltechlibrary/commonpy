@@ -114,7 +114,7 @@ def timed_request(method, url, client = None, **kwargs):
         return f'{text} for {url}'
 
     if client is None:
-        timeout = httpx.Timeout(connect = 15, read = 15, write = 15)
+        timeout = httpx.Timeout(15, connect = 15, read = 15, write = 15)
         client = httpx.Client(timeout = timeout, http2 = True, verify = False)
 
     failures = 0
