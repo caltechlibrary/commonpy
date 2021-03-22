@@ -91,7 +91,7 @@ def wait(duration):
     '''Wait for "duration" seconds, in a way that can be interrupted.
 
     This is a replacement for sleep(duration).  If interrupted, this function
-    raises the exception UserCancelled.
+    raises the exception configured by a prior call to config_interrupt(...).
     '''
     if __debug__: log(f'waiting for {duration} s')
     __waiter.wait(duration)
