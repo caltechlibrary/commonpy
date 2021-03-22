@@ -16,7 +16,7 @@ file "LICENSE" for more information.
 
 import inspect
 import os
-from   os import path
+from os.path import exists, isdir, isfile, dirname, relpath, realpath, splitext
 import shutil
 import subprocess
 import sys
@@ -49,15 +49,15 @@ def writable(dest):
             return False
         return True
 
-    if path.exists(dest) and not path.isdir(dest):
+    if exists(dest) and not isdir(dest):
         # Path is an existing file.
         return os.access(dest, os.F_OK | os.W_OK)
-    elif path.isdir(dest):
+    elif isdir(dest):
         # Path itself is an existing directory.  Is it writable?
         return dir_writable(dest)
     else:
         # Path is a file but doesn't exist yet. Can we write to the parent dir?
-        return dir_writable(path.dirname(dest))
+        return dir_writable(dirname(dest))
 
 
 def nonempty(dest):
@@ -66,7 +66,7 @@ def nonempty(dest):
 
 
 def files_in_directory(dir, extensions = None, recursive = True):
-    if not path.isdir(dir):
+    if not isdir(dir):
         return []
     if not readable(dir):
         return []
@@ -74,10 +74,10 @@ def files_in_directory(dir, extensions = None, recursive = True):
     files = []
     for item in os.listdir(dir):
         full_path = path.join(dir, item)
-        if path.isfile(full_path) and readable(full_path):
+        if isfile(full_path) and readable(full_path):
             if not extensions or filename_extension(item) in extensions:
                 files.append(full_path)
-        elif path.isdir(full_path) and recursive:
+        elif isdir(full_path) and recursive:
             files += files_in_directory(full_path, extensions)
     return sorted(files)
 
@@ -102,7 +102,7 @@ def alt_extension(filepath, ext):
     '''Returns the 'filepath' with the extension replaced by 'ext'.  The
     extension given in 'ext' should NOT have a leading period: that is, it
     should be "foo", not ".foo".'''
-    return path.splitext(filepath)[0] + '.' + ext
+    return splitext(filepath)[0] + '.' + ext
 
 
 def filtered_by_extensions(item_list, endings):
@@ -123,11 +123,11 @@ def relative(file):
     argument is actuall a file path, it will return it unchanged.'''
     if is_url(file):
         return file
-    candidate = path.relpath(file, os.getcwd())
+    candidate = relpath(file, os.getcwd())
     if not candidate.startswith('../..'):
         return candidate
     else:
-        return path.realpath(candidate)
+        return realpath(candidate)
 
 
 def rename_existing(file):
@@ -147,11 +147,11 @@ def rename_existing(file):
                 if __debug__: log(f'failed to delete {backup}')
                 if __debug__: log(f'failed to rename {file} to {backup}')
 
-    if path.exists(file):
+    if exists(file):
         rename(file)
         return
     full_path = path.join(os.getcwd(), file)
-    if path.exists(full_path):
+    if exists(full_path):
         rename(full_path)
         return
 
@@ -159,7 +159,7 @@ def rename_existing(file):
 def delete_existing(file):
     '''Delete the given file.'''
     # Check if it's actually a directory.
-    if path.isdir(file):
+    if isdir(file):
         if __debug__: log(f'doing rmtree on directory {file}')
         try:
             shutil.rmtree(file)
@@ -178,7 +178,7 @@ def file_in_use(file):
     '''Returns True if the given 'file' appears to be in use.  Note: this only
     works on Windows, currently.
     '''
-    if not path.exists(file):
+    if not exists(file):
         return False
     if sys.platform.startswith('win'):
         # This is a hack, and it really only works for this purpose on Windows.

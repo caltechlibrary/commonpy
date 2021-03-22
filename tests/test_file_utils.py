@@ -22,7 +22,7 @@ def test_readable_and_nonempty(tmpdir):
         f.write('foo\n')
     assert readable(tmpfile)
     assert nonempty(tmpfile)
-
+    assert nonempty('test_file_utils.py')
 
 def test_files_in_directory(tmpdir):
     tmpfile = tmpdir.join('test.txt')
@@ -35,6 +35,7 @@ def test_basenames_and_extensions():
     assert filename_basename('/foo/bar.txt') == '/foo/bar'
     assert filename_extension('/foo/bar.txt') == '.txt'
     assert filename_extension('foo') == ''
+    assert filename_extension('/foo/bar.bif.j') == '.j'
     assert alt_extension('/foo.app/bar.txt', 'zip') == '/foo.app/bar.zip'
 
 

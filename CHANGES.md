@@ -1,6 +1,13 @@
 Change log for CommonPy
 =======================
 
+Version 1.3.1
+-------------
+
+* Remove reference to HTTPX exception `RequestBodyUnavailable`, which no longer seems to exist in current versions of the HTTPX package.
+* Remove use of exception `UserCancelled` in `network_utils.py`, because its definition no longer existed elsewhere and on review it seemed unecessary in the context where it was used.
+
+
 Version 1.3.0
 -------------
 

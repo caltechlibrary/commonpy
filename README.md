@@ -189,7 +189,7 @@ The CommonPy module defines a number of exceptions that it may return.  (Most of
 Getting help
 ------------
 
-If you find an issue, please submit it in [the GitHub issue tracker](https://github.com/caltechlibrary/sidetrack/issues) for this repository.
+If you find an issue, please submit it in [the GitHub issue tracker](https://github.com/caltechlibrary/commonpy/issues) for this repository.
 
 
 Contributing

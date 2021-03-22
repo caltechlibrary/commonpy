@@ -23,7 +23,6 @@ import urllib
 if __debug__:
     from sidetrack import log
 
-from .exceptions import *
 from .interrupt import wait, interrupted
 
 
@@ -132,12 +131,11 @@ def timed_request(method, url, client = None, **kwargs):
                 return response
             else:
                 failures += 1
-        except (KeyboardInterrupt, UserCancelled) as ex:
+        except KeyboardInterrupt as ex:
             if __debug__: log(addurl(f'network {method} interrupted by {str(ex)}'))
             raise
-        except (httpx.CookieConflict, httpx.StreamError, httpx.ProxyError,
-                httpx.DecodingError, httpx.ProtocolError,
-                httpx.RequestBodyUnavailable, httpx.TooManyRedirects) as ex:
+        except (httpx.CookieConflict, httpx.StreamError, httpx.TooManyRedirects,
+                httpx.DecodingError, httpx.ProtocolError, httpx.ProxyError) as ex:
             # Probably indicates a deeper issue.  Don't do our lengthy retry
             # sequence, but try one more time, in case it's transient.
             if __debug__: log(addurl(f'exception {str(ex)}'))
