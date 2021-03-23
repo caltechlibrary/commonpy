@@ -22,7 +22,7 @@ def test_readable_and_nonempty(tmpdir):
         f.write('foo\n')
     assert readable(tmpfile)
     assert nonempty(tmpfile)
-    assert nonempty('test_file_utils.py')
+
 
 def test_files_in_directory(tmpdir):
     tmpfile = tmpdir.join('test.txt')
