@@ -122,7 +122,6 @@ def timed_request(method, url, client = None, **kwargs):
     while failures < _MAX_CONSECUTIVE_FAILS and not interrupted():
         try:
             if __debug__: log(addurl(f'doing http {method}'))
-            import pdb; pdb.set_trace()
             func = getattr(client, method)
             response = func(url, **kwargs)
             # For some statuses, retry once, in case it's a transient problem.

@@ -1,6 +1,12 @@
 Change log for CommonPy
 =======================
 
+Version 1.3.3
+-------------
+
+* Fix broken references to os.path functions.
+
+
 Version 1.3.2
 -------------
 
