@@ -1,6 +1,12 @@
 Change log for CommonPy
 =======================
 
+Version 1.3.2
+-------------
+
+* Add a check for a common mistake in parameters to `net(...)`.
+
+
 Version 1.3.1
 -------------
 
