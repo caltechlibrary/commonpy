@@ -24,6 +24,7 @@ if __debug__:
     from sidetrack import log
 
 from .interrupt import wait, interrupted
+from .exceptions import *
 
 
 # Internal constants.
@@ -202,6 +203,11 @@ def net(method, url, client = None, handle_rate = True,
     This method always passes the argument allow_redirects = True to the
     underlying Python HTTPX library network calls.
     '''
+    known_methods = ['get', 'post', 'head', 'options', 'put', 'delete', 'patch']
+    if method.lower() not in known_methods:
+        raise ValueError(f'HTTP method "{method}" is not'
+                         f' one of {", ".join(known_methods)}.')
+
     def addurl(text):
         return f'{text} for {url}'
 

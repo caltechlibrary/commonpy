@@ -1,6 +1,24 @@
 Change log for CommonPy
 =======================
 
+Version 1.3.4
+-------------
+
+* Fix undefined exceptions in network_utils due to a missing import.
+
+
+Version 1.3.3
+-------------
+
+* Fix broken references to os.path functions.
+
+
+Version 1.3.2
+-------------
+
+* Add a check for a common mistake in parameters to `net(...)`.
+
+
 Version 1.3.1
 -------------
 

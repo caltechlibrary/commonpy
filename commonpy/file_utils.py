@@ -16,7 +16,8 @@ file "LICENSE" for more information.
 
 import inspect
 import os
-from os.path import exists, isdir, isfile, dirname, relpath, realpath, splitext
+from   os.path import exists, isdir, isfile, join, dirname, relpath, realpath
+from   os.path import splitext
 import shutil
 import subprocess
 import sys
@@ -73,7 +74,7 @@ def files_in_directory(dir, extensions = None, recursive = True):
     if __debug__: log(f'reading directory {dir}')
     files = []
     for item in os.listdir(dir):
-        full_path = path.join(dir, item)
+        full_path = join(dir, item)
         if isfile(full_path) and readable(full_path):
             if not extensions or filename_extension(item) in extensions:
                 files.append(full_path)
@@ -150,7 +151,7 @@ def rename_existing(file):
     if exists(file):
         rename(file)
         return
-    full_path = path.join(os.getcwd(), file)
+    full_path = join(os.getcwd(), file)
     if exists(full_path):
         rename(full_path)
         return
