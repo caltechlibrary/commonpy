@@ -24,6 +24,7 @@ if __debug__:
     from sidetrack import log
 
 from .interrupt import wait, interrupted
+from .exceptions import *
 
 
 # Internal constants.
