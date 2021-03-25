@@ -1,6 +1,12 @@
 Change log for CommonPy
 =======================
 
+Version 1.3.4
+-------------
+
+* Fix undefined exceptions in network_utils due to a missing import.
+
+
 Version 1.3.3
 -------------
 
