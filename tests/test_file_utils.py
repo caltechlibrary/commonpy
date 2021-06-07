@@ -49,3 +49,7 @@ def test_copy_rename_delete_files(tmpdir):
     assert readable('copy1.txt.bak')
     delete_existing('copy1.txt.bak')
     assert not readable('copy1.txt.bak')
+
+def test_relative():
+    p = os.path.join(os.path.abspath('.'), '..', 'setup.cfg')
+    assert relative(p) == '../setup.cfg'
