@@ -23,6 +23,7 @@ import subprocess
 import sys
 import tempfile
 import webbrowser
+from   validator_collection.checkers import is_url
 
 if __debug__:
     from sidetrack import log
