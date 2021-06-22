@@ -1,5 +1,10 @@
 # Change log for CommonPy
 
+## Version 1.3.7
+
+* Make `relative(...)` from `file_utils` more robust against a problem on Windows, in which Python's `os.path.relpath` generates an error when you try to use it on a network-mapped drive.
+
+
 ## Version 1.3.6
 
 * Fix missing `requirements.txt` entry for `pywin32` on Windows.
