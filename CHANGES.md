@@ -1,5 +1,10 @@
 # Change log for CommonPy
 
+## Version 1.3.6
+
+* Fix missing `requirements.txt` entry for `pywin32` on Windows.
+
+
 ## Version 1.3.5
 
 * Fix reference to missing function called by `relative(...)`.
