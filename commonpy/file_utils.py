@@ -125,11 +125,17 @@ def relative(file):
     argument is actuall a file path, it will return it unchanged.'''
     if is_url(file):
         return file
-    candidate = relpath(file, os.getcwd())
-    if not candidate.startswith('../..'):
-        return candidate
+    try:
+        # This can fail on Windows if we're on a network-mapped drive.
+        candidate = relpath(file, os.getcwd())
+    except Exception as ex:
+        if __debug__: log(f'Cannot get relative path for {file}')
+        return file
     else:
-        return realpath(candidate)
+        if not candidate.startswith('../..'):
+            return candidate
+        else:
+            return realpath(candidate)
 
 
 def rename_existing(file):
