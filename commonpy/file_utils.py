@@ -129,7 +129,6 @@ def relative(file):
         # This can fail on Windows if we're on a network-mapped drive.
         candidate = relpath(file, os.getcwd())
     except Exception as ex:
-        if __debug__: log(f'Cannot get relative path for {file}')
         return file
     else:
         if not candidate.startswith('../..'):
