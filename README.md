@@ -228,6 +228,7 @@ CommonPy makes use of numerous open-source packages, without which it would have
 * [pytest](https://docs.pytest.org/en/stable/) &ndash; testing framework for Python
 * [python_dateutil](https://pypi.org/project/python-dateutil) &ndash; date utilities
 * [PyYAML](https://pyyaml.org) &ndash; Python YAML parser
+* [pywin32](https://github.com/mhammond/pywin32) &ndash; Windows APIs for Python
 * [sidetrack](https://github.com/caltechlibrary/sidetrack) &ndash; simple debug logging/tracing package
 * [tldextract](https://github.com/john-kurkowski/tldextract) &ndash; module to parse domains from URLs
 
