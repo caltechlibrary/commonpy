@@ -15,11 +15,9 @@ file "LICENSE" for more information.
 '''
 
 from   boltons.strutils import pluralize
-import dateparser
 import datetime
 from   datetime import datetime as dt
 from   dateutil import tz
-from   humanize import intcomma
 
 
 # Constants.
@@ -80,6 +78,9 @@ def timestamp():
 def parsed_datetime(string):
     '''Parse a human-written time/date string using dateparser's parse()
 function with predefined settings.'''
+    # Dateparser imports regex, a large package that takes a long time to load.
+    # Delay loading it so that application startup times can be faster.
+    import dateparser
     return dateparser.parse(string, settings = {'RETURN_AS_TIMEZONE_AWARE': True})
 
 
@@ -109,6 +110,9 @@ def pluralized(word, count, include_number = False):
         return word
     text = pluralize(word) if num > 1 else word
     if include_number:
+        # Humanize imports pkg_resources, which takes a long time to load.
+        # Delay loading it so that application startup times can be faster.
+        from humanize import intcomma
         return f'{intcomma(num)} {text}'
     else:
         return text

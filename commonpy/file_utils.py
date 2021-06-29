@@ -23,7 +23,6 @@ import subprocess
 import sys
 import tempfile
 import webbrowser
-from   validator_collection.checkers import is_url
 
 if __debug__:
     from sidetrack import log
@@ -123,6 +122,11 @@ def relative(file):
     relative path would require more than one parent step (i.e., ../../*
     instead of ../*) then it will return an absolute path instead.  If the
     argument is actuall a file path, it will return it unchanged.'''
+
+    # Validator_collection takes a long time to load.  Delay loading it until
+    # it's actually needed, so that application startup times can be faster.
+    from validator_collection.checkers import is_url
+
     if is_url(file):
         return file
     try:
