@@ -71,14 +71,17 @@ def config_interrupt(callback = None, raise_exception = KeyboardInterrupt,
     global __exception
     __exception = raise_exception
 
-    def interrupt_handler(signum, frame):
+    def interrupt_handler(signum, frame = None):
         if __debug__: log('interrupt_handler invoked')
         interrupt()
         if callback:
             if __debug__: log(f'invoking callback {callback}')
             callback()
-        if __debug__: log(f'raising {raise_exception}')
-        raise __exception
+        if sys.platform == "win32":
+            # Don't chain to next handler.
+            return 1
+        else:
+            raise __exception
 
     if __debug__: log(f'setting handler on {on_signal}, exception {__exception}')
     if sys.platform == "win32":

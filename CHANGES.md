@@ -1,5 +1,20 @@
 # Change log for CommonPy
 
+## Version 1.3.8
+
+* Fix problems on Windows involving the interrupt handler configured by `config_interrupt(...)`. First, the internal function used did not have a signature that was correct for `win32api.SetConsoleCtrlHandler` on Windows. Second, the proper usage is to return a value, not raise an exception.
+
+
+## Version 1.3.7
+
+* Make `relative(...)` from `file_utils` more robust against a problem on Windows, in which Python's `os.path.relpath` generates an error when you try to use it on a network-mapped drive.
+
+
+## Version 1.3.6
+
+* Fix missing `requirements.txt` entry for `pywin32` on Windows.
+
+
 ## Version 1.3.5
 
 * Fix reference to missing function called by `relative(...)`.
