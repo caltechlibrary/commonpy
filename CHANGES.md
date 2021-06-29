@@ -1,5 +1,10 @@
 # Change log for CommonPy
 
+## Version 1.3.9
+
+* Don't import packages `dateparser` and `validator_collection` until actually necessary, to reduce application startup times.
+
+
 ## Version 1.3.8
 
 * Fix problems on Windows involving the interrupt handler configured by `config_interrupt(...)`. First, the internal function used did not have a signature that was correct for `win32api.SetConsoleCtrlHandler` on Windows. Second, the proper usage is to return a value, not raise an exception.

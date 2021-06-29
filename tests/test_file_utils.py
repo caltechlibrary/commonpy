@@ -53,3 +53,7 @@ def test_copy_rename_delete_files(tmpdir):
 def test_relative():
     p = os.path.join(os.path.abspath('.'), '..', 'setup.cfg')
     assert relative(p) == '../setup.cfg'
+    assert relative('http://foo.com/file') == 'http://foo.com/file'
+    assert relative('http://foo.com/file.jpg') == 'http://foo.com/file.jpg'
+    assert relative('file://path/to/file.jpg') == 'file:/path/to/file.jpg'
+    assert relative('ftp://foo.com/file.jpg') == 'ftp://foo.com/file.jpg'
