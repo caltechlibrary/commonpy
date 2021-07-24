@@ -15,6 +15,7 @@ file "LICENSE" for more information.
 '''
 
 import httpx
+from   os import stat
 import socket
 import ssl
 import tldextract
@@ -23,7 +24,7 @@ import urllib
 if __debug__:
     from sidetrack import log
 
-from .interrupt import wait, interrupted
+from .interrupt import wait, interrupted, raise_for_interrupts
 from .exceptions import *
 
 
@@ -116,6 +117,8 @@ def timed_request(method, url, client = None, **kwargs):
     if client is None:
         timeout = httpx.Timeout(15, connect = 15, read = 15, write = 15)
         client = httpx.Client(timeout = timeout, http2 = True, verify = False)
+    elif client == 'stream':
+        client = httpx.stream
 
     failures = 0
     retries = 0
@@ -258,3 +261,62 @@ def net(method, url, client = None, handle_rate = True,
     # The error msg will have had the URL added already; no need to do it here.
     if __debug__: log('returning {}'.format(f'{error}' if error else f'response for {url}'))
     return (resp, error)
+
+
+def download_file(url, local_destination):
+    '''Returns True if the content at 'url' could be downloaded to the file
+    'local_destination', and False otherwise. It does not throw an exception.'''
+
+    def addurl(text):
+        return f'{text} for {url}'
+
+    try:
+        download(url, local_destination)
+    except Exception as ex:
+        if __debug__: log(f'download exception: {str(ex)}')
+        return False
+    else:
+        return True
+
+
+def download(url, local_destination, recursing = 0):
+    '''Download the 'url' to the file 'local_destination'.'''
+
+    timeout = httpx.Timeout(15, connect = 15, read = 15, write = 15)
+    with httpx.stream('get', url, verify = False, timeout = timeout,
+                      allow_redirects = True) as resp:
+        code = resp.status_code
+        if code == 202:
+            # Code 202 = Accepted, "received but not yet acted upon."
+            wait(2)                     # Sleep a short time and try again.
+            raise_for_interrupts()
+            recursing += 1
+            if recursing <= _MAX_RECURSIVE_CALLS:
+                if __debug__: log(f'calling download(url) recursively for code 202')
+                download(url, local_destination, recursing)
+            else:
+                raise ServiceFailure(addurl('Exceeded max retries for code 202'))
+        elif 200 <= code < 400:
+            with open(local_destination, 'wb') as f:
+                for chunk in resp.iter_bytes():
+                    raise_for_interrupts()
+                    f.write(chunk)
+            resp.close()
+            size = stat(local_destination).st_size
+            if __debug__: log(f'wrote {size} bytes to file {local_destination}')
+        elif code in [401, 402, 403, 407, 451, 511]:
+            raise AuthenticationFailure(addurl('Access is forbidden'))
+        elif code in [404, 410]:
+            raise NoContent(addurl('No content found'))
+        elif code in [405, 406, 409, 411, 412, 414, 417, 428, 431, 505, 510]:
+            raise InternalError(addurl(f'Server returned code {code}'))
+        elif code in [415, 416]:
+            raise ServiceFailure(addurl('Server rejected the request'))
+        elif code == 429:
+            raise RateLimitExceeded('Server blocking further requests due to rate limits')
+        elif code == 503:
+            raise ServiceFailure('Server is unavailable -- try again later')
+        elif code in [500, 501, 502, 506, 507, 508]:
+            raise ServiceFailure(addurl(f'Internal server error (HTTP code {code})'))
+        else:
+            raise NetworkFailure('Unable to resolve {}'.format(url))

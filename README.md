@@ -129,13 +129,16 @@ Function `config_path(...)` is useful to use in conjunction with Python's [`conf
 
 The `network_utils` module provides several functions that are useful when performing network operations.
 
-| Function           | Purpose |
-|--------------------|---------|
-| `network_available()` | Returns `True` if external hosts are reacheable over the network |
-| `scheme(url)` | Returns the protocol portion of the url; e.g., "https" |
-| `hostname(url)` | Returns the hostname portion of a URL |
-| `netlock(url)` | Returns the hostname, port number (if any), and login info (if any) |
-| `net(...)` | See below |
+| Function                         | Purpose                                    |
+|----------------------------------|--------------------------------------------|
+| `download(url, local_dest)`      | Download a file                            |
+| `download_file(url, local_dest)` | Download a file without raising exceptions |
+| `hostname(url)`                  | Returns the hostname portion of a URL      |
+| `net(...)`                       | See below                                  |
+| `netlock(url)`                   | Returns the hostname, port number (if any), and login info (if any) |
+| `network_available()`            | Returns `True` if external hosts are reacheable over the network |
+| `scheme(url)`                    | Returns the protocol portion of the url; e.g., "https" |
+
 
 #### _`net`_
 
@@ -154,6 +157,11 @@ If keyword `handle_rate` is `True`, this function will automatically pause and r
 If keyword `polling` is `True`, certain statuses like 404 are ignored and the response is returned; otherwise, they are considered errors.  The behavior when `True` is useful in situations where a URL does not exist until something is ready at the server, and the caller is repeatedly checking the URL.  It is up to the caller to implement the polling schedule and call this function (with `polling = True`) as needed.
 
 This method always passes the argument `allow_redirects = True` to the underlying Python HTTPX library network calls.
+
+
+#### _`download` and `download_file`_
+
+The functions `download(url, local_destination)` and `download_file(url, local_destination)` download a file at the given `url`, writing it to the file specified by the parameter `local_destination`. The former version of the function will raise exceptions in case of problems; the latter version simply return `True` or `False` depending on the success of the download.
 
 
 ### String utilities
