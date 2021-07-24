@@ -1,5 +1,10 @@
 # Change log for CommonPy
 
+## Version 1.3.10
+
+* Add new functions `download(...)` and `download_file(...)`.
+
+
 ## Version 1.3.9
 
 * Don't import packages `dateparser` and `validator_collection` until actually necessary, to reduce application startup times.
