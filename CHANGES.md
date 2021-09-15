@@ -1,5 +1,15 @@
 # Change log for CommonPy
 
+## Version 1.4.0
+
+Changes in this version:
+* In `net(...)`, in case of a connection error, don't do exponential back-off and retry. Retry only once and then give up, because connection errors often mean the server is not available and long waits are unhelpful to callers.
+* Change `net(...)` to not test if a network is available if the given destination address is on the local host. This prevents incorrectly returning `NetworkFailure` when the current host is detached from the network and the failure is actually a `ServiceFailure` (for example, if nothing is listening on the destination port on the local host).
+* Add new function `on_localhost(...)`, for testing whether a given network location indicates the local host.
+
+Note: the previous release, 1.3.10, should not have added new functions in a patch release &ndash; API changes should result in changing the minor release number, not merely the patch number. The previous release number was a mistake; it should have been 1.4.0.
+
+
 ## Version 1.3.10
 
 * Add new functions `download(...)` and `download_file(...)`.
