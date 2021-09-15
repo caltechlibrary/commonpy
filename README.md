@@ -129,15 +129,16 @@ Function `config_path(...)` is useful to use in conjunction with Python's [`conf
 
 The `network_utils` module provides several functions that are useful when performing network operations.
 
-| Function                         | Purpose                                    |
-|----------------------------------|--------------------------------------------|
-| `download(url, local_dest)`      | Download a file                            |
-| `download_file(url, local_dest)` | Download a file without raising exceptions |
-| `hostname(url)`                  | Returns the hostname portion of a URL      |
-| `net(...)`                       | See below                                  |
+| Function                         | Purpose                                                             |
+| -------------------------------- | ------------------------------------------------------------------- |
+| `download(url, local_dest)`      | Download a file                                                     |
+| `download_file(url, local_dest)` | Download a file without raising exceptions                          |
+| `hostname(url)`                  | Returns the hostname portion of a URL                               |
+| `net(...)`                       | See below                                                           |
 | `netlock(url)`                   | Returns the hostname, port number (if any), and login info (if any) |
-| `network_available()`            | Returns `True` if external hosts are reacheable over the network |
-| `scheme(url)`                    | Returns the protocol portion of the url; e.g., "https" |
+| `network_available()`            | Returns `True` if external hosts are reacheable over the network    |
+| `scheme(url)`                    | Returns the protocol portion of the url; e.g., "https"              |
+| `on_localhost(url)`              | Returns `True` if the address of `url` points to the local host     |
 
 
 #### _`net`_

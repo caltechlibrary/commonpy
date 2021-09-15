@@ -15,6 +15,7 @@ file "LICENSE" for more information.
 '''
 
 import httpx
+from   ipaddress import ip_address
 from   os import stat
 import socket
 import ssl
@@ -26,6 +27,7 @@ if __debug__:
 
 from .interrupt import wait, interrupted, raise_for_interrupts
 from .exceptions import *
+from .string_utils import antiformat
 
 
 # Internal constants.
@@ -91,6 +93,25 @@ def netloc(url):
     else:
         # Last-ditch effort.
         return parsed.path
+
+
+def on_localhost(url):
+    if not url:
+        return False
+    host = hostname(url)
+    # The following approach is based on code posted by user "georgexsh" on
+    # 2017-12-21 to https://stackoverflow.com/a/47919356/743730
+    for family in (socket.AF_INET, socket.AF_INET6):
+        try:
+            addrinfo = socket.getaddrinfo(host, None, family, socket.SOCK_STREAM)
+        except socket.gaierror as ex:
+            log(f'socket.getaddrinfo exception: {antiformat(ex)}')
+            return False
+        for family, _, _, _, sockaddr in addrinfo:
+            address_part = sockaddr[0]
+            if ip_address(address_part).is_loopback:
+                return True
+    return False
 
 
 def timed_request(method, url, client = None, **kwargs):
