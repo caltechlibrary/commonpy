@@ -242,12 +242,12 @@ def net(method, url, client = None, handle_rate = True,
     except (httpx.NetworkError, httpx.ProtocolError) as ex:
         # timed_request() will have retried, so if we get here, time to bail.
         if __debug__: log(addurl(f'got network exception: {str(ex)}'))
-        if not network_available():
-            if __debug__: log(addurl('returning NetworkFailure'))
-            return (resp, NetworkFailure(addurl('Network connectivity failure')))
-        else:
+        if on_localhost(url) or network_available():
             if __debug__: log(addurl('failed > 1 times -- returning ServiceFailure'))
             return (resp, ServiceFailure(addurl('Network or server error {str(ex)}')))
+        else:
+            if __debug__: log(addurl('returning NetworkFailure'))
+            return (resp, NetworkFailure(addurl('Network connectivity failure')))
     except Exception as ex:
         # Not a network or protocol error, and not a normal server response.
         if __debug__: log(addurl(f'returning exception: {str(ex)}'))
