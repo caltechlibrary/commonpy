@@ -139,14 +139,15 @@ def timed_request(method, url, client = None, **kwargs):
             if __debug__: log(addurl(f'network {method} interrupted by {str(ex)}'))
             raise
         except (httpx.CookieConflict, httpx.StreamError, httpx.TooManyRedirects,
-                httpx.DecodingError, httpx.ProtocolError, httpx.ProxyError) as ex:
+                httpx.DecodingError, httpx.ProtocolError, httpx.ProxyError,
+                httpx.ConnectError) as ex:
             # Probably indicates a deeper issue.  Don't do our lengthy retry
             # sequence, but try one more time, in case it's transient.
             if __debug__: log(addurl(f'exception {str(ex)}'))
             if failures > 0:
                 raise
             failures += 1
-            if __debug__: log(addurl('retrying one more time after brief pause'))
+            if __debug__: log(addurl('will retry one more time after brief pause'))
         except Exception as ex:
             # Problem might be transient.  Don't quit right away.
             failures += 1
