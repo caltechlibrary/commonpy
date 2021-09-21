@@ -29,3 +29,23 @@ def antiformat(s):
     s = s.replace('{{', '⁌').replace('}}', '⁍')
     s = s.replace('{', '{{').replace('}', '}}')
     return s.replace('⁌', '{').replace('⁍', '}')
+
+
+# The following is based on code posted by user "Darkonaut" to Stack Overflow
+# on 2019-11-09 at https://stackoverflow.com/a/58780542/743730
+# The version below uses pure ASCII characters so that it will format normally
+# in, e.g., server log files.
+
+def print_boxed(msg, indent = 1, width = None, title = None):
+    '''Print message-box with optional title.'''
+    lines = msg.split('\n')
+    space = " " * indent
+    if not width:
+        width = max(map(len, lines))
+    box = f',{"-" * (width + indent * 2)}.\n'
+    if title:
+        box += f'|{space}{title:<{width}}{space}|\n'             # title
+        box += f'|{space}{"-" * len(title):<{width}}{space}|\n'  # underscore
+    box += ''.join([f'|{space}{line:<{width}}{space}|\n' for line in lines])
+    box += f'`{"-" * (width + indent * 2)}\''
+    print(box)
