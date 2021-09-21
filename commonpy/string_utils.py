@@ -37,7 +37,12 @@ def antiformat(s):
 # in, e.g., server log files.
 
 def print_boxed(msg, indent = 1, width = None, title = None):
-    '''Print message-box with optional title.'''
+    '''Print a boxed message with optional title.
+
+    If optional parameter "width" is not set, this will use the width of
+    the longest line in the "msg" text.
+    '''
+
     lines = msg.split('\n')
     space = " " * indent
     if not width:
