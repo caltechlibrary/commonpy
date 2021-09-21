@@ -169,7 +169,8 @@ The functions `download(url, local_destination)` and `download_file(url, local_d
 
 | Function           | Purpose |
 |--------------------|---------|
-| `antiformat(s)`      | Quote instances of `{` and `}` in `s` so it can be passed to format. |
+| `antiformat(s)`    | Quote instances of `{` and `}` in `s` so it can be passed to format. |
+| `print_boxed(msg)` | Print a message with a box around it using pure ASCII characters. |
 
 
 ### System utilities
