@@ -1,5 +1,9 @@
 # Change log for CommonPy
 
+## Version 1.6.2
+
+This release expands `flattened(...)` to deal with iterators and generators.
+
 ## Version 1.6.1
 
 This release fixes a bug in version 1.6.0.
