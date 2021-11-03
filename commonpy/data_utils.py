@@ -63,11 +63,11 @@ def flattened(original, parent_key = False, separator = '.'):
             if not value.items():
                 items.append((new_key,None))
             else:
-                items.extend(flatten(value, new_key, separator).items())
+                items.extend(flattened(value, new_key, separator).items())
         elif isinstance(value, list):
             if len(value):
                 for k, v in enumerate(value):
-                    items.extend(flatten({str(k): v}, new_key).items())
+                    items.extend(flattened({str(k): v}, new_key).items())
             else:
                 items.append((new_key,None))
         else:
