@@ -1,5 +1,9 @@
 # Change log for CommonPy
 
+## Version 1.6.1
+
+This release fixes a bug in version 1.6.0.
+
 ## Version 1.6.0
 
 This release adds the new function `flattened(...)`
