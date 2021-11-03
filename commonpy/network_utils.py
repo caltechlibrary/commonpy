@@ -19,7 +19,6 @@ from   ipaddress import ip_address
 from   os import stat
 import socket
 import ssl
-import tldextract
 import urllib
 
 if __debug__:
@@ -74,6 +73,7 @@ def hostname(url):
         return parsed.hostname
     else:
         # urllib.parse doesn't provide a hostname.  Try a different way.
+        import tldextract
         return '.'.join(part for part in tldextract.extract(url) if part)
 
 
