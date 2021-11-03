@@ -56,23 +56,31 @@ def flattened(original, parent_key = False, separator = '.'):
 
     # Case of a dict. Original algorithm by "Nikhil VJ" to Stack Overflow
     # at https://stackoverflow.com/a/62186294/743730. Version of 2021-05-30.
-    items = []
-    for key, value in original.items():
-        new_key = str(parent_key) + separator + key if parent_key else key
-        if isinstance(value, MutableMapping):
-            if not value.items():
-                items.append((new_key,None))
+    if isinstance(original, dict):
+        items = []
+        for key, value in original.items():
+            new_key = str(parent_key) + separator + key if parent_key else key
+            if isinstance(value, MutableMapping):
+                if not value.items():
+                    items.append((new_key,None))
+                else:
+                    items.extend(flattened(value, new_key, separator).items())
+            elif isinstance(value, list):
+                if len(value):
+                    for k, v in enumerate(value):
+                        items.extend(flattened({str(k): v}, new_key).items())
+                else:
+                    items.append((new_key,None))
             else:
-                items.extend(flattened(value, new_key, separator).items())
-        elif isinstance(value, list):
-            if len(value):
-                for k, v in enumerate(value):
-                    items.extend(flattened({str(k): v}, new_key).items())
-            else:
-                items.append((new_key,None))
-        else:
-            items.append((new_key, value))
-    return dict(items)
+                items.append((new_key, value))
+        return dict(items)
+
+    from typing import Generator, Iterator
+    if isinstance(original, Generator) or isinstance(original, Iterator):
+        return flattened(list(original), parent_key, separator)
+
+    # Fallback if we don't know how to deal with this kind of thing.
+    return original
 
 
 def unique(lst):
