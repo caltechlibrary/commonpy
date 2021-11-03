@@ -1,5 +1,9 @@
 # Change log for CommonPy
 
+## Version 1.6.0
+
+This release adds the new function `flattened(...)`
+
 ## Version 1.5.0
 
 This release adds the new function `print_boxed(...)`.

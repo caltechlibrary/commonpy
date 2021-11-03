@@ -58,3 +58,8 @@ def test_pluralized():
     assert pluralized('flower', 2, True) == '2 flowers'
     assert pluralized('error', [1, 2], True) == '2 errors'
     assert pluralized('word', 10000, True) == '10,000 words'
+
+
+def test_flattened():
+    assert flattened([[1, 2], 3, [4, 5], []]) == [1, 2, 3, 4, 5]
+    assert dict({'a': 1, 'b': {'c': 2}, 'd': {'e': 3, 'f': 4, 'g': [5, 6]}})
