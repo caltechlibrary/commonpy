@@ -64,4 +64,6 @@ def test_flattened():
     assert flattened([[1, 2], 3, [4, 5], []]) == [1, 2, 3, 4, 5]
     original = dict({'a': 1, 'b': {'c': 2}, 'd': {'e': 3, 'f': 4, 'g': [5, 6]}})
     assert flattened(original) == {'a': 1, 'b.c': 2, 'd.e': 3, 'd.f': 4, 'd.g.0': 5, 'd.g.1': 6}
+    assert flattened([original, original]) == [{'a': 1, 'b.c': 2, 'd.e': 3, 'd.f': 4, 'd.g.0': 5, 'd.g.1': 6}, {'a': 1, 'b.c': 2, 'd.e': 3, 'd.f': 4, 'd.g.0': 5, 'd.g.1': 6}]
+    assert flattened([[1, 2], original, [original]]) == [1, 2, {'a': 1, 'b.c': 2, 'd.e': 3, 'd.f': 4, 'd.g.0': 5, 'd.g.1': 6}, {'a': 1, 'b.c': 2, 'd.e': 3, 'd.f': 4, 'd.g.0': 5, 'd.g.1': 6}]
     assert flattened(iter(range(0, 3))) == [0, 1, 2]

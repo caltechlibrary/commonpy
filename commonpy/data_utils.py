@@ -15,11 +15,11 @@ file "LICENSE" for more information.
 '''
 
 from   boltons.strutils import pluralize
-from   boltons.iterutils import flatten as boltons_flatten
 from   collections.abc import MutableMapping
 import datetime
 from   datetime import datetime as dt
 from   dateutil import tz
+from   typing import Sequence, Generator, Iterator
 
 
 # Constants.
@@ -50,13 +50,9 @@ def flattened(original, parent_key = False, separator = '.'):
     :return: A flattened original
     '''
 
-    # Case of a list. This just uses the function from Boltons.
-    if isinstance(original, list):
-        return boltons_flatten(original)
-
-    # Case of a dict. Original algorithm by "Nikhil VJ" to Stack Overflow
-    # at https://stackoverflow.com/a/62186294/743730. Version of 2021-05-30.
     if isinstance(original, dict):
+        # Case of a dict. Original algorithm by "Nikhil VJ" to Stack Overflow
+        # at https://stackoverflow.com/a/62186294/743730. Version of 2021-05-30.
         items = []
         for key, value in original.items():
             new_key = str(parent_key) + separator + key if parent_key else key
@@ -65,7 +61,7 @@ def flattened(original, parent_key = False, separator = '.'):
                     items.append((new_key,None))
                 else:
                     items.extend(flattened(value, new_key, separator).items())
-            elif isinstance(value, list):
+            elif isinstance(value, Sequence):
                 if len(value):
                     for k, v in enumerate(value):
                         items.extend(flattened({str(k): v}, new_key).items())
@@ -75,9 +71,16 @@ def flattened(original, parent_key = False, separator = '.'):
                 items.append((new_key, value))
         return dict(items)
 
-    from typing import Generator, Iterator
-    if isinstance(original, Generator) or isinstance(original, Iterator):
-        return flattened(list(original), parent_key, separator)
+    if isinstance(original, (Sequence, Generator, Iterator)):
+        # Solution based in part on Stack Overflow posting by "telliott99" on
+        # 2010-01-28 at https://stackoverflow.com/q/2158395/743730.
+        result = []
+        for el in original:
+            if isinstance(el, Sequence) and not isinstance(el, (str, bytes)):
+                result.extend(flattened(el))
+            else:
+                result.append(flattened(el))
+        return result
 
     # Fallback if we don't know how to deal with this kind of thing.
     return original
