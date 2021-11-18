@@ -76,7 +76,9 @@ def flattened(original, parent_key = False, separator = '.'):
         # 2010-01-28 at https://stackoverflow.com/q/2158395/743730.
         result = []
         for el in original:
-            if isinstance(el, Sequence) and not isinstance(el, (str, bytes)):
+            if isinstance(el, (str, bytes)):
+                result.append(el)
+            elif isinstance(el, Sequence):
                 result.extend(flattened(el))
             else:
                 result.append(flattened(el))
