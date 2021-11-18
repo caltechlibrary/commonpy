@@ -19,7 +19,7 @@ from   collections.abc import MutableMapping
 import datetime
 from   datetime import datetime as dt
 from   dateutil import tz
-from   typing import Sequence, Generator, Iterator
+from   typing import Sequence, Generator, Iterator, KeysView, ValuesView
 
 
 # Constants.
@@ -58,20 +58,20 @@ def flattened(original, parent_key = False, separator = '.'):
             new_key = str(parent_key) + separator + key if parent_key else key
             if isinstance(value, MutableMapping):
                 if not value.items():
-                    items.append((new_key,None))
+                    items.append((new_key, None))
                 else:
                     items.extend(flattened(value, new_key, separator).items())
-            elif isinstance(value, Sequence):
+            elif isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
                 if len(value):
                     for k, v in enumerate(value):
                         items.extend(flattened({str(k): v}, new_key).items())
                 else:
-                    items.append((new_key,None))
+                    items.append((new_key, None))
             else:
                 items.append((new_key, value))
         return dict(items)
 
-    if isinstance(original, (Sequence, Generator, Iterator)):
+    if isinstance(original, (Sequence, Generator, Iterator, ValuesView, KeysView)):
         # Solution based in part on Stack Overflow posting by "telliott99" on
         # 2010-01-28 at https://stackoverflow.com/q/2158395/743730.
         result = []
