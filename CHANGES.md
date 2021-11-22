@@ -1,5 +1,10 @@
 # Change log for CommonPy
 
+## Version 1.7.1
+
+Add missing `deprecation` package to `requirements.txt`.
+
+
 ## Version 1.7.0
 
 Changes in this release:
