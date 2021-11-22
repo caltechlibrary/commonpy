@@ -19,6 +19,7 @@ open-source software released under a 3-clause BSD license.  Please see the
 file "LICENSE" for more information.
 '''
 
+from   deprecation import deprecated
 import signal
 import sys
 import threading
@@ -28,6 +29,9 @@ if sys.platform == "win32":
 
 if __debug__:
     from sidetrack import log
+
+# This is needed to get the __version__ property.
+import commonpy
 
 
 # Global variables.
@@ -121,7 +125,14 @@ def raise_for_interrupts():
         raise __exception
 
 
-def reset():
+def reset_interrupts():
     '''Clear the internal marker that an interrupt occurred.'''
-    if __debug__: log(f'clearing wait')
+    if __debug__: log(f'clearing interrupt state')
     __waiter.clear()
+
+
+@deprecated(deprecated_in = '1.7.0', removed_in = '2.0.0',
+            current_version = commonpy.__version__,
+            details = 'Use reset_interrupts() instead of reset()')
+def reset():
+    reset_interrupts()
