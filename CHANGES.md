@@ -1,20 +1,32 @@
 # Change log for CommonPy
 
+## Version 1.7.0
+
+Changes in this release:
+
+* Beginning with this release, the function `reset()` is deprecated in favor of the function `reset_interrupts()`. 
+* The function `wait()` resets the interrupt state before it begins waiting.
+
+
 ## Version 1.6.3
 
 This release fixes some unexpected failures in `flattened(...)`.
+
 
 ## Version 1.6.2
 
 This release expands `flattened(...)` to deal with iterators and generators.
 
+
 ## Version 1.6.1
 
 This release fixes a bug in version 1.6.0.
 
+
 ## Version 1.6.0
 
 This release adds the new function `flattened(...)`
+
 
 ## Version 1.5.0
 

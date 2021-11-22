@@ -101,14 +101,14 @@ The `file_utils` module provides a number of miscellaneous simple functions for 
 
 The `interrupt` module includes `wait(...)`, a replacement for `sleep(...)` that is interruptible and works with multiple threads.  It also provides methods to cause an interruption (including doing it by issuing a <kbd>^C</kbd> to the program), check whether an interruption occurred, and other related operations.
 
-| Function           | Purpose |
-|--------------------|---------|
+| Function                 | Purpose |
+|--------------------------|---------|
 | `config_interrupt(callback, raise_ex, signal)` | Sets up a callback function |
-| `wait(duration)` | Waits for `duration` in an interruptible fashion |
-| `interrupt()` | Interrupts any `wait` in progress |
-| `interrupted() ` | Returns `True` if an interruption has been called |
+| `wait(duration)`         | Waits for `duration` in an interruptible fashion |
+| `interrupt()`            | Interrupts any `wait` in progress |
+| `interrupted() `         | Returns `True` if an interruption has been called |
 | `raise_for_interrupts()` | Raises an exception if `interrupt()` has been invoked |
-| `reset()` | Resets the interruption flag |
+| `reset_interrupts()`     | Resets the interruption flag |
 
 
 ### Module utilities
