@@ -99,7 +99,13 @@ def wait(duration):
 
     This is a replacement for sleep(duration).  If interrupted, this function
     raises the exception configured by a prior call to config_interrupt(...).
+
+    This function calls reset() before it begins waiting.
     '''
+    if interrupted():
+        # It doesn't make sense to exit right away if we're called, so assume
+        # a preexisting interrupt was left unreset accidentally.
+        reset_interrupts()
     if __debug__: log(f'waiting for {duration} s')
     __waiter.wait(duration)
     if interrupted():
