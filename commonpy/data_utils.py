@@ -14,6 +14,7 @@ is open-source software released under a 3-clause BSD license.  Please see the
 file "LICENSE" for more information.
 '''
 
+from   boltons.iterutils import flatten_iter
 from   boltons.strutils import pluralize
 from   collections.abc import MutableMapping
 import datetime
@@ -80,6 +81,8 @@ def flattened(original, parent_key = False, separator = '.'):
                 result.append(el)
             elif isinstance(el, Sequence):
                 result.extend(flattened(el))
+            elif isinstance(el, (KeysView, ValuesView)):
+                result.extend(el)
             else:
                 result.append(flattened(el))
         return result

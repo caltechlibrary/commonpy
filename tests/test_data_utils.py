@@ -83,3 +83,7 @@ def test_flattened():
                                     'formerIds': None,
                                     'discoverySuppress': None,
                                     'tags.tagList': None}]
+    x = {'a':1}
+    y = {'b':2}
+    assert flattened([d.keys() for d in [x, y]]) == ['a', 'b']
+    assert flattened([x.keys(), 1, 2, [3], 'a', 'b']) == ['a', 1, 2, 3, 'a', 'b']
