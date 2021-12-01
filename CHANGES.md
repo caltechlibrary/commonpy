@@ -1,5 +1,10 @@
 # Change log for CommonPy
 
+## Version 1.7.2
+
+Improve `flattened` to handle lists of dict keys.
+
+
 ## Version 1.7.1
 
 Add missing `deprecation` package to `requirements.txt`.
