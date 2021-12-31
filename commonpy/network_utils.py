@@ -157,14 +157,14 @@ def timed_request(method, url, client = None, **kwargs):
             else:
                 failures += 1
         except KeyboardInterrupt as ex:
-            if __debug__: log(addurl(f'network {method} interrupted by {str(ex)}'))
+            if __debug__: log(addurl(f'network {method} interrupted by {antiformat(ex)}'))
             raise
         except (httpx.CookieConflict, httpx.StreamError, httpx.TooManyRedirects,
                 httpx.DecodingError, httpx.ProtocolError, httpx.ProxyError,
                 httpx.ConnectError) as ex:
             # Probably indicates a deeper issue.  Don't do our lengthy retry
             # sequence, but try one more time, in case it's transient.
-            if __debug__: log(addurl(f'exception {str(ex)}'))
+            if __debug__: log(addurl(f'exception {antiformat(ex)}'))
             if failures > 0:
                 raise
             failures += 1
@@ -172,7 +172,7 @@ def timed_request(method, url, client = None, **kwargs):
         except Exception as ex:
             # Problem might be transient.  Don't quit right away.
             failures += 1
-            if __debug__: log(addurl(f'exception (failure #{failures}): {str(ex)}'))
+            if __debug__: log(addurl(f'exception (failure #{failures}): {antiformat(ex)}'))
             # Record the first error we get, not the subsequent ones, because
             # in the case of network outages, the subsequent ones will be
             # about being unable to reconnect and not the original problem.
@@ -241,16 +241,16 @@ def net(method, url, client = None, handle_rate = True,
         resp = timed_request(method, url, client, allow_redirects = True, **kwargs)
     except (httpx.NetworkError, httpx.ProtocolError) as ex:
         # timed_request() will have retried, so if we get here, time to bail.
-        if __debug__: log(addurl(f'got network exception: {str(ex)}'))
+        if __debug__: log(addurl(f'got network exception: {antiformat(ex)}'))
         if on_localhost(url) or network_available():
             if __debug__: log(addurl('failed > 1 times -- returning ServiceFailure'))
-            return (resp, ServiceFailure(addurl('Network or server error {str(ex)}')))
+            return (resp, ServiceFailure(addurl(f'Network or server error "{antiformat(ex)}"')))
         else:
             if __debug__: log(addurl('returning NetworkFailure'))
             return (resp, NetworkFailure(addurl('Network connectivity failure')))
     except Exception as ex:
         # Not a network or protocol error, and not a normal server response.
-        if __debug__: log(addurl(f'returning exception: {str(ex)}'))
+        if __debug__: log(addurl(f'returning exception: {antiformat(ex)}'))
         return (resp, ex)
 
     # Interpret the response.  Note that the requests library handles code 301
@@ -267,7 +267,7 @@ def net(method, url, client = None, handle_rate = True,
     elif code in [405, 406, 409, 411, 412, 413, 414, 417, 428, 431, 505, 510]:
         error = InternalError(addurl(f'Server returned code {code} ({reason})'))
     elif code in [415, 416]:
-        error = ServiceFailure(addurl('Server rejected the request ({reason})'))
+        error = ServiceFailure(addurl(f'Server rejected the request ({reason})'))
     elif code == 429:
         if handle_rate and recursing < _MAX_RECURSIVE_CALLS:
             pause = 5 * (recursing + 1)   # +1 b/c we start with recursing = 0.
@@ -295,7 +295,7 @@ def download_file(url, local_destination):
     try:
         download(url, local_destination)
     except Exception as ex:
-        if __debug__: log(f'download exception: {str(ex)}')
+        if __debug__: log(f'download exception: {antiformat(ex)}')
         return False
     else:
         return True
@@ -341,4 +341,4 @@ def download(url, local_destination, recursing = 0):
         elif code in [500, 501, 502, 506, 507, 508]:
             raise ServiceFailure(addurl(f'Internal server error (HTTP code {code})'))
         else:
-            raise NetworkFailure('Unable to resolve {}'.format(url))
+            raise NetworkFailure(f'Unable to resolve {url}')
