@@ -1,5 +1,10 @@
 # Change log for CommonPy
 
+## Version 1.7.3
+
+Fixed a missing f-string in an exception message, plus guarded a few more exception message strings with `antiformat`.
+
+
 ## Version 1.7.2
 
 Improve `flattened` to handle lists of dict keys.
