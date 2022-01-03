@@ -1,5 +1,10 @@
 # Change log for CommonPy
 
+## Version 1.8.0
+
+This version introduces the `data_structures` module, and a new class, `CaseFoldDict`.
+
+
 ## Version 1.7.3
 
 Changes in this release:
