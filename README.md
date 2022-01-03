@@ -59,6 +59,15 @@ if readable('/path/to/some/file'):
 The following subsections describe the different modules available.
 
 
+### Data structures
+
+The `data_structures` module provides miscellaneous data classes.
+
+| Function              | Purpose |
+|-----------------------|---------|
+| `CaseInsensitiveDict` | A version of `dict` that compares keys in a case-insensitive manner |
+
+
 ### Data utilities
 
 The `data_utils` module provides a number of miscellaneous simple functions for some common operations on data of various kinds.
