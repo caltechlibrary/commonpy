@@ -82,6 +82,7 @@ vars:
 	$(eval doi_url	 := $(shell curl -sILk $(id_url) | grep Locat | cut -f2 -d' '))
 	$(eval doi	 := $(subst https://doi.org/,,$(doi_url)))
 	$(eval doi_tail  := $(lastword $(subst ., ,$(doi))))
+	$(info Gathering data -- this takes a few moments ... Done.)
 
 report: vars
 	@echo name	= $(name)
@@ -147,12 +148,12 @@ print-instructions: vars
 	$(info ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓)
 	$(info ┃ Next steps:                                             ┃)
 	$(info ┃ 1. Visit https://github.com/$(repo)/releases )
-	$(info ┃ 2. Double-check the release                             ┃)
+	$(info ┃ 2. Check the release                                    ┃)
 	$(info ┃ 3. Wait a few seconds to let web services do their work ┃)
 	$(info ┃ 4. Run "make update-doi" to update the DOI in README.md ┃)
 	$(info ┃ 5. Run "make packages" & check the results              ┃)
 	$(info ┃ 6. Run "make test-pypi" to push to test.pypi.org        ┃)
-	$(info ┃ 7. Double-check https://test.pypi.org/$(repo) )
+	$(info ┃ 7. Check https://test.pypi.org/$(repo) )
 	$(info ┃ 8. Run "make pypi" to push to pypi for real             ┃)
 	$(info ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛)
 	@echo ""
@@ -167,7 +168,7 @@ update-doi: vars
 	git diff-index --quiet HEAD CITATION.cff || \
 	    (git commit -m"Update DOI" CITATION.cff && git push -v --all)
 
-packages: | vars
+packages: | vars clean
 	python3 setup.py sdist bdist_wheel
 	python3 -m twine check dist/$(name)-$(version).tar.gz
 	python3 -m twine check dist/$(name)-$(version)-py3-none-any.whl
