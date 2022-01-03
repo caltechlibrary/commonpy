@@ -20,13 +20,15 @@ TEST := $(foreach p,$(PROGRAMS_NEEDED),\
 # Set some basic variables.  These are quick to set; we set additional
 # variables using "set-vars" but only when the others are needed.
 
-name	:= $(strip $(shell awk -F "=" '/^name/ {print $$2}' setup.cfg))
-version	:= $(strip $(shell awk -F "=" '/^version/ {print $$2}' setup.cfg))
-url	:= $(strip $(shell awk -F "=" '/^url/ {print $$2}' setup.cfg))
-desc	:= $(strip $(shell awk -F "=" '/^description / {print $$2}' setup.cfg))
-author	:= $(strip $(shell awk -F "=" '/^author / {print $$2}' setup.cfg))
-email	:= $(strip $(shell awk -F "=" '/^author_email/ {print $$2}' setup.cfg))
-license	:= $(strip $(shell awk -F "=" '/^license / {print $$2}' setup.cfg))
+name	  := $(strip $(shell awk -F "=" '/^name/ {print $$2}' setup.cfg))
+version	  := $(strip $(shell awk -F "=" '/^version/ {print $$2}' setup.cfg))
+url	  := $(strip $(shell awk -F "=" '/^url/ {print $$2}' setup.cfg))
+desc	  := $(strip $(shell awk -F "=" '/^description / {print $$2}' setup.cfg))
+author	  := $(strip $(shell awk -F "=" '/^author / {print $$2}' setup.cfg))
+email	  := $(strip $(shell awk -F "=" '/^author_email/ {print $$2}' setup.cfg))
+license	  := $(strip $(shell awk -F "=" '/^license / {print $$2}' setup.cfg))
+init_file := $(name)/__init__.py
+branch	  := $(shell git rev-parse --abbrev-ref HEAD)
 
 
 # Print help if no command is given ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -73,7 +75,6 @@ help:
 .SILENT: vars
 vars:
 	$(info Gathering data -- this takes a few moments ...)
-	$(eval branch    := $(shell git rev-parse --abbrev-ref HEAD))
 	$(eval repo	 := $(strip $(shell gh repo view | head -1 | cut -f2 -d':')))
 	$(eval api_url   := https://api.github.com)
 	$(eval id	 := $(shell curl -s $(api_url)/repos/$(repo) | jq '.id'))
@@ -81,9 +82,6 @@ vars:
 	$(eval doi_url	 := $(shell curl -sILk $(id_url) | grep Locat | cut -f2 -d' '))
 	$(eval doi	 := $(subst https://doi.org/,,$(doi_url)))
 	$(eval doi_tail  := $(lastword $(subst ., ,$(doi))))
-	$(eval init_file := $(name)/__init__.py)
-	$(eval app_name  := $(shell python3 -c 'import sys; print("$(name)".title())'))
-	$(eval platform  := $(shell python3 -c 'import sys; print(sys.platform)'))
 
 report: vars
 	@echo name	= $(name)
@@ -101,8 +99,6 @@ report: vars
 	@echo doi	= $(doi)
 	@echo doi_tail	= $(doi_tail)
 	@echo init_file = $(init_file)
-	@echo app_name	= $(app_name)
-	@echo platform	= $(platform)
 
 
 # make release ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -110,7 +106,9 @@ report: vars
 release: | test-branch release-on-github print-instructions
 
 test-branch: vars
-	$(if $(filter-out $(branch),main),$(error Current git branch != main.))
+ifneq ($(branch),main)
+	$(error Current git branch != main. Merge changes into main first!)
+endif
 
 update-init: vars
 	@sed -i .bak -e "s|^\(__version__ *=\).*|\1 '$(version)'|"  $(init_file)
@@ -120,20 +118,21 @@ update-init: vars
 	@sed -i .bak -e "s|^\(__email__ *=\).*|\1 '$(email)'|"	    $(init_file)
 	@sed -i .bak -e "s|^\(__license__ *=\).*|\1 '$(license)'|"  $(init_file)
 
-update-codemeta: vars
+update-meta: vars
 	@sed -i .bak -e "/version/ s/[0-9].[0-9][0-9]*.[0-9][0-9]*/$(version)/" codemeta.json
 
-check-in-updates: vars
-	$(eval edited := codemeta.json $(init_file))
-	@echo foo
-	@echo $(edited)
-	@echo bar
+update-citation: vars
+	@sed -i .bak -e "/^version/ s/[0-9].[0-9][0-9]*.[0-9][0-9]*/$(version)/" CITATION.cff
+
+edited := codemeta.json $(init_file) CITATION.cff
+
+commit-updates: vars
 	git add $(edited)
 	git diff-index --quiet HEAD $(edited) || \
 	    git commit -m"Update stored version number" $(edited)
 
-release-on-github: | vars update-init update-codemeta check-in-updates
-	$(eval tmp_file  := $(shell mktemp /tmp/release-notes-$(name).XXXXXX))
+release-on-github: | vars update-init update-meta update-citation commit-updates
+	$(eval tmp_file  := $(shell mktemp /tmp/release-notes-$(name).XXXX))
 	git push -v --all
 	git push -v --tags
 	$(info ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓)
@@ -143,27 +142,30 @@ release-on-github: | vars update-init update-codemeta check-in-updates
 	sleep 2
 	$(EDITOR) $(tmp_file)
 	gh release create v$(version) -t "Release $(version)" -F $(tmp_file)
-	-rm -f $(tmp_file)
 
 print-instructions: vars
-	$(info ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓)
-	$(info ┃ Next steps:                                               ┃)
-	$(info ┃ 1. Double-check https://github.com/$(repo)/releases )
-	$(info ┃ 2. Wait a few seconds to let web services do their work   ┃)
-	$(info ┃ 3. Run "make update-doi" to update the DOI in README.md   ┃)
-	$(info ┃ 4. Run "make packages" and check the results for problems ┃)
-	$(info ┃ 5. Run "make test-pypi" to push to test.pypi.org          ┃)
-	$(info ┃ 6. Double-check https://test.pypi.org/$(repo) )
-	$(info ┃ 7. Run "make pypi" to push to pypi for real               ┃)
-	$(info ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛)
+	$(info ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓)
+	$(info ┃ Next steps:                                             ┃)
+	$(info ┃ 1. Visit https://github.com/$(repo)/releases )
+	$(info ┃ 2. Double-check the release                             ┃)
+	$(info ┃ 3. Wait a few seconds to let web services do their work ┃)
+	$(info ┃ 4. Run "make update-doi" to update the DOI in README.md ┃)
+	$(info ┃ 5. Run "make packages" & check the results              ┃)
+	$(info ┃ 6. Run "make test-pypi" to push to test.pypi.org        ┃)
+	$(info ┃ 7. Double-check https://test.pypi.org/$(repo) )
+	$(info ┃ 8. Run "make pypi" to push to pypi for real             ┃)
+	$(info ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛)
 	@echo ""
 
-update-doi:  vars
+update-doi: vars
 	sed -i .bak -e 's|/api/record/[0-9]\{1,\}|/api/record/$(doi_tail)|' README.md
 	sed -i .bak -e 's|edu/records/[0-9]\{1,\}|edu/records/$(doi_tail)|' README.md
-	git add README.md
+	sed -i .bak -e '/doi:/ s|10.22002/[0-9]\{1,\}|10.22002/$(doi_tail)|' CITATION.cff
+	git add README.md CITATION.cff
 	git diff-index --quiet HEAD README.md || \
 	    (git commit -m"Update DOI" README.md && git push -v --all)
+	git diff-index --quiet HEAD CITATION.cff || \
+	    (git commit -m"Update DOI" CITATION.cff && git push -v --all)
 
 packages: | vars
 	python3 setup.py sdist bdist_wheel
@@ -198,7 +200,8 @@ clean-release: vars
 
 clean-other: vars
 	-rm -fr __pycache__ $(name)/__pycache__ .eggs
+	-rm -rf .cache
 
-.PHONY: release release-on-github update-init update-codemeta \
+.PHONY: release release-on-github update-init update-meta \
 	vars print-instructions update-doi packages test-pypi pypi clean \
 	clean-dist really-clean-dist clean-build clean-release clean-other
