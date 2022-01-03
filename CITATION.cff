@@ -1,0 +1,20 @@
+# YAML 1.2
+---
+authors: 
+  -
+    affiliation: "Caltech Library"
+    given-names: Mike
+    family-names: Hucka
+    orcid: "0000-0001-9105-5960"
+cff-version: "1.1.0"
+message: "If you use this software, please cite it using these metadata."
+repository-code: "https://github.com/caltechlibrary/foliage"
+title: "Foliage: a tool to do bulk changes in FOLIO using the OKAPI API"
+date-released: 2021-12-02
+version: "1.7.3"
+doi: 10.22002/2317
+keywords: 
+  - FOLIO
+  - batch operations
+  - desktop software
+...
