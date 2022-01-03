@@ -2,7 +2,11 @@
 
 ## Version 1.7.3
 
-Fixed a missing f-string in an exception message, plus guarded a few more exception message strings with `antiformat`.
+Changes in this release:
+
+* Fixed a missing f-string in an exception message, plus guarded a few more exception message strings with `antiformat`.
+* Added `CITATION.cff` file.
+* Updated the `Makefile`.
 
 
 ## Version 1.7.2
