@@ -43,8 +43,7 @@ class CaseFoldDict(collections.OrderedDict):
         super(CaseFoldDict, self).__init__()
         if data is None:
             data = {}
-        for key, val in data.items():
-            self[key] = val
+        self.update(data)
 
 
     def __contains__(self, key):
