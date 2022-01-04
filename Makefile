@@ -151,7 +151,7 @@ print-instructions: vars
 	$(info ┃ 2. Check the release                                    ┃)
 	$(info ┃ 3. Wait a few seconds to let web services do their work ┃)
 	$(info ┃ 4. Run "make update-doi" to update the DOI in README.md ┃)
-	$(info ┃ 5. Run "make packages" & check the results              ┃)
+	$(info ┃ 5. Run "make packages" and check the results            ┃)
 	$(info ┃ 6. Run "make test-pypi" to push to test.pypi.org        ┃)
 	$(info ┃ 7. Check https://test.pypi.org/$(repo) )
 	$(info ┃ 8. Run "make pypi" to push to pypi for real             ┃)
