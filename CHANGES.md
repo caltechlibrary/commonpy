@@ -1,5 +1,14 @@
 # Change log for CommonPy
 
+## Version 1.8.1
+
+Changes in this release:
+
+* At some point between versions 0.18 and 0.21.1 (current version), the `httpx` package changed the keyword argument named `allow_redirects` to `follow_redirects`, and our `network_utils` module functions broke as a result. This release updates `network_utils` to account for the change.
+* The `requirements.txt` file now pins most dependencies to a specific version, to avoid situations where getting a newer version of a package might break existing code.
+* The copyright year has been updated in various files.
+
+
 ## Version 1.8.0
 
 This version introduces the `data_structures` module, and a new class, `CaseFoldDict`.
