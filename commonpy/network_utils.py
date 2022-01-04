@@ -225,7 +225,7 @@ def net(method, url, client = None, handle_rate = True,
     the URL.  It is up to the caller to implement the polling schedule and
     call this function (with polling = True) as needed.
 
-    This method always passes the argument allow_redirects = True to the
+    This method always passes the argument follow_redirects = True to the
     underlying Python HTTPX library network calls.
     '''
     known_methods = ['get', 'post', 'head', 'options', 'put', 'delete', 'patch']
@@ -238,7 +238,7 @@ def net(method, url, client = None, handle_rate = True,
 
     resp = None
     try:
-        resp = timed_request(method, url, client, allow_redirects = True, **kwargs)
+        resp = timed_request(method, url, client, follow_redirects = True, **kwargs)
     except (httpx.NetworkError, httpx.ProtocolError) as ex:
         # timed_request() will have retried, so if we get here, time to bail.
         if __debug__: log(addurl(f'got network exception: {antiformat(ex)}'))
@@ -306,7 +306,7 @@ def download(url, local_destination, recursing = 0):
 
     timeout = httpx.Timeout(15, connect = 15, read = 15, write = 15)
     with httpx.stream('get', url, verify = False, timeout = timeout,
-                      allow_redirects = True) as resp:
+                      follow_redirects = True) as resp:
         code = resp.status_code
         if code == 202:
             # Code 202 = Accepted, "received but not yet acted upon."
