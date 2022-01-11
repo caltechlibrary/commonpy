@@ -11,7 +11,7 @@ message: "If you use this software, please cite it using these metadata."
 repository-code: "https://github.com/caltechlibrary/foliage"
 title: "Foliage: a tool to do bulk changes in FOLIO using the OKAPI API"
 date-released: 2021-12-02
-version: "1.8.1"
+version: "1.8.2"
 doi: 10.22002/8772
 keywords: 
   - FOLIO
