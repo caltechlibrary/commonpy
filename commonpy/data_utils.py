@@ -9,15 +9,18 @@ Michael Hucka <mhucka@caltech.edu> -- Caltech Library
 Copyright
 ---------
 
-Copyright (c) 2020 by the California Institute of Technology.  This code
+Copyright (c) 2020-2022 by the California Institute of Technology.  This code
 is open-source software released under a 3-clause BSD license.  Please see the
 file "LICENSE" for more information.
 '''
 
+from   boltons.iterutils import flatten_iter
 from   boltons.strutils import pluralize
+from   collections.abc import MutableMapping
 import datetime
 from   datetime import datetime as dt
 from   dateutil import tz
+from   typing import Sequence, Generator, Iterator, KeysView, ValuesView
 
 
 # Constants.
@@ -37,6 +40,55 @@ def slice(lst, n):
     # https://stackoverflow.com/a/54802737/743730
     for i in range(0, n):
         yield lst[i::n]
+
+
+def flattened(original, parent_key = False, separator = '.'):
+    '''Return a recursively flattened version of a nested list or dictionary.
+
+    :param original: The original to flatten (a dict or a list)
+    :param parent_key: The string to prepend to original's keys (if a dict)
+    :param separator: The string used to separate flattened keys (if a dict)
+    :return: A flattened original
+    '''
+
+    if isinstance(original, dict):
+        # Case of a dict. Original algorithm by "Nikhil VJ" to Stack Overflow
+        # at https://stackoverflow.com/a/62186294/743730. Version of 2021-05-30.
+        items = []
+        for key, value in original.items():
+            new_key = str(parent_key) + separator + key if parent_key else key
+            if isinstance(value, MutableMapping):
+                if not value.items():
+                    items.append((new_key, None))
+                else:
+                    items.extend(flattened(value, new_key, separator).items())
+            elif isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
+                if len(value):
+                    for k, v in enumerate(value):
+                        items.extend(flattened({str(k): v}, new_key).items())
+                else:
+                    items.append((new_key, None))
+            else:
+                items.append((new_key, value))
+        return dict(items)
+
+    if isinstance(original, (Sequence, Generator, Iterator, ValuesView, KeysView)):
+        # Solution based in part on Stack Overflow posting by "telliott99" on
+        # 2010-01-28 at https://stackoverflow.com/q/2158395/743730.
+        result = []
+        for el in original:
+            if isinstance(el, (str, bytes)):
+                result.append(el)
+            elif isinstance(el, Sequence):
+                result.extend(flattened(el))
+            elif isinstance(el, (KeysView, ValuesView)):
+                result.extend(el)
+            else:
+                result.append(flattened(el))
+        return result
+
+    # Fallback if we don't know how to deal with this kind of thing.
+    return original
 
 
 def unique(lst):

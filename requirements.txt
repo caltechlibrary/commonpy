@@ -7,14 +7,15 @@
 # =============================================================================
 
 PyYAML               >= 5.3.1
-boltons              >= 20.2.1
-dateparser           >= 1.0.0
-h2                   >= 3.2.0
-httpx                >= 0.16.1
-humanize             >= 3.0.0
+boltons              == 21.0.0
+dateparser           == 1.0.0
+deprecation          == 2.1.0
+h2                   == 3.2.0
+httpx                == 0.21.1
+humanize             >= 3.9.0
 pytest               >= 6.1.2
-python_dateutil      >= 2.8.1
+python_dateutil      == 2.8.2
 pywin32              >= 301; sys_platform == 'win32'
-sidetrack            >= 1.2.0
-tldextract           >= 2.2.3
-validator-collection >= 1.5.0
+sidetrack            >= 2.0.0
+tldextract           == 3.0.2
+validator-collection == 1.5.0

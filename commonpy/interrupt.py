@@ -14,11 +14,12 @@ Michael Hucka <mhucka@caltech.edu> -- Caltech Library
 Copyright
 ---------
 
-Copyright (c) 2020 by the California Institute of Technology.  This code is
-open-source software released under a 3-clause BSD license.  Please see the
+Copyright (c) 2020-2022 by the California Institute of Technology.  This code
+is open-source software released under a 3-clause BSD license.  Please see the
 file "LICENSE" for more information.
 '''
 
+from   deprecation import deprecated
 import signal
 import sys
 import threading
@@ -28,6 +29,9 @@ if sys.platform == "win32":
 
 if __debug__:
     from sidetrack import log
+
+# This is needed to get the __version__ property.
+import commonpy
 
 
 # Global variables.
@@ -95,7 +99,13 @@ def wait(duration):
 
     This is a replacement for sleep(duration).  If interrupted, this function
     raises the exception configured by a prior call to config_interrupt(...).
+
+    This function calls reset() before it begins waiting.
     '''
+    if interrupted():
+        # It doesn't make sense to exit right away if we're called, so assume
+        # a preexisting interrupt was left unreset accidentally.
+        reset_interrupts()
     if __debug__: log(f'waiting for {duration} s')
     __waiter.wait(duration)
     if interrupted():
@@ -121,7 +131,14 @@ def raise_for_interrupts():
         raise __exception
 
 
-def reset():
+def reset_interrupts():
     '''Clear the internal marker that an interrupt occurred.'''
-    if __debug__: log(f'clearing wait')
+    if __debug__: log(f'clearing interrupt state')
     __waiter.clear()
+
+
+@deprecated(deprecated_in = '1.7.0', removed_in = '2.0.0',
+            current_version = commonpy.__version__,
+            details = 'Use reset_interrupts() instead of reset()')
+def reset():
+    reset_interrupts()

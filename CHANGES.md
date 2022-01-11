@@ -1,5 +1,91 @@
 # Change log for CommonPy
 
+## Version 1.8.2
+
+This version merely changes a version dependency in `requirements.txt`. No other changes.
+
+
+## Version 1.8.1
+
+Changes in this release:
+
+* At some point between versions 0.18 and 0.21.1 (current version), the `httpx` package changed the keyword argument named `allow_redirects` to `follow_redirects`, and our `network_utils` module functions broke as a result. This release updates `network_utils` to account for the change.
+* The `requirements.txt` file now pins most dependencies to a specific version, to avoid situations where getting a newer version of a package might break existing code.
+* The copyright year has been updated in various files.
+
+
+## Version 1.8.0
+
+This version introduces the `data_structures` module, and a new class, `CaseFoldDict`.
+
+
+## Version 1.7.3
+
+Changes in this release:
+
+* Fixed a missing f-string in an exception message, plus guarded a few more exception message strings with `antiformat`.
+* Added `CITATION.cff` file.
+* Updated the `Makefile`.
+
+
+## Version 1.7.2
+
+Improve `flattened` to handle lists of dict keys.
+
+
+## Version 1.7.1
+
+Add missing `deprecation` package to `requirements.txt`.
+
+
+## Version 1.7.0
+
+Changes in this release:
+
+* Beginning with this release, the function `reset()` is deprecated in favor of the function `reset_interrupts()`. 
+* The function `wait()` resets the interrupt state before it begins waiting.
+
+
+## Version 1.6.3
+
+This release fixes some unexpected failures in `flattened(...)`.
+
+
+## Version 1.6.2
+
+This release expands `flattened(...)` to deal with iterators and generators.
+
+
+## Version 1.6.1
+
+This release fixes a bug in version 1.6.0.
+
+
+## Version 1.6.0
+
+This release adds the new function `flattened(...)`
+
+
+## Version 1.5.0
+
+This release adds the new function `print_boxed(...)`.
+
+
+## Version 1.4.0
+
+Changes in this version:
+* In `net(...)`, in case of a connection error, don't do exponential back-off and retry. Retry only once and then give up, because connection errors often mean the server is not available and long waits are unhelpful to callers.
+* Change `net(...)` to not test if a network is available if the given destination address is on the local host. This prevents incorrectly returning `NetworkFailure` when the current host is detached from the network and the failure is actually a `ServiceFailure` (for example, if nothing is listening on the destination port on the local host).
+* Add new function `on_localhost(...)`, for testing whether a given network location indicates the local host.
+
+Note: the previous release, 1.3.10, should not have added new functions in a patch release &ndash; API changes should result in changing the minor release number, not merely the patch number. The previous release number was a mistake; it should have been 1.4.0, but since it wasn't, this release is 1.4.0.
+
+
+## Version 1.3.10
+
+* Add new functions `download(...)` and `download_file(...)`.
+
+
 ## Version 1.3.9
 
 * Don't import packages `dateparser` and `validator_collection` until actually necessary, to reduce application startup times.

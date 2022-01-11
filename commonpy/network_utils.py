@@ -9,22 +9,24 @@ Michael Hucka <mhucka@caltech.edu> -- Caltech Library
 Copyright
 ---------
 
-Copyright (c) 2018-2020 by the California Institute of Technology.  This code
+Copyright (c) 2018-2022 by the California Institute of Technology.  This code
 is open-source software released under a 3-clause BSD license.  Please see the
 file "LICENSE" for more information.
 '''
 
 import httpx
+from   ipaddress import ip_address
+from   os import stat
 import socket
 import ssl
-import tldextract
 import urllib
 
 if __debug__:
     from sidetrack import log
 
-from .interrupt import wait, interrupted
+from .interrupt import wait, interrupted, raise_for_interrupts
 from .exceptions import *
+from .string_utils import antiformat
 
 
 # Internal constants.
@@ -71,6 +73,7 @@ def hostname(url):
         return parsed.hostname
     else:
         # urllib.parse doesn't provide a hostname.  Try a different way.
+        import tldextract
         return '.'.join(part for part in tldextract.extract(url) if part)
 
 
@@ -90,6 +93,25 @@ def netloc(url):
     else:
         # Last-ditch effort.
         return parsed.path
+
+
+def on_localhost(url):
+    if not url:
+        return False
+    host = hostname(url)
+    # The following approach is based on code posted by user "georgexsh" on
+    # 2017-12-21 to https://stackoverflow.com/a/47919356/743730
+    for family in (socket.AF_INET, socket.AF_INET6):
+        try:
+            addrinfo = socket.getaddrinfo(host, None, family, socket.SOCK_STREAM)
+        except socket.gaierror as ex:
+            log(f'socket.getaddrinfo exception: {antiformat(ex)}')
+            return False
+        for family, _, _, _, sockaddr in addrinfo:
+            address_part = sockaddr[0]
+            if ip_address(address_part).is_loopback:
+                return True
+    return False
 
 
 def timed_request(method, url, client = None, **kwargs):
@@ -116,6 +138,8 @@ def timed_request(method, url, client = None, **kwargs):
     if client is None:
         timeout = httpx.Timeout(15, connect = 15, read = 15, write = 15)
         client = httpx.Client(timeout = timeout, http2 = True, verify = False)
+    elif client == 'stream':
+        client = httpx.stream
 
     failures = 0
     retries = 0
@@ -133,21 +157,22 @@ def timed_request(method, url, client = None, **kwargs):
             else:
                 failures += 1
         except KeyboardInterrupt as ex:
-            if __debug__: log(addurl(f'network {method} interrupted by {str(ex)}'))
+            if __debug__: log(addurl(f'network {method} interrupted by {antiformat(ex)}'))
             raise
         except (httpx.CookieConflict, httpx.StreamError, httpx.TooManyRedirects,
-                httpx.DecodingError, httpx.ProtocolError, httpx.ProxyError) as ex:
+                httpx.DecodingError, httpx.ProtocolError, httpx.ProxyError,
+                httpx.ConnectError) as ex:
             # Probably indicates a deeper issue.  Don't do our lengthy retry
             # sequence, but try one more time, in case it's transient.
-            if __debug__: log(addurl(f'exception {str(ex)}'))
+            if __debug__: log(addurl(f'exception {antiformat(ex)}'))
             if failures > 0:
                 raise
             failures += 1
-            if __debug__: log(addurl('retrying one more time after brief pause'))
+            if __debug__: log(addurl('will retry one more time after brief pause'))
         except Exception as ex:
             # Problem might be transient.  Don't quit right away.
             failures += 1
-            if __debug__: log(addurl(f'exception (failure #{failures}): {str(ex)}'))
+            if __debug__: log(addurl(f'exception (failure #{failures}): {antiformat(ex)}'))
             # Record the first error we get, not the subsequent ones, because
             # in the case of network outages, the subsequent ones will be
             # about being unable to reconnect and not the original problem.
@@ -200,7 +225,7 @@ def net(method, url, client = None, handle_rate = True,
     the URL.  It is up to the caller to implement the polling schedule and
     call this function (with polling = True) as needed.
 
-    This method always passes the argument allow_redirects = True to the
+    This method always passes the argument follow_redirects = True to the
     underlying Python HTTPX library network calls.
     '''
     known_methods = ['get', 'post', 'head', 'options', 'put', 'delete', 'patch']
@@ -213,19 +238,19 @@ def net(method, url, client = None, handle_rate = True,
 
     resp = None
     try:
-        resp = timed_request(method, url, client, allow_redirects = True, **kwargs)
+        resp = timed_request(method, url, client, follow_redirects = True, **kwargs)
     except (httpx.NetworkError, httpx.ProtocolError) as ex:
         # timed_request() will have retried, so if we get here, time to bail.
-        if __debug__: log(addurl(f'got network exception: {str(ex)}'))
-        if not network_available():
+        if __debug__: log(addurl(f'got network exception: {antiformat(ex)}'))
+        if on_localhost(url) or network_available():
+            if __debug__: log(addurl('failed > 1 times -- returning ServiceFailure'))
+            return (resp, ServiceFailure(addurl(f'Network or server error "{antiformat(ex)}"')))
+        else:
             if __debug__: log(addurl('returning NetworkFailure'))
             return (resp, NetworkFailure(addurl('Network connectivity failure')))
-        else:
-            if __debug__: log(addurl('failed > 1 times -- returning ServiceFailure'))
-            return (resp, ServiceFailure(addurl('Network or server error {str(ex)}')))
     except Exception as ex:
         # Not a network or protocol error, and not a normal server response.
-        if __debug__: log(addurl(f'returning exception: {str(ex)}'))
+        if __debug__: log(addurl(f'returning exception: {antiformat(ex)}'))
         return (resp, ex)
 
     # Interpret the response.  Note that the requests library handles code 301
@@ -242,7 +267,7 @@ def net(method, url, client = None, handle_rate = True,
     elif code in [405, 406, 409, 411, 412, 413, 414, 417, 428, 431, 505, 510]:
         error = InternalError(addurl(f'Server returned code {code} ({reason})'))
     elif code in [415, 416]:
-        error = ServiceFailure(addurl('Server rejected the request ({reason})'))
+        error = ServiceFailure(addurl(f'Server rejected the request ({reason})'))
     elif code == 429:
         if handle_rate and recursing < _MAX_RECURSIVE_CALLS:
             pause = 5 * (recursing + 1)   # +1 b/c we start with recursing = 0.
@@ -258,3 +283,62 @@ def net(method, url, client = None, handle_rate = True,
     # The error msg will have had the URL added already; no need to do it here.
     if __debug__: log('returning {}'.format(f'{error}' if error else f'response for {url}'))
     return (resp, error)
+
+
+def download_file(url, local_destination):
+    '''Returns True if the content at 'url' could be downloaded to the file
+    'local_destination', and False otherwise. It does not throw an exception.'''
+
+    def addurl(text):
+        return f'{text} for {url}'
+
+    try:
+        download(url, local_destination)
+    except Exception as ex:
+        if __debug__: log(f'download exception: {antiformat(ex)}')
+        return False
+    else:
+        return True
+
+
+def download(url, local_destination, recursing = 0):
+    '''Download the 'url' to the file 'local_destination'.'''
+
+    timeout = httpx.Timeout(15, connect = 15, read = 15, write = 15)
+    with httpx.stream('get', url, verify = False, timeout = timeout,
+                      follow_redirects = True) as resp:
+        code = resp.status_code
+        if code == 202:
+            # Code 202 = Accepted, "received but not yet acted upon."
+            wait(2)                     # Sleep a short time and try again.
+            raise_for_interrupts()
+            recursing += 1
+            if recursing <= _MAX_RECURSIVE_CALLS:
+                if __debug__: log(f'calling download(url) recursively for code 202')
+                download(url, local_destination, recursing)
+            else:
+                raise ServiceFailure(addurl('Exceeded max retries for code 202'))
+        elif 200 <= code < 400:
+            with open(local_destination, 'wb') as f:
+                for chunk in resp.iter_bytes():
+                    raise_for_interrupts()
+                    f.write(chunk)
+            resp.close()
+            size = stat(local_destination).st_size
+            if __debug__: log(f'wrote {size} bytes to file {local_destination}')
+        elif code in [401, 402, 403, 407, 451, 511]:
+            raise AuthenticationFailure(addurl('Access is forbidden'))
+        elif code in [404, 410]:
+            raise NoContent(addurl('No content found'))
+        elif code in [405, 406, 409, 411, 412, 414, 417, 428, 431, 505, 510]:
+            raise InternalError(addurl(f'Server returned code {code}'))
+        elif code in [415, 416]:
+            raise ServiceFailure(addurl('Server rejected the request'))
+        elif code == 429:
+            raise RateLimitExceeded('Server blocking further requests due to rate limits')
+        elif code == 503:
+            raise ServiceFailure('Server is unavailable -- try again later')
+        elif code in [500, 501, 502, 506, 507, 508]:
+            raise ServiceFailure(addurl(f'Internal server error (HTTP code {code})'))
+        else:
+            raise NetworkFailure(f'Unable to resolve {url}')

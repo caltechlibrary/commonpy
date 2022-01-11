@@ -6,7 +6,7 @@ This is a collection of common utility functions and classes that we at the Calt
 [![Latest release](https://img.shields.io/github/v/release/caltechlibrary/commonpy.svg?style=flat-square&color=b44e88&label=Latest%20release)](https://github.com/caltechlibrary/commonpy/releases)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square)](https://choosealicense.com/licenses/bsd-3-clause)
 [![Python](https://img.shields.io/badge/Python-3.6+-brightgreen.svg?style=flat-square)](http://shields.io)
-[![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&color=lightgray&query=$.metadata.doi&uri=https://data.caltech.edu/api/record/2003)](https://data.caltech.edu/records/2003)
+[![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&color=lightgray&query=$.metadata.doi&uri=https://data.caltech.edu/api/record/8772)](https://data.caltech.edu/records/8772)
 [![PyPI](https://img.shields.io/pypi/v/commonpy.svg?style=flat-square&color=orange)](https://pypi.org/project/commonpy/)
 
 Table of contents
@@ -59,12 +59,22 @@ if readable('/path/to/some/file'):
 The following subsections describe the different modules available.
 
 
+### Data structures
+
+The `data_structures` module provides miscellaneous data classes.
+
+| Function              | Purpose |
+|-----------------------|---------|
+| `CaseInsensitiveDict` | A version of `dict` that compares keys in a case-insensitive manner |
+
+
 ### Data utilities
 
 The `data_utils` module provides a number of miscellaneous simple functions for some common operations on data of various kinds.
 
 | Function           | Purpose |
 |--------------------|---------|
+| `flattened(thing)` | Takes a list or dictionary and returns a recursively flattened version |
 | `unique(list)`     | Takes a list and return a version without duplicates |
 | `ordinal(integer)` | Returns a string with the number followed by "st", "nd, "rd", or "th" |
 | `slice(list, n)`   | Yields `n` number of slices from the `list` |
@@ -100,14 +110,14 @@ The `file_utils` module provides a number of miscellaneous simple functions for 
 
 The `interrupt` module includes `wait(...)`, a replacement for `sleep(...)` that is interruptible and works with multiple threads.  It also provides methods to cause an interruption (including doing it by issuing a <kbd>^C</kbd> to the program), check whether an interruption occurred, and other related operations.
 
-| Function           | Purpose |
-|--------------------|---------|
+| Function                 | Purpose |
+|--------------------------|---------|
 | `config_interrupt(callback, raise_ex, signal)` | Sets up a callback function |
-| `wait(duration)` | Waits for `duration` in an interruptible fashion |
-| `interrupt()` | Interrupts any `wait` in progress |
-| `interrupted() ` | Returns `True` if an interruption has been called |
+| `wait(duration)`         | Waits for `duration` in an interruptible fashion |
+| `interrupt()`            | Interrupts any `wait` in progress |
+| `interrupted() `         | Returns `True` if an interruption has been called |
 | `raise_for_interrupts()` | Raises an exception if `interrupt()` has been invoked |
-| `reset()` | Resets the interruption flag |
+| `reset_interrupts()`     | Resets the interruption flag |
 
 
 ### Module utilities
@@ -129,13 +139,17 @@ Function `config_path(...)` is useful to use in conjunction with Python's [`conf
 
 The `network_utils` module provides several functions that are useful when performing network operations.
 
-| Function           | Purpose |
-|--------------------|---------|
-| `network_available()` | Returns `True` if external hosts are reacheable over the network |
-| `scheme(url)` | Returns the protocol portion of the url; e.g., "https" |
-| `hostname(url)` | Returns the hostname portion of a URL |
-| `netlock(url)` | Returns the hostname, port number (if any), and login info (if any) |
-| `net(...)` | See below |
+| Function                         | Purpose                                                             |
+| -------------------------------- | ------------------------------------------------------------------- |
+| `download(url, local_dest)`      | Download a file                                                     |
+| `download_file(url, local_dest)` | Download a file without raising exceptions                          |
+| `hostname(url)`                  | Returns the hostname portion of a URL                               |
+| `net(...)`                       | See below                                                           |
+| `netlock(url)`                   | Returns the hostname, port number (if any), and login info (if any) |
+| `network_available()`            | Returns `True` if external hosts are reacheable over the network    |
+| `scheme(url)`                    | Returns the protocol portion of the url; e.g., "https"              |
+| `on_localhost(url)`              | Returns `True` if the address of `url` points to the local host     |
+
 
 #### _`net`_
 
@@ -156,11 +170,17 @@ If keyword `polling` is `True`, certain statuses like 404 are ignored and the re
 This method always passes the argument `allow_redirects = True` to the underlying Python HTTPX library network calls.
 
 
+#### _`download` and `download_file`_
+
+The functions `download(url, local_destination)` and `download_file(url, local_destination)` download a file at the given `url`, writing it to the file specified by the parameter `local_destination`. The former version of the function will raise exceptions in case of problems; the latter version simply return `True` or `False` depending on the success of the download.
+
+
 ### String utilities
 
 | Function           | Purpose |
 |--------------------|---------|
-| `antiformat(s)`      | Quote instances of `{` and `}` in `s` so it can be passed to format. |
+| `antiformat(s)`    | Quote instances of `{` and `}` in `s` so it can be passed to format. |
+| `print_boxed(msg)` | Print a message with a box around it using pure ASCII characters. |
 
 
 ### System utilities
@@ -201,7 +221,7 @@ We would be happy to receive your help and participation with enhancing CommonPy
 License
 -------
 
-Software produced by the Caltech Library is Copyright (C) 2020, Caltech.  This software is freely distributed under a BSD/MIT type license.  Please see the [LICENSE](LICENSE) file for more information.
+Software produced by the Caltech Library is Copyright (C) 2020-2022, Caltech.  This software is freely distributed under a BSD/MIT type license.  Please see the [LICENSE](LICENSE) file for more information.
 
 
 Authors and history
