@@ -1,5 +1,10 @@
 # Change log for CommonPy
 
+## Version 1.8.2
+
+This version merely changes a version dependency in `requirements.txt`. No other changes.
+
+
 ## Version 1.8.1
 
 Changes in this release:
