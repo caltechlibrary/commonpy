@@ -12,7 +12,7 @@ repository-code: "https://github.com/caltechlibrary/commonpy"
 title: "CommonPy: assortment of Python helper functions and utility classes"
 date-released: 2022-03-11
 version: "1.9.0"
-doi: 10.22002/8967
+doi: 10.22002/20056
 keywords: 
   - Python
   - utilities
