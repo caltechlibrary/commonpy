@@ -34,3 +34,9 @@ def test_net_fail_refused_connection():
     (response, error) = net('get', 'https://www.library.caltech.edu/admin')
     assert isinstance(error, AuthenticationFailure)
     assert response.status_code == 403
+
+
+def test_net_bad_args():
+    (response, error) = net('get', 'https://www.google.com', data = {'foo': 1})
+    assert isinstance(error, ArgumentError)
+    assert response == None
