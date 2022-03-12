@@ -6,7 +6,7 @@ This is a collection of common utility functions and classes that we at the Calt
 [![Latest release](https://img.shields.io/github/v/release/caltechlibrary/commonpy.svg?style=flat-square&color=b44e88&label=Latest%20release)](https://github.com/caltechlibrary/commonpy/releases)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square)](https://choosealicense.com/licenses/bsd-3-clause)
 [![Python](https://img.shields.io/badge/Python-3.6+-brightgreen.svg?style=flat-square)](http://shields.io)
-[![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&color=lightgray&query=$.metadata.doi&uri=https://data.caltech.edu/api/record/8967)](https://data.caltech.edu/records/8967)
+[![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&color=lightgray&query=$.metadata.doi&uri=https://data.caltech.edu/api/record/20056)](https://data.caltech.edu/records/20056)
 [![PyPI](https://img.shields.io/pypi/v/commonpy.svg?style=flat-square&color=orange)](https://pypi.org/project/commonpy/)
 
 Table of contents
@@ -194,16 +194,18 @@ The functions `download(url, local_destination)` and `download_file(url, local_d
 
 The CommonPy module defines a number of exceptions that it may return.  (Most of the exceptions are potentially thrown by `net`, discussed above.)
 
-| Exception          | Meaning |
-|--------------------|---------|
-| `CommonPyException` | Base class for CommonPy exceptions |
-| `Interrupted` | The user elected to cancel/quit the program |
-| `NetworkFailure` | Unrecoverable problem involving net | 
-| `ServiceFailure` | Unrecoverable problem involving a remote service
-| `AuthenticationFailure` | Problem obtaining or using authentication credentials |
-| `NoContent` | No content found at the given location |
-| `RateLimitExceeded` | The service flagged reports that its rate limits have been exceeded |
-| `InternalError` | Unrecoverable problem involving CommonPy itself |
+| Exception                | Meaning |
+|--------------------------|---------|
+| `CommonPyException`      | Base class for CommonPy exceptions |
+| | |
+| `ArgumentError`          | The function call was given invalid or unexpected arguments |
+| `AuthenticationFailure`  | Problem obtaining or using authentication credentials |
+| `InternalError`          | Unrecoverable problem involving CommonPy itself |
+| `Interrupted`            | The user elected to cancel/quit the program |
+| `NetworkFailure`         | Unrecoverable problem involving net | 
+| `NoContent`              | No content found at the given location |
+| `RateLimitExceeded`      | The service flagged reports that its rate limits have been exceeded |
+| `ServiceFailure`         | Unrecoverable problem involving a remote service |
 
 
 Getting help
