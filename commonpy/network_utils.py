@@ -161,6 +161,10 @@ def timed_request(method, url, client = None, **kwargs):
         except KeyboardInterrupt as ex:
             if __debug__: log(addurl(f'network {method} interrupted by {antiformat(ex)}'))
             raise
+        except TypeError as ex:
+            # Bad arguments to the call, like passing data to a 'get'.
+            if __debug__: log(addurl(f'exception {antiformat(ex)}'))
+            raise ArgumentError(f'Bad or invalid arguments in network call')
         except (httpx.CookieConflict, httpx.StreamError, httpx.TooManyRedirects,
                 httpx.DecodingError, httpx.ProtocolError, httpx.ProxyError,
                 httpx.ConnectError) as ex:
