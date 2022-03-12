@@ -105,12 +105,14 @@ def on_localhost(url):
         try:
             addrinfo = socket.getaddrinfo(host, None, family, socket.SOCK_STREAM)
         except socket.gaierror as ex:
-            log(f'socket.getaddrinfo exception: {antiformat(ex)}')
-            return False
-        for family, _, _, _, sockaddr in addrinfo:
-            address_part = sockaddr[0]
-            if ip_address(address_part).is_loopback:
-                return True
+            break
+        else:
+            for _, _, _, _, sockaddr in addrinfo:
+                address_part = sockaddr[0]
+                if ip_address(address_part).is_loopback:
+                    log(f'address seems to be on localhost: {url}')
+                    return True
+    log(f'address not on localhost: {url}')
     return False
 
 
