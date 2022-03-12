@@ -194,16 +194,18 @@ The functions `download(url, local_destination)` and `download_file(url, local_d
 
 The CommonPy module defines a number of exceptions that it may return.  (Most of the exceptions are potentially thrown by `net`, discussed above.)
 
-| Exception          | Meaning |
-|--------------------|---------|
-| `CommonPyException` | Base class for CommonPy exceptions |
-| `Interrupted` | The user elected to cancel/quit the program |
-| `NetworkFailure` | Unrecoverable problem involving net | 
-| `ServiceFailure` | Unrecoverable problem involving a remote service
-| `AuthenticationFailure` | Problem obtaining or using authentication credentials |
-| `NoContent` | No content found at the given location |
-| `RateLimitExceeded` | The service flagged reports that its rate limits have been exceeded |
-| `InternalError` | Unrecoverable problem involving CommonPy itself |
+| Exception                | Meaning |
+|--------------------------|---------|
+| `CommonPyException`      | Base class for CommonPy exceptions |
+| | |
+| `ArgumentError`          | The function call was given invalid or unexpected arguments |
+| `AuthenticationFailure`  | Problem obtaining or using authentication credentials |
+| `InternalError`          | Unrecoverable problem involving CommonPy itself |
+| `Interrupted`            | The user elected to cancel/quit the program |
+| `NetworkFailure`         | Unrecoverable problem involving net | 
+| `NoContent`              | No content found at the given location |
+| `RateLimitExceeded`      | The service flagged reports that its rate limits have been exceeded |
+| `ServiceFailure`         | Unrecoverable problem involving a remote service |
 
 
 Getting help
