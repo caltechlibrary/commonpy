@@ -8,13 +8,12 @@ authors:
     orcid: "0000-0001-9105-5960"
 cff-version: "1.1.0"
 message: "If you use this software, please cite it using these metadata."
-repository-code: "https://github.com/caltechlibrary/foliage"
-title: "Foliage: a tool to do bulk changes in FOLIO using the OKAPI API"
-date-released: 2021-12-02
-version: "1.8.2"
+repository-code: "https://github.com/caltechlibrary/commonpy"
+title: "CommonPy: assortment of Python helper functions and utility classes"
+date-released: 2022-03-11
+version: "1.9.0"
 doi: 10.22002/8967
 keywords: 
-  - FOLIO
-  - batch operations
-  - desktop software
+  - Python
+  - utilities
 ...
