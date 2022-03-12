@@ -53,6 +53,10 @@ class RateLimitExceeded(CommonPyException):
     '''The service flagged reports that its rate limits have been exceeded.'''
     pass
 
+class ArgumentError(CommonPyException):
+    '''Incorrect or invalid argument or argument value.'''
+    pass
+
 class InternalError(CommonPyException):
     '''Unrecoverable problem involving commonpy itself.'''
     pass
