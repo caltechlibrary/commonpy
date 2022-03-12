@@ -7,6 +7,7 @@ Changes in this release:
 * `net(...)` makes slightly finer distinctions between `ServiceFailure` and `NetworkFailure` when it comes to addresses it can't connect to, and also raises `ArgumentError` in some cases such as passing a `data` keyword argument to a network `get`.
 * `on_localhost(...)` logs slightly better debug messages.
 * There are more test cases.
+* `CITATION.cff` has been corrected and no longer describes the wrong repository.
 
 
 ## Version 1.8.2
