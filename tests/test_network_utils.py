@@ -10,6 +10,7 @@ except:
     sys.path.append('..')
 
 from commonpy.network_utils import *
+from commonpy.exceptions import *
 
 
 def test_net():
@@ -21,3 +22,15 @@ def test_net():
 def test_on_localhost():
     assert on_localhost('localhost')
     assert on_localhost('127.0.0.1')
+
+
+def test_net_fail_bad_address():
+    (response, error) = net('get', 'https://www.nonexistent.foo')
+    assert isinstance(error, ServiceFailure)
+    assert response == None
+
+
+def test_net_fail_refused_connection():
+    (response, error) = net('get', 'https://www.library.caltech.edu/admin')
+    assert isinstance(error, AuthenticationFailure)
+    assert response.status_code == 403
