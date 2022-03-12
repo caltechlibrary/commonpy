@@ -105,12 +105,14 @@ def on_localhost(url):
         try:
             addrinfo = socket.getaddrinfo(host, None, family, socket.SOCK_STREAM)
         except socket.gaierror as ex:
-            log(f'socket.getaddrinfo exception: {antiformat(ex)}')
-            return False
-        for family, _, _, _, sockaddr in addrinfo:
-            address_part = sockaddr[0]
-            if ip_address(address_part).is_loopback:
-                return True
+            break
+        else:
+            for _, _, _, _, sockaddr in addrinfo:
+                address_part = sockaddr[0]
+                if ip_address(address_part).is_loopback:
+                    log(f'address seems to be on localhost: {url}')
+                    return True
+    log(f'address not on localhost: {url}')
     return False
 
 
@@ -159,6 +161,10 @@ def timed_request(method, url, client = None, **kwargs):
         except KeyboardInterrupt as ex:
             if __debug__: log(addurl(f'network {method} interrupted by {antiformat(ex)}'))
             raise
+        except TypeError as ex:
+            # Bad arguments to the call, like passing data to a 'get'.
+            if __debug__: log(addurl(f'exception {antiformat(ex)}'))
+            raise ArgumentError(f'Bad or invalid arguments in network call')
         except (httpx.CookieConflict, httpx.StreamError, httpx.TooManyRedirects,
                 httpx.DecodingError, httpx.ProtocolError, httpx.ProxyError,
                 httpx.ConnectError) as ex:
@@ -242,12 +248,17 @@ def net(method, url, client = None, handle_rate = True,
     except (httpx.NetworkError, httpx.ProtocolError) as ex:
         # timed_request() will have retried, so if we get here, time to bail.
         if __debug__: log(addurl(f'got network exception: {antiformat(ex)}'))
-        if on_localhost(url) or network_available():
-            if __debug__: log(addurl('failed > 1 times -- returning ServiceFailure'))
-            return (resp, ServiceFailure(addurl(f'Network or server error "{antiformat(ex)}"')))
+        is_on_localhost = on_localhost(url)
+        msg = antiformat(ex)
+        if isinstance(ex, httpx.ConnectError) and is_on_localhost:
+            if __debug__: log(addurl('returning ServiceFailure'))
+            return (resp, ServiceFailure(addurl(f'Access failure ({msg})')))
+        elif is_on_localhost or network_available():
+            if __debug__: log(addurl('returning ServiceFailure'))
+            return (resp, ServiceFailure(addurl(f'Server error ({msg})')))
         else:
             if __debug__: log(addurl('returning NetworkFailure'))
-            return (resp, NetworkFailure(addurl('Network connectivity failure')))
+            return (resp, NetworkFailure(addurl('Network failure ({msg})')))
     except Exception as ex:
         # Not a network or protocol error, and not a normal server response.
         if __debug__: log(addurl(f'returning exception: {antiformat(ex)}'))

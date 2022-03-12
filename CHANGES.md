@@ -1,5 +1,14 @@
 # Change log for CommonPy
 
+## Version 1.9.0
+
+Changes in this release:
+* New exception `ArgumentError`.
+* `net(...)` makes slightly finer distinctions between `ServiceFailure` and `NetworkFailure` when it comes to addresses it can't connect to, and also raises `ArgumentError` in some cases such as passing a `data` keyword argument to a network `get`.
+* `on_localhost(...)` logs slightly better debug messages.
+* There are more test cases.
+
+
 ## Version 1.8.2
 
 This version merely changes a version dependency in `requirements.txt`. No other changes.
