@@ -1,5 +1,10 @@
 # Change log for CommonPy
 
+## Version 1.9.1
+
+This version adds more test cases and splits out the requirements for testing/development into a separate requirements file, [`requirements-dev.txt`](requirements-dev.txt).
+
+
 ## Version 1.9.0
 
 Changes in this release:
