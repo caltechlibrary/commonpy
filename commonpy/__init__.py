@@ -21,7 +21,7 @@ file "LICENSE" for more information.
 #  |    by the Makefile. Manual changes to these values will be lost.      |
 #  ╰────────────────────── Notice ── Notice ── Notice ─────────────────────╯
 
-__version__     = '1.9.0'
+__version__     = '1.9.1'
 __description__ = 'Assortment of Python helper functions and utility classes'
 __url__         = 'https://github.com/caltechlibrary/commonpy'
 __author__      = 'Michael Hucka'
