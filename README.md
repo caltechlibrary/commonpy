@@ -219,6 +219,11 @@ Contributing
 
 We would be happy to receive your help and participation with enhancing CommonPy!  Please visit the [guidelines for contributing](CONTRIBUTING.md) for some tips on getting started.
 
+If you plan on doing any development on CommonPy, you may want to install the package dependencies listed in [`requirements-dev.txt`](requirements-dev.txt), e.g., using a command such as the following. This will install dependencies necessary to run `pytest`.
+```
+python3 -m pip install -r requirements-dev.txt
+```
+
 
 License
 -------
