@@ -248,16 +248,19 @@ CommonPy makes use of numerous open-source packages, without which it would have
 
 * [boltons](https://github.com/mahmoud/boltons/) &ndash; package of miscellaneous Python utilities
 * [dateparser](https://pypi.org/project/dateparser/) &ndash; parse dates in almost any string format
+* [deprecation]() &ndash; a library to handle deprecation of code in your Python packages
 * [h2](https://pypi.org/project/h2) &ndash; HTTP/2 support library used by [HTTPX](https://www.python-httpx.org)
 * [httpx](https://www.python-httpx.org) &ndash; Python HTTP client library that supports HTTP/2
 * [humanize](https://github.com/jmoiron/humanize) &ndash; make numbers more easily readable by humans
 * [ipdb](https://github.com/gotcha/ipdb) &ndash; the IPython debugger
 * [pytest](https://docs.pytest.org/en/stable/) &ndash; testing framework for Python
+* [pytest-mock](https://pypi.org/project/pytest-mock/) &ndash; wrapper around the `mock` package for use with `pytest`
 * [python_dateutil](https://pypi.org/project/python-dateutil) &ndash; date utilities
 * [PyYAML](https://pyyaml.org) &ndash; Python YAML parser
 * [pywin32](https://github.com/mhammond/pywin32) &ndash; Windows APIs for Python
 * [sidetrack](https://github.com/caltechlibrary/sidetrack) &ndash; simple debug logging/tracing package
 * [tldextract](https://github.com/john-kurkowski/tldextract) &ndash; module to parse domains from URLs
+* [validator-collection](https://pypi.org/project/validator-collection/) &ndash; collection of Python functions for validating data
 
 <div align="center">
   <br>
