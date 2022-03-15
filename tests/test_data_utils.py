@@ -1,3 +1,4 @@
+from   freezegun import freeze_time
 import os
 import pytest
 import sys
@@ -87,3 +88,13 @@ def test_flattened():
     y = {'b':2}
     assert flattened([d.keys() for d in [x, y]]) == ['a', 'b']
     assert flattened([x.keys(), 1, 2, [3], 'a', 'b']) == ['a', 1, 2, 3, 'a', 'b']
+
+
+@freeze_time("2012-01-14 03:21:34", tz_offset=-4)
+def test_timestamp():
+    assert timestamp() == "Jan 13 2012 15:21:34 PST"
+
+
+@freeze_time("2012-01-14 03:21:34", tz_offset=-4)
+def test_parsed_datetime():
+    assert str(parsed_datetime(timestamp())) == "2012-01-13 15:21:34-08:00"
