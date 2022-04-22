@@ -10,8 +10,8 @@ cff-version: "1.1.0"
 message: "If you use this software, please cite it using these metadata."
 repository-code: "https://github.com/caltechlibrary/commonpy"
 title: "CommonPy: assortment of Python helper functions and utility classes"
-date-released: 2022-03-14
-version: "1.9.1"
+date-released: 2022-04-22
+version: "1.9.2"
 doi: 10.22002/20058
 keywords: 
   - Python
