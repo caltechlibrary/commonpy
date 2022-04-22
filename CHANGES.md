@@ -1,5 +1,10 @@
 # Change log for CommonPy
 
+## Version 1.9.2
+
+This version changes `pluralized` so that it outputs `0 items` instead of `0 item` if the number of its argument has length 0.
+
+
 ## Version 1.9.1
 
 This version adds more test cases and splits out the requirements for testing/development into a separate requirements file, [`requirements-dev.txt`](requirements-dev.txt).
