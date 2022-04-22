@@ -6,7 +6,7 @@ This is a collection of common utility functions and classes that we at the Calt
 [![Latest release](https://img.shields.io/github/v/release/caltechlibrary/commonpy.svg?style=flat-square&color=b44e88&label=Latest%20release)](https://github.com/caltechlibrary/commonpy/releases)
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg?style=flat-square)](https://choosealicense.com/licenses/bsd-3-clause)
 [![Python](https://img.shields.io/badge/Python-3.6+-brightgreen.svg?style=flat-square)](http://shields.io)
-[![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&color=lightgray&query=$.metadata.doi&uri=https://data.caltech.edu/api/record/20056)](https://data.caltech.edu/records/20056)
+[![DOI](https://img.shields.io/badge/dynamic/json.svg?label=DOI&style=flat-square&color=lightgray&query=$.metadata.doi&uri=https://data.caltech.edu/api/record/20058)](https://data.caltech.edu/records/20058)
 [![PyPI](https://img.shields.io/pypi/v/commonpy.svg?style=flat-square&color=orange)](https://pypi.org/project/commonpy/)
 
 Table of contents
@@ -248,16 +248,19 @@ CommonPy makes use of numerous open-source packages, without which it would have
 
 * [boltons](https://github.com/mahmoud/boltons/) &ndash; package of miscellaneous Python utilities
 * [dateparser](https://pypi.org/project/dateparser/) &ndash; parse dates in almost any string format
+* [deprecation]() &ndash; a library to handle deprecation of code in your Python packages
 * [h2](https://pypi.org/project/h2) &ndash; HTTP/2 support library used by [HTTPX](https://www.python-httpx.org)
 * [httpx](https://www.python-httpx.org) &ndash; Python HTTP client library that supports HTTP/2
 * [humanize](https://github.com/jmoiron/humanize) &ndash; make numbers more easily readable by humans
 * [ipdb](https://github.com/gotcha/ipdb) &ndash; the IPython debugger
 * [pytest](https://docs.pytest.org/en/stable/) &ndash; testing framework for Python
+* [pytest-mock](https://pypi.org/project/pytest-mock/) &ndash; wrapper around the `mock` package for use with `pytest`
 * [python_dateutil](https://pypi.org/project/python-dateutil) &ndash; date utilities
 * [PyYAML](https://pyyaml.org) &ndash; Python YAML parser
 * [pywin32](https://github.com/mhammond/pywin32) &ndash; Windows APIs for Python
 * [sidetrack](https://github.com/caltechlibrary/sidetrack) &ndash; simple debug logging/tracing package
 * [tldextract](https://github.com/john-kurkowski/tldextract) &ndash; module to parse domains from URLs
+* [validator-collection](https://pypi.org/project/validator-collection/) &ndash; collection of Python functions for validating data
 
 <div align="center">
   <br>
