@@ -160,7 +160,7 @@ def pluralized(word, count, include_number = False):
         # If we can't figure out what kind of thing we're counting, we can't
         # pluralize, so just return the word as-is.
         return word
-    text = pluralize(word) if num > 1 else word
+    text = pluralize(word) if (num > 1 or num == 0) else word
     if include_number:
         # Humanize imports pkg_resources, which takes a long time to load.
         # Delay loading it so that application startup times can be faster.
