@@ -1,5 +1,10 @@
 # Change log for CommonPy
 
+## Version 1.9.3
+
+This version adds a missing internal function definition in `download(...)`.
+
+
 ## Version 1.9.2
 
 This version changes `pluralized` so that it outputs `0 items` instead of `0 item` if the number of its argument has length 0.
