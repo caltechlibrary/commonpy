@@ -18,14 +18,15 @@ import httpx
 from   ipaddress import ip_address
 from   os import stat
 import socket
-import ssl
 import urllib
 
 if __debug__:
     from sidetrack import log
 
 from .interrupt import wait, interrupted, raise_for_interrupts
-from .exceptions import *
+from .exceptions import ArgumentError, Interrupted, InternalError, NoContent
+from .exceptions import AuthenticationFailure, ServiceFailure, NetworkFailure
+from .exceptions import RateLimitExceeded
 from .string_utils import antiformat
 
 
@@ -104,7 +105,7 @@ def on_localhost(url):
     for family in (socket.AF_INET, socket.AF_INET6):
         try:
             addrinfo = socket.getaddrinfo(host, None, family, socket.SOCK_STREAM)
-        except socket.gaierror as ex:
+        except socket.gaierror:
             break
         else:
             for _, _, _, _, sockaddr in addrinfo:
@@ -164,7 +165,7 @@ def timed_request(method, url, client = None, **kwargs):
         except TypeError as ex:
             # Bad arguments to the call, like passing data to a 'get'.
             if __debug__: log(addurl(f'exception {antiformat(ex)}'))
-            raise ArgumentError(f'Bad or invalid arguments in network call')
+            raise ArgumentError('Bad or invalid arguments in network call')
         except (httpx.CookieConflict, httpx.StreamError, httpx.TooManyRedirects,
                 httpx.DecodingError, httpx.ProtocolError, httpx.ProxyError,
                 httpx.ConnectError) as ex:
@@ -190,7 +191,7 @@ def timed_request(method, url, client = None, **kwargs):
                 retries += 1
                 failures = 0
                 pause = 10 * retries * retries
-                if __debug__: log(addurl(f'pausing due to consecutive failures'))
+                if __debug__: log(addurl('pausing due to consecutive failures'))
                 wait(pause)
             else:
                 if __debug__: log(addurl('exceeded max failures and max retries'))
@@ -315,6 +316,9 @@ def download_file(url, local_destination):
 def download(url, local_destination, recursing = 0):
     '''Download the 'url' to the file 'local_destination'.'''
 
+    def addurl(text):
+        return f'{text} for {url}'
+
     timeout = httpx.Timeout(15, connect = 15, read = 15, write = 15)
     with httpx.stream('get', url, verify = False, timeout = timeout,
                       follow_redirects = True) as resp:
@@ -325,7 +329,7 @@ def download(url, local_destination, recursing = 0):
             raise_for_interrupts()
             recursing += 1
             if recursing <= _MAX_RECURSIVE_CALLS:
-                if __debug__: log(f'calling download(url) recursively for code 202')
+                if __debug__: log('calling download(url) recursively for code 202')
                 download(url, local_destination, recursing)
             else:
                 raise ServiceFailure(addurl('Exceeded max retries for code 202'))
