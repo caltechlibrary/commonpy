@@ -1,5 +1,10 @@
 # Change log for CommonPy
 
+## Version 1.9.4
+
+This release merely changes the version of httpx required by `requirements.txt`. No other changes.
+
+
 ## Version 1.9.3
 
 This version adds a missing internal function definition in `download(...)`.
