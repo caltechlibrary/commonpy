@@ -34,10 +34,10 @@ def test_net_fail_bad_address():
     assert response == None
 
 
-def test_net_fail_refused_connection():
-    (response, error) = net('get', 'https://www.library.caltech.edu/admin')
-    assert isinstance(error, AuthenticationFailure)
-    assert response.status_code == 403
+def test_net_fail_no_content():
+    (response, error) = net('get', 'https://library.caltech.edu/foobarbaz')
+    assert isinstance(error, NoContent)
+    assert response.status_code == 404
 
 
 def test_net_bad_args():
