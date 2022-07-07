@@ -11,27 +11,30 @@
 # requirements don't have to be repeated and so that "python3 setup.py" works.
 # =============================================================================
 
-from os.path import abspath, dirname, exists, join
 from setuptools import setup
 
-required = []
-requirements_file = join(abspath(dirname(__file__)), 'requirements.txt')
-if exists(requirements_file):
-    with open(requirements_file, encoding = 'utf-8') as f:
-        required = [line for line in filter(str.strip, f.read().splitlines())
-                    if not line.startswith('#')]
-    if any(item.startswith(('-', '.', '/')) for item in required):
-        # The requirements.txt uses pip features. Try to use pip's parser.
-        try:
-            from pip._internal.req import parse_requirements
-            from pip._internal.network.session import PipSession
-            parsed = parse_requirements(requirements_file, PipSession())
-            required = [item.requirement for item in parsed]
-        except ImportError:
-            # No pip, or not the expected version. Give up & leave list as is.
-            pass
+def requirements(file):
+    from os import path
+    required = []
+    requirements_file = path.join(path.abspath(path.dirname(__file__)), file)
+    if path.exists(requirements_file):
+        with open(requirements_file, encoding='utf-8') as f:
+            required = [ln for ln in filter(str.strip, f.read().splitlines())
+                        if not ln.startswith('#')]
+        if any(item.startswith(('-', '.', '/')) for item in required):
+            # The requirements.txt uses pip features. Try to use pip's parser.
+            try:
+                from pip._internal.req import parse_requirements
+                from pip._internal.network.session import PipSession
+                parsed = parse_requirements(requirements_file, PipSession())
+                required = [item.requirement for item in parsed]
+            except ImportError:
+                # No pip, or not the expected version. Give up & return as-is.
+                pass
+    return required
 
 setup(
-    setup_requires = ['wheel'],
-    install_requires = required,
+    setup_requires=['wheel'],
+    install_requires=requirements('requirements.txt'),
+    extras_require={'dev': requirements('requirements-dev.txt')},
 )
