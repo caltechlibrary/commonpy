@@ -6,7 +6,7 @@
   "codeRepository": "https://github.com/caltechlibrary/commonpy",
   "issueTracker": "https://github.com/caltechlibrary/commonpy/issues",
   "license": "https://github.com/caltechlibrary/commonpy/blob/master/LICENSE",
-  "version": "1.9.4",
+  "version": "1.9.5",
   "author": [
     {
       "@type": "Person",
