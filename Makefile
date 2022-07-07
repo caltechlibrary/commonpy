@@ -20,15 +20,15 @@ TEST := $(foreach p,$(PROGRAMS_NEEDED),\
 # Set some basic variables.  These are quick to set; we set additional
 # variables using "set-vars" but only when the others are needed.
 
-name	  := $(strip $(shell awk -F "=" '/^name/ {print $$2}' setup.cfg))
-version	  := $(strip $(shell awk -F "=" '/^version/ {print $$2}' setup.cfg))
-url	  := $(strip $(shell awk -F "=" '/^url/ {print $$2}' setup.cfg))
-desc	  := $(strip $(shell awk -F "=" '/^description / {print $$2}' setup.cfg))
-author	  := $(strip $(shell awk -F "=" '/^author / {print $$2}' setup.cfg))
-email	  := $(strip $(shell awk -F "=" '/^author_email/ {print $$2}' setup.cfg))
-license	  := $(strip $(shell awk -F "=" '/^license / {print $$2}' setup.cfg))
-init_file := $(name)/__init__.py
-branch	  := $(shell git rev-parse --abbrev-ref HEAD)
+name	 := $(strip $(shell awk -F "=" '/^name/ {print $$2}' setup.cfg))
+version	 := $(strip $(shell awk -F "=" '/^version/ {print $$2}' setup.cfg))
+url	 := $(strip $(shell awk -F "=" '/^url/ {print $$2}' setup.cfg))
+desc	 := $(strip $(shell awk -F "=" '/^description / {print $$2}' setup.cfg))
+author	 := $(strip $(shell awk -F "=" '/^author / {print $$2}' setup.cfg))
+email	 := $(strip $(shell awk -F "=" '/^author_email/ {print $$2}' setup.cfg))
+license	 := $(strip $(shell awk -F "=" '/^license / {print $$2}' setup.cfg))
+initfile := $(name)/__init__.py
+branch	 := $(shell git rev-parse --abbrev-ref HEAD)
 
 
 # Print help if no command is given ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -43,6 +43,12 @@ help:
 	@echo 'make report'
 	@echo '  Print variables set in this Makefile from various sources.'
 	@echo '  This is useful to verify the values that have been parsed.'
+	@echo ''
+	@echo 'make lint'
+	@echo '  Run Python linters like flake8.'
+	@echo ''
+	@echo 'make test'
+	@echo '  Run pytest.'
 	@echo ''
 	@echo 'make release'
 	@echo '  Do a release on GitHub. This will push changes to GitHub,'
@@ -99,7 +105,16 @@ report: vars
 	@echo doi_url	= $(doi_url)
 	@echo doi	= $(doi)
 	@echo doi_tail	= $(doi_tail)
-	@echo init_file = $(init_file)
+	@echo initfile = $(initfile)
+
+
+# make lint & make test ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+lint:
+	flake8 commonpy
+
+test:
+	pytest -v --cov=commonpy -l tests/
 
 
 # make release ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -112,12 +127,12 @@ ifneq ($(branch),main)
 endif
 
 update-init: vars
-	@sed -i .bak -e "s|^\(__version__ *=\).*|\1 '$(version)'|"  $(init_file)
-	@sed -i .bak -e "s|^\(__description__ *=\).*|\1 '$(desc)'|" $(init_file)
-	@sed -i .bak -e "s|^\(__url__ *=\).*|\1 '$(url)'|"	    $(init_file)
-	@sed -i .bak -e "s|^\(__author__ *=\).*|\1 '$(author)'|"    $(init_file)
-	@sed -i .bak -e "s|^\(__email__ *=\).*|\1 '$(email)'|"	    $(init_file)
-	@sed -i .bak -e "s|^\(__license__ *=\).*|\1 '$(license)'|"  $(init_file)
+	@sed -i .bak -e "s|^\(__version__ *=\).*|\1 '$(version)'|"  $(initfile)
+	@sed -i .bak -e "s|^\(__description__ *=\).*|\1 '$(desc)'|" $(initfile)
+	@sed -i .bak -e "s|^\(__url__ *=\).*|\1 '$(url)'|"	    $(initfile)
+	@sed -i .bak -e "s|^\(__author__ *=\).*|\1 '$(author)'|"    $(initfile)
+	@sed -i .bak -e "s|^\(__email__ *=\).*|\1 '$(email)'|"	    $(initfile)
+	@sed -i .bak -e "s|^\(__license__ *=\).*|\1 '$(license)'|"  $(initfile)
 
 update-meta: vars
 	@sed -i .bak -e "/version/ s/[0-9].[0-9][0-9]*.[0-9][0-9]*/$(version)/" codemeta.json
@@ -127,7 +142,7 @@ update-citation: vars
 	@sed -i .bak -e "/^date-released/ s/[0-9][0-9-]*/$(date)/" CITATION.cff
 	@sed -i .bak -e "/^version/ s/[0-9].[0-9][0-9]*.[0-9][0-9]*/$(version)/" CITATION.cff
 
-edited := codemeta.json $(init_file) CITATION.cff
+edited := codemeta.json $(initfile) CITATION.cff
 
 commit-updates: vars
 	git add $(edited)
@@ -199,7 +214,7 @@ clean-build:;
 	-rm -rf build
 
 clean-release: vars
-	-rm -rf $(name).egg-info codemeta.json.bak $(init_file).bak README.md.bak
+	-rm -rf $(name).egg-info codemeta.json.bak $(initfile).bak README.md.bak
 
 clean-other: vars
 	-rm -fr __pycache__ $(name)/__pycache__ .eggs
