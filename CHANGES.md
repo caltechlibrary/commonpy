@@ -1,5 +1,12 @@
 # Change log for CommonPy
 
+## Version 1.9.5
+
+The main functional change in this release is that error objects returned by `net(...)` will have error message bodies returned by network services, where possible.
+
+Internally, there has been some refactoring of the Makefile and addition of things like GitHub template files.
+
+
 ## Version 1.9.4
 
 This release merely changes the version of httpx required by `requirements.txt`. No other changes.
