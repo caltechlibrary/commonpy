@@ -62,6 +62,7 @@ TAGS
 __pycache__
 .cache
 .pytest_cache
+.coverage
 
 # Project-specific things to ignore:
 # .............................................................................
