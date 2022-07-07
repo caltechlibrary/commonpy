@@ -13,7 +13,7 @@
 # The following is based on the approach posted by Jonathan Ben-Avraham to
 # Stack Overflow in 2014 at https://stackoverflow.com/a/25668869
 
-PROGRAMS_NEEDED = curl gh git jq sed pyinstaller
+PROGRAMS_NEEDED = curl gh git jq sed python3
 TEST := $(foreach p,$(PROGRAMS_NEEDED),\
 	  $(if $(shell which $(p)),_,$(error Cannot find program "$(p)")))
 
@@ -49,6 +49,9 @@ help:
 	@echo ''
 	@echo 'make test'
 	@echo '  Run pytest.'
+	@echo ''
+	@echo 'make install'
+	@echo '  Install the project in dev mode.'
 	@echo ''
 	@echo 'make release'
 	@echo '  Do a release on GitHub. This will push changes to GitHub,'
@@ -115,6 +118,12 @@ lint:
 
 test:
 	pytest -v --cov=commonpy -l tests/
+
+
+# make install ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+install:
+	python3 -m pip install -e .[dev]
 
 
 # make release ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
