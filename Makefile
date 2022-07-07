@@ -9,11 +9,21 @@
 .ONESHELL: 				# Run all commands in the same shell.
 .SHELLFLAGS += -e			# Exit at the first error.
 
+# This Makefile uses syntax that needs at least GNU Make version 3.82.
+# The following test is based on the approach posted by Eldar Abusalimov to
+# Stack Overflow in 2012 at https://stackoverflow.com/a/12231321/743730
+
+ifeq ($(filter undefine,$(value .FEATURES)),)
+$(error Unsupported version of Make. \
+    This Makefile does not work properly with GNU Make $(MAKE_VERSION); \
+    it needs GNU Make version 3.82 or later)
+endif
+
 # Before we go any further, test if certain programs are available.
 # The following is based on the approach posted by Jonathan Ben-Avraham to
 # Stack Overflow in 2014 at https://stackoverflow.com/a/25668869
 
-PROGRAMS_NEEDED = curl gh git jq sed python3
+PROGRAMS_NEEDED = awk curl gh git jq sed python3
 TEST := $(foreach p,$(PROGRAMS_NEEDED),\
 	  $(if $(shell which $(p)),_,$(error Cannot find program "$(p)")))
 
