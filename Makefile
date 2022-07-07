@@ -199,10 +199,8 @@ update-doi: vars
 	sed -i .bak -e 's|edu/records/[0-9]\{1,\}|edu/records/$(doi_tail)|' README.md
 	sed -i .bak -e '/doi:/ s|10.22002/[0-9]\{1,\}|10.22002/$(doi_tail)|' CITATION.cff
 	git add README.md CITATION.cff
-	git diff-index --quiet HEAD README.md || \
-	    (git commit -m"Update DOI" README.md && git push -v --all)
-	git diff-index --quiet HEAD CITATION.cff || \
-	    (git commit -m"Update DOI" CITATION.cff && git push -v --all)
+	git commit -m"Update DOI in README and CITATION.cff files" README.md CITATION.cff
+	git push -v --all
 
 packages: | vars clean
 	python3 setup.py sdist bdist_wheel
