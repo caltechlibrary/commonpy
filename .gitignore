@@ -61,6 +61,7 @@ TAGS
 *.pyc
 __pycache__
 .cache
+.pytest_cache
 
 # Project-specific things to ignore:
 # .............................................................................
