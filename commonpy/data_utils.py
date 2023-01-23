@@ -67,7 +67,7 @@ def flattened(original, parent_key = False, separator = '.'):
                     for k, v in enumerate(value):
                         items.extend(flattened({str(k): v}, new_key, separator).items())
                 else:
-                    items.append((new_key, None))
+                    items.append((new_key, []))
             else:
                 items.append((new_key, value))
         return dict(items)
