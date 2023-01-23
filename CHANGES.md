@@ -1,5 +1,18 @@
 # Change log for CommonPy
 
+## Version 1.10.0
+
+Changes in this release:
+
+* `data_utils.flattened` now would outputs `[]` as the value of dict or mapping keys whose original values are an empty sequence (e.g., when the value of a dict key is `[]`). Previously, it would output `None` as the value, which was an unexpected transformation of the input.
+
+Bug fixes in this release:
+
+* Fixed a bug in `data_utils.flattened` that caused it to ignore the `separator` argument in some cases.
+* Fixed a missing import of `freezegun` in `requirements-dev.txt`.
+* Pin the imported version of regex 2022.3.2, because more recent versions cause calls to `dateparser` to encounter an error ("regex._regex_core.error: bad escape \d at position 7").
+
+
 ## Version 1.9.5
 
 The main functional change in this release is that error objects returned by `net(...)` will have error message bodies returned by network services, where possible.
