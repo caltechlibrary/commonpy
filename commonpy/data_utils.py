@@ -65,7 +65,7 @@ def flattened(original, parent_key = False, separator = '.'):
             elif isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
                 if len(value):
                     for k, v in enumerate(value):
-                        items.extend(flattened({str(k): v}, new_key).items())
+                        items.extend(flattened({str(k): v}, new_key, separator).items())
                 else:
                     items.append((new_key, None))
             else:
@@ -80,11 +80,11 @@ def flattened(original, parent_key = False, separator = '.'):
             if isinstance(el, (str, bytes)):
                 result.append(el)
             elif isinstance(el, Sequence):
-                result.extend(flattened(el))
+                result.extend(flattened(el, separator = separator))
             elif isinstance(el, (KeysView, ValuesView)):
                 result.extend(el)
             else:
-                result.append(flattened(el))
+                result.append(flattened(el, separator = separator))
         return result
 
     # Fallback if we don't know how to deal with this kind of thing.
