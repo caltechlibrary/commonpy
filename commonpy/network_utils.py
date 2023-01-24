@@ -9,7 +9,7 @@ Michael Hucka <mhucka@caltech.edu> -- Caltech Library
 Copyright
 ---------
 
-Copyright (c) 2018-2022 by the California Institute of Technology.  This code
+Copyright (c) 2018-2023 by the California Institute of Technology.  This code
 is open-source software released under a 3-clause BSD license.  Please see the
 file "LICENSE" for more information.
 '''
@@ -18,14 +18,15 @@ import httpx
 from   ipaddress import ip_address
 from   os import stat
 import socket
-import ssl
 import urllib
 
 if __debug__:
     from sidetrack import log
 
 from .interrupt import wait, interrupted, raise_for_interrupts
-from .exceptions import *
+from .exceptions import ArgumentError, Interrupted, InternalError, NoContent
+from .exceptions import AuthenticationFailure, ServiceFailure, NetworkFailure
+from .exceptions import RateLimitExceeded
 from .string_utils import antiformat
 
 
@@ -104,7 +105,7 @@ def on_localhost(url):
     for family in (socket.AF_INET, socket.AF_INET6):
         try:
             addrinfo = socket.getaddrinfo(host, None, family, socket.SOCK_STREAM)
-        except socket.gaierror as ex:
+        except socket.gaierror:
             break
         else:
             for _, _, _, _, sockaddr in addrinfo:
@@ -164,7 +165,7 @@ def timed_request(method, url, client = None, **kwargs):
         except TypeError as ex:
             # Bad arguments to the call, like passing data to a 'get'.
             if __debug__: log(addurl(f'exception {antiformat(ex)}'))
-            raise ArgumentError(f'Bad or invalid arguments in network call')
+            raise ArgumentError('Bad or invalid arguments in network call')
         except (httpx.CookieConflict, httpx.StreamError, httpx.TooManyRedirects,
                 httpx.DecodingError, httpx.ProtocolError, httpx.ProxyError,
                 httpx.ConnectError) as ex:
@@ -190,7 +191,7 @@ def timed_request(method, url, client = None, **kwargs):
                 retries += 1
                 failures = 0
                 pause = 10 * retries * retries
-                if __debug__: log(addurl(f'pausing due to consecutive failures'))
+                if __debug__: log(addurl('pausing due to consecutive failures'))
                 wait(pause)
             else:
                 if __debug__: log(addurl('exceeded max failures and max retries'))
@@ -239,29 +240,32 @@ def net(method, url, client = None, handle_rate = True,
         raise ValueError(f'HTTP method "{method}" is not'
                          f' one of {", ".join(known_methods)}.')
 
-    def addurl(text):
-        return f'{text} for {url}'
+    def info(text, details = ''):
+        msg = f'{text} for {url}'
+        if details:
+            msg += (' (' + details + ')')
+        return msg
 
     resp = None
     try:
         resp = timed_request(method, url, client, follow_redirects = True, **kwargs)
     except (httpx.NetworkError, httpx.ProtocolError) as ex:
         # timed_request() will have retried, so if we get here, time to bail.
-        if __debug__: log(addurl(f'got network exception: {antiformat(ex)}'))
+        if __debug__: log(info(f'network exception: {antiformat(ex)}'))
         is_on_localhost = on_localhost(url)
-        msg = antiformat(ex)
+        reason = antiformat(ex)
         if isinstance(ex, httpx.ConnectError) and is_on_localhost:
-            if __debug__: log(addurl('returning ServiceFailure'))
-            return (resp, ServiceFailure(addurl(f'Access failure ({msg})')))
+            if __debug__: log(info('returning ServiceFailure'))
+            return (resp, ServiceFailure(info(f'Access failure ({reason})')))
         elif is_on_localhost or network_available():
-            if __debug__: log(addurl('returning ServiceFailure'))
-            return (resp, ServiceFailure(addurl(f'Server error ({msg})')))
+            if __debug__: log(info('returning ServiceFailure'))
+            return (resp, ServiceFailure(info(f'Server error ({reason})')))
         else:
-            if __debug__: log(addurl('returning NetworkFailure'))
-            return (resp, NetworkFailure(addurl('Network failure ({msg})')))
+            if __debug__: log(info('returning NetworkFailure'))
+            return (resp, NetworkFailure(info('Network failure ({reason})')))
     except Exception as ex:
         # Not a network or protocol error, and not a normal server response.
-        if __debug__: log(addurl(f'returning exception: {antiformat(ex)}'))
+        if __debug__: log(info(f'returning exception: {antiformat(ex)}'))
         return (resp, ex)
 
     # Interpret the response.  Note that the requests library handles code 301
@@ -269,30 +273,32 @@ def net(method, url, client = None, handle_rate = True,
     error = None
     code = resp.status_code
     reason = resp.reason_phrase
+    text = resp.text                    # Sometimes this holds more details.
     if code == 400:
-        error = ServiceFailure(addurl('Server rejected the request'))
+        error = ServiceFailure(info('Server rejected the request', text))
     elif code in [401, 402, 403, 407, 451, 511]:
-        error = AuthenticationFailure(addurl('Access is forbidden'))
+        error = AuthenticationFailure(info('Access is forbidden', text))
     elif code in [404, 410] and not polling:
-        error = NoContent(addurl("No content found"))
+        error = NoContent(info("No content found", text))
     elif code in [405, 406, 409, 411, 412, 413, 414, 417, 428, 431, 505, 510]:
-        error = InternalError(addurl(f'Server returned code {code} ({reason})'))
+        error = InternalError(info(f'Server returned code {code} ({reason})', text))
     elif code in [415, 416]:
-        error = ServiceFailure(addurl(f'Server rejected the request ({reason})'))
+        error = ServiceFailure(info(f'Server rejected the request ({reason})', text))
     elif code == 429:
         if handle_rate and recursing < _MAX_RECURSIVE_CALLS:
             pause = 5 * (recursing + 1)   # +1 b/c we start with recursing = 0.
-            if __debug__: log(addurl('rate limit hit -- pausing'))
+            if __debug__: log(info('rate limit hit -- pausing', text))
             wait(pause)                   # 5 s, then 10 s, then 15 s, etc.
-            if __debug__: log(addurl(f'doing recursive call #{recursing + 1}'))
+            if __debug__: log(info(f'doing recursive call #{recursing + 1}', text))
             return net(method, url, client, handle_rate, polling, recursing + 1, **kwargs)
-        error = RateLimitExceeded(addurl('Server blocking requests due to rate limits'))
+        error = RateLimitExceeded(info('Server blocking requests due to rate limits', text))
     elif code in [500, 501, 502, 503, 504, 506, 507, 508]:
-        error = ServiceFailure(addurl(f'Server error (code {code} -- {reason})'))
+        error = ServiceFailure(info(f'Server error (code {code} -- {reason})', text))
     elif not (200 <= code < 400):
-        error = NetworkFailure(addurl(f'Unable to resolve {url}'))
+        error = NetworkFailure(info(f'Unable to resolve {url}', text))
     # The error msg will have had the URL added already; no need to do it here.
-    if __debug__: log('returning {}'.format(f'{error}' if error else f'response for {url}'))
+    if __debug__: log('returning {}'.format(
+            f'error: {error}' if error else f'response for {url}'))
     return (resp, error)
 
 
@@ -315,6 +321,9 @@ def download_file(url, local_destination):
 def download(url, local_destination, recursing = 0):
     '''Download the 'url' to the file 'local_destination'.'''
 
+    def addurl(text):
+        return f'{text} for {url}'
+
     timeout = httpx.Timeout(15, connect = 15, read = 15, write = 15)
     with httpx.stream('get', url, verify = False, timeout = timeout,
                       follow_redirects = True) as resp:
@@ -325,7 +334,7 @@ def download(url, local_destination, recursing = 0):
             raise_for_interrupts()
             recursing += 1
             if recursing <= _MAX_RECURSIVE_CALLS:
-                if __debug__: log(f'calling download(url) recursively for code 202')
+                if __debug__: log('calling download(url) recursively for code 202')
                 download(url, local_destination, recursing)
             else:
                 raise ServiceFailure(addurl('Exceeded max retries for code 202'))

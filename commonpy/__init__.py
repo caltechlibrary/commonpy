@@ -9,7 +9,7 @@ Michael Hucka <mhucka@caltech.edu> -- Caltech Library
 Copyright
 ---------
 
-Copyright (c) 2018-2022 by the California Institute of Technology.  This code
+Copyright (c) 2018-2023 by the California Institute of Technology.  This code
 is open-source software released under a 3-clause BSD license.  Please see the
 file "LICENSE" for more information.
 '''
@@ -21,7 +21,7 @@ file "LICENSE" for more information.
 #  |    by the Makefile. Manual changes to these values will be lost.      |
 #  ╰────────────────────── Notice ── Notice ── Notice ─────────────────────╯
 
-__version__     = '1.9.2'
+__version__     = '1.10.0'
 __description__ = 'Assortment of Python helper functions and utility classes'
 __url__         = 'https://github.com/caltechlibrary/commonpy'
 __author__      = 'Michael Hucka'

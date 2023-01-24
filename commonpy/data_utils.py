@@ -9,7 +9,7 @@ Michael Hucka <mhucka@caltech.edu> -- Caltech Library
 Copyright
 ---------
 
-Copyright (c) 2020-2022 by the California Institute of Technology.  This code
+Copyright (c) 2020-2023 by the California Institute of Technology.  This code
 is open-source software released under a 3-clause BSD license.  Please see the
 file "LICENSE" for more information.
 '''
@@ -65,9 +65,9 @@ def flattened(original, parent_key = False, separator = '.'):
             elif isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
                 if len(value):
                     for k, v in enumerate(value):
-                        items.extend(flattened({str(k): v}, new_key).items())
+                        items.extend(flattened({str(k): v}, new_key, separator).items())
                 else:
-                    items.append((new_key, None))
+                    items.append((new_key, []))
             else:
                 items.append((new_key, value))
         return dict(items)
@@ -80,11 +80,11 @@ def flattened(original, parent_key = False, separator = '.'):
             if isinstance(el, (str, bytes)):
                 result.append(el)
             elif isinstance(el, Sequence):
-                result.extend(flattened(el))
+                result.extend(flattened(el, separator = separator))
             elif isinstance(el, (KeysView, ValuesView)):
                 result.extend(el)
             else:
-                result.append(flattened(el))
+                result.append(flattened(el, separator = separator))
         return result
 
     # Fallback if we don't know how to deal with this kind of thing.
