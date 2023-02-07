@@ -14,7 +14,6 @@ is open-source software released under a 3-clause BSD license.  Please see the
 file "LICENSE" for more information.
 '''
 
-import httpx
 from   ipaddress import ip_address
 from   os import stat
 import socket
@@ -135,6 +134,8 @@ def timed_request(method, url, client = None, **kwargs):
     result of temporary server problems or other issues and disappear when a
     second attempt is made after a brief pause.
     '''
+    import httpx
+
     def addurl(text):
         return f'{text} for {url}'
 
@@ -235,6 +236,8 @@ def net(method, url, client = None, handle_rate = True,
     This method always passes the argument follow_redirects = True to the
     underlying Python HTTPX library network calls.
     '''
+    import httpx
+
     known_methods = ['get', 'post', 'head', 'options', 'put', 'delete', 'patch']
     if method.lower() not in known_methods:
         raise ValueError(f'HTTP method "{method}" is not'
@@ -320,6 +323,7 @@ def download_file(url, local_destination):
 
 def download(url, local_destination, recursing = 0):
     '''Download the 'url' to the file 'local_destination'.'''
+    import httpx
 
     def addurl(text):
         return f'{text} for {url}'
