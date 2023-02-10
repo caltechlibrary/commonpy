@@ -300,8 +300,9 @@ def net(method, url, client = None, handle_rate = True,
     elif not (200 <= code < 400):
         error = NetworkFailure(info(f'Unable to resolve {url}', text))
     # The error msg will have had the URL added already; no need to do it here.
-    if __debug__: log('returning {}'.format(
-            f'error: {error}' if error else f'response for {url}'))
+    if __debug__:
+        if error:
+            log('returning error ' + str(error))
     return (resp, error)
 
 
