@@ -110,9 +110,9 @@ def on_localhost(url):
             for _, _, _, _, sockaddr in addrinfo:
                 address_part = sockaddr[0]
                 if ip_address(address_part).is_loopback:
-                    log(f'address seems to be on localhost: {url}')
+                    if __debug__: log(f'address seems to be on localhost: {url}')
                     return True
-    log(f'address not on localhost: {url}')
+    if __debug__: log(f'address not on localhost: {url}')
     return False
 
 
