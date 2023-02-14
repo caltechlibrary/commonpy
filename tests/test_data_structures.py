@@ -40,9 +40,18 @@ def test_set_basic():
     d = CaseFoldSet()
     d.add('A')
     assert 'a' in d
+    assert 'A' in d
 
     d = CaseFoldSet(['A'])
     assert 'a' in d
+    assert 'A' in d
+
+    d.add('b')
+    d = CaseFoldSet(['a']) | CaseFoldSet(['B'])
+    assert 'b' in d
+
+    d.add('É')
+    assert 'é' in d
 
 
 def test_set_comparison():
