@@ -47,7 +47,7 @@ maximum wait time that will be reached after repeated retries.'''
 # Main functions.
 # .............................................................................
 
-def network_available(address = "8.8.8.8", port = 53, timeout = 5):
+def network_available(address = "8.8.4.4", port = 53, timeout = 5):
     '''Return True if it appears we have a network connection, False if not.
     By default, this attempts to contact one of the Google DNS servers (as a
     plain TCP connection, not as an actual DNS lookup).  Argument 'address'
@@ -63,7 +63,7 @@ def network_available(address = "8.8.8.8", port = 53, timeout = 5):
         if __debug__: log('we have a network connection')
         return True
     except Exception:
-        if __debug__: log('could not connect to https://www.google.com')
+        if __debug__: log('could not connect to 8.8.4.4')
         return False
 
 
