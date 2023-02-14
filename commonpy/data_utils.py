@@ -14,10 +14,8 @@ is open-source software released under a 3-clause BSD license.  Please see the
 file "LICENSE" for more information.
 '''
 
-from   boltons.iterutils import flatten_iter
 from   boltons.strutils import pluralize
 from   collections.abc import MutableMapping
-import datetime
 from   datetime import datetime as dt
 from   dateutil import tz
 from   typing import Sequence, Generator, Iterator, KeysView, ValuesView
