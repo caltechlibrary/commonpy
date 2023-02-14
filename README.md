@@ -260,6 +260,7 @@ CommonPy makes use of numerous open-source packages, without which it would have
 * [pywin32](https://github.com/mhammond/pywin32) &ndash; Windows APIs for Python
 * [sidetrack](https://github.com/caltechlibrary/sidetrack) &ndash; simple debug logging/tracing package
 * [tldextract](https://github.com/john-kurkowski/tldextract) &ndash; module to parse domains from URLs
+* [twine](https://twine.readthedocs.io) &ndash; package for publishing Python packages to PyPI
 * [validator-collection](https://pypi.org/project/validator-collection/) &ndash; collection of Python functions for validating data
 
 <div align="center">
