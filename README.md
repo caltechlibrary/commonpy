@@ -62,9 +62,10 @@ The following subsections describe the different modules available.
 
 The `data_structures` module provides miscellaneous data classes.
 
-| Function              | Purpose |
-|-----------------------|---------|
+| Class          | Purpose |
+|----------------|---------|
 | `CaseFoldDict` | A version of `dict` that compares keys in a case-insensitive manner |
+| `CaseFoldSet`  | A version of `set` that compares keys in a case-insensitive manner |
 
 
 ### Data utilities
