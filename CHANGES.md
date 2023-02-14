@@ -1,10 +1,21 @@
 # Change log for CommonPy
 
+## Version 1.11.0
+
+Additions in this release:
+* New class `CaseFoldSet`, similar to `CaseFoldDict` but … a set.
+
+Changes in this release:
+* Fixed a bug in the class documentation in the `README.md` file.
+* Add missing dependency for [twine]() in requirements-dev
+* Use lazy `import`s in more places, for faster load times.
+
+
 ## Version 1.10.0
 
 Changes in this release:
 
-* `data_utils.flattened` now would outputs `[]` as the value of dict or mapping keys whose original values are an empty sequence (e.g., when the value of a dict key is `[]`). Previously, it would output `None` as the value, which was an unexpected transformation of the input.
+* `data_utils.flattened` now outputs `[]` as the value of dict or mapping keys whose original values are an empty sequence (e.g., when the value of a dict key is `[]`). Previously, it would output `None` as the value, which was an unexpected transformation of the input.
 
 Bug fixes in this release:
 
