@@ -47,8 +47,8 @@ __exception = KeyboardInterrupt
 # Main functions.
 # .............................................................................
 
-def config_interrupt(callback = None, raise_exception = KeyboardInterrupt,
-                     on_signal = signal.SIGINT):
+def config_interrupt(callback=None, raise_exception=KeyboardInterrupt,
+                     on_signal=signal.SIGINT):
     '''Configure handling of interruptions.
 
     This function can be used to attach a signal handler that will do the
@@ -75,7 +75,7 @@ def config_interrupt(callback = None, raise_exception = KeyboardInterrupt,
     global __exception
     __exception = raise_exception
 
-    def interrupt_handler(signum, frame = None):
+    def interrupt_handler(signum, frame=None):
         if __debug__: log('interrupt_handler invoked')
         interrupt()
         if callback:
@@ -115,7 +115,7 @@ def wait(duration):
 
 def interrupt():
     '''Interrupt any waits and internally record an interrupt has occurred.'''
-    if __debug__: log(f'interrupting wait')
+    if __debug__: log('interrupting wait')
     __waiter.set()
 
 
@@ -133,12 +133,12 @@ def raise_for_interrupts():
 
 def reset_interrupts():
     '''Clear the internal marker that an interrupt occurred.'''
-    if __debug__: log(f'clearing interrupt state')
+    if __debug__: log('clearing interrupt state')
     __waiter.clear()
 
 
-@deprecated(deprecated_in = '1.7.0', removed_in = '2.0.0',
-            current_version = commonpy.__version__,
-            details = 'Use reset_interrupts() instead of reset()')
+@deprecated(deprecated_in='1.7.0', removed_in='2.0.0',
+            current_version=commonpy.__version__,
+            details='Use reset_interrupts() instead of reset()')
 def reset():
     reset_interrupts()

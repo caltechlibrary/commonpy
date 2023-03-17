@@ -14,7 +14,6 @@ is open-source software released under a 3-clause BSD license.  Please see the
 file "LICENSE" for more information.
 '''
 
-import inspect
 import os
 from   os.path import exists, isdir, isfile, join, dirname, relpath, realpath
 from   os.path import splitext
@@ -44,9 +43,9 @@ def writable(dest):
         # This is based on the following Stack Overflow answer by user "zak":
         # https://stackoverflow.com/a/25868839/743730
         try:
-            testfile = tempfile.TemporaryFile(dir = dir)
+            testfile = tempfile.TemporaryFile(dir=dir)
             testfile.close()
-        except (OSError, IOError) as e:
+        except (OSError, IOError):
             return False
         return True
 
@@ -66,7 +65,7 @@ def nonempty(dest):
     return os.stat(dest).st_size != 0
 
 
-def files_in_directory(dir, extensions = None, recursive = True):
+def files_in_directory(dir, extensions=None, recursive=True):
     if not isdir(dir):
         return []
     if not readable(dir):
@@ -132,7 +131,7 @@ def relative(file):
     try:
         # This can fail on Windows if we're on a network-mapped drive.
         candidate = relpath(file, os.getcwd())
-    except Exception as ex:
+    except Exception:
         return file
     else:
         if not candidate.startswith('../..'):
@@ -204,7 +203,7 @@ def file_in_use(file):
 def copy_file(src, dst):
     '''Copies a file from "src" to "dst".'''
     if __debug__: log(f'copying file {src} to {dst}')
-    shutil.copy2(src, dst, follow_symlinks = True)
+    shutil.copy2(src, dst, follow_symlinks=True)
 
 
 def open_file(file):

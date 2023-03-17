@@ -43,11 +43,14 @@ _MAX_RETRIES = 5
 '''Maximum number of times we back off and try again.  This also affects the
 maximum wait time that will be reached after repeated retries.'''
 
+_KNOWN_HTTP_METHODS = ['get', 'post', 'head', 'options', 'put', 'delete', 'patch']
+'''Known http methods.'''
+
 
 # Main functions.
 # .............................................................................
 
-def network_available(address = "8.8.4.4", port = 53, timeout = 5):
+def network_available(address="8.8.4.4", port=53, timeout=5):
     '''Return True if it appears we have a network connection, False if not.
     By default, this attempts to contact one of the Google DNS servers (as a
     plain TCP connection, not as an actual DNS lookup).  Argument 'address'
@@ -63,7 +66,7 @@ def network_available(address = "8.8.4.4", port = 53, timeout = 5):
         if __debug__: log('we have a network connection')
         return True
     except Exception:
-        if __debug__: log('could not connect to 8.8.4.4')
+        if __debug__: log(f'could not connect to {address} in {timeout} sec')
         return False
 
 
@@ -116,7 +119,7 @@ def on_localhost(url):
     return False
 
 
-def timed_request(method, url, client = None, **kwargs):
+def timed_request(method, url, client=None, **kwargs):
     '''Perform a network access, automatically retrying if exceptions occur.
 
     The value given to parameter "method" must be a string chosen from among
@@ -140,8 +143,8 @@ def timed_request(method, url, client = None, **kwargs):
         return f'{text} for {url}'
 
     if client is None:
-        timeout = httpx.Timeout(15, connect = 15, read = 15, write = 15)
-        client = httpx.Client(timeout = timeout, http2 = True, verify = False)
+        timeout = httpx.Timeout(15, connect=15, read=15, write=15)
+        client = httpx.Client(timeout=timeout, http2=True, verify=False)
     elif client == 'stream':
         client = httpx.stream
 
@@ -208,8 +211,8 @@ def timed_request(method, url, client = None, **kwargs):
         raise InternalError(addurl('Unexpected case in timed_request'))
 
 
-def net(method, url, client = None, handle_rate = True,
-        polling = False, recursing = 0, **kwargs):
+def net(method, url, client=None, handle_rate=True,
+        polling=False, recursing=0, **kwargs):
     '''Invoke HTTP "method" on 'url' with optional keyword arguments provided.
 
     Returns a tuple of (response, exception), where the first element is
@@ -238,12 +241,10 @@ def net(method, url, client = None, handle_rate = True,
     '''
     import httpx
 
-    known_methods = ['get', 'post', 'head', 'options', 'put', 'delete', 'patch']
-    if method.lower() not in known_methods:
-        raise ValueError(f'HTTP method "{method}" is not'
-                         f' one of {", ".join(known_methods)}.')
+    if method.lower() not in _KNOWN_HTTP_METHODS:
+        raise ValueError(f'Method must be one of {", ".join(_KNOWN_HTTP_METHODS)}.')
 
-    def info(text, details = ''):
+    def info(text, details=''):
         msg = f'{text} for {url}'
         if details:
             msg += (' (' + details + ')')
@@ -251,7 +252,7 @@ def net(method, url, client = None, handle_rate = True,
 
     resp = None
     try:
-        resp = timed_request(method, url, client, follow_redirects = True, **kwargs)
+        resp = timed_request(method, url, client, follow_redirects=True, **kwargs)
     except (httpx.NetworkError, httpx.ProtocolError) as ex:
         # timed_request() will have retried, so if we get here, time to bail.
         if __debug__: log(info(f'network exception: {antiformat(ex)}'))
@@ -322,16 +323,16 @@ def download_file(url, local_destination):
         return True
 
 
-def download(url, local_destination, recursing = 0):
+def download(url, local_destination, recursing=0):
     '''Download the 'url' to the file 'local_destination'.'''
     import httpx
 
     def addurl(text):
         return f'{text} for {url}'
 
-    timeout = httpx.Timeout(15, connect = 15, read = 15, write = 15)
-    with httpx.stream('get', url, verify = False, timeout = timeout,
-                      follow_redirects = True) as resp:
+    timeout = httpx.Timeout(15, connect=15, read=15, write=15)
+    with httpx.stream('get', url, verify=False, timeout=timeout,
+                      follow_redirects=True) as resp:
         code = resp.status_code
         if code == 202:
             # Code 202 = Accepted, "received but not yet acted upon."

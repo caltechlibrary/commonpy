@@ -18,6 +18,9 @@ import os
 from os import path as path
 import sys
 
+if __debug__:
+    from sidetrack import log
+
 
 # Constants.
 # .............................................................................
@@ -32,7 +35,7 @@ like this: _APP_REG_PATH_FORMAT.format(module).
 # Main functions.
 # .............................................................................
 
-def module_path(module_name = __package__):
+def module_path(module_name=__package__):
     '''Returns the absolute path to the installation directory of the Python
     module named 'name'.  The name defaults to __package__.
     '''
@@ -42,7 +45,7 @@ def module_path(module_name = __package__):
         return None
 
 
-def datadir_path(module_name = __package__):
+def datadir_path(module_name=__package__):
     '''Returns the path to the named module's internal data directory.'''
     return path.join(module_path(module_name), 'data')
 
@@ -55,13 +58,13 @@ def desktop_path():
         return path.join(path.expanduser('~'), 'Desktop')
 
 
-def installation_path(module_name = __package__):
+def installation_path(module_name=__package__):
     '''Returns the path to where the given Python package is installed.'''
     # The path returned by module.__path__ is to the directory containing
     # the __init__.py file.  What we want here is the path to the installation
     # of the application binary.
     if sys.platform.startswith('win'):
-        from winreg import OpenKey, CloseKey, QueryValueEx, HKEY_LOCAL_MACHINE, KEY_READ
+        from winreg import OpenKey, CloseKey, QueryValueEx, HKEY_LOCAL_MACHINE
         try:
             if __debug__: log('reading Windows registry entry')
             reg_path = _APP_REG_PATH_FORMAT.format(module_name)
@@ -79,7 +82,7 @@ def installation_path(module_name = __package__):
         return path.abspath(path.join(module_path(module_name), '..'))
 
 
-def config_path(module_name = __package__):
+def config_path(module_name=__package__):
     '''Returns the path to ~/.config or equivalent.'''
     if sys.platform.startswith('win'):
         config_root = path.join(os.environ['USERPROFILE'], 'AppData', 'Local')
