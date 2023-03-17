@@ -65,7 +65,7 @@ def network_available(address="8.8.4.4", port=53, timeout=5):
         socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((address, port))
         if __debug__: log('we have a network connection')
         return True
-    except Exception:
+    except (socket.error, socket.timeout):
         if __debug__: log(f'could not connect to {address} in {timeout} sec')
         return False
 
@@ -180,7 +180,7 @@ def timed_request(method, url, client=None, **kwargs):
                 raise
             failures += 1
             if __debug__: log(addurl('will retry one more time after brief pause'))
-        except Exception as ex:
+        except Exception as ex:         # noqa PIE786
             # Problem might be transient.  Don't quit right away.
             failures += 1
             if __debug__: log(addurl(f'exception (failure #{failures}): {antiformat(ex)}'))
@@ -267,7 +267,7 @@ def net(method, url, client=None, handle_rate=True,
         else:
             if __debug__: log(info('returning NetworkFailure'))
             return (resp, NetworkFailure(info('Network failure ({reason})')))
-    except Exception as ex:
+    except Exception as ex:             # noqa PIE786
         # Not a network or protocol error, and not a normal server response.
         if __debug__: log(info(f'returning exception: {antiformat(ex)}'))
         return (resp, ex)
@@ -301,7 +301,7 @@ def net(method, url, client=None, handle_rate=True,
     elif not (200 <= code < 400):
         error = NetworkFailure(info(f'Unable to resolve {url}', text))
     # The error msg will have had the URL added already; no need to do it here.
-    if __debug__:
+    if __debug__:                       # noqa SIM102
         if error:
             log('returning error ' + str(error))
     return (resp, error)
@@ -316,7 +316,7 @@ def download_file(url, local_destination):
 
     try:
         download(url, local_destination)
-    except Exception as ex:
+    except Exception as ex:             # noqa PIE786
         if __debug__: log(f'download exception: {antiformat(ex)}')
         return False
     else:
