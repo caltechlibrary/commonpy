@@ -45,7 +45,7 @@ def writable(dest):
         try:
             testfile = tempfile.TemporaryFile(dir=directory)
             testfile.close()
-        except (OSError, IOError):
+        except OSError:
             return False
         return True
 
@@ -131,7 +131,7 @@ def relative(file):
     try:
         # This can fail on Windows if we're on a network-mapped drive.
         candidate = relpath(file, os.getcwd())
-    except Exception:
+    except (ValueError, OSError):
         return file
     else:
         if not candidate.startswith('../..'):
@@ -149,11 +149,11 @@ def rename_existing(file):
         try:
             os.rename(f, backup)
             if __debug__: log(f'renamed {file} to {backup}')
-        except:
+        except OSError:
             try:
                 delete_existing(backup)
                 os.rename(f, backup)
-            except:
+            except OSError:
                 if __debug__: log(f'failed to delete {backup}')
                 if __debug__: log(f'failed to rename {file} to {backup}')
 
@@ -173,11 +173,11 @@ def delete_existing(file):
         if __debug__: log(f'doing rmtree on directory {file}')
         try:
             shutil.rmtree(file)
-        except:
+        except OSError:
             if __debug__: log(f'unable to rmtree {file}; will try renaming')
             try:
                 rename_existing(file)
-            except:
+            except OSError:
                 if __debug__: log(f'unable to rmtree or rename {file}')
     else:
         if __debug__: log(f'doing os.remove on file {file}')
@@ -195,7 +195,7 @@ def file_in_use(file):
         try:
             os.rename(file, file)
             return False
-        except:
+        except OSError:
             return True
     return False
 
