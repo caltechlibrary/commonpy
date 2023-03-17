@@ -16,6 +16,7 @@ file "LICENSE" for more information.
 
 import collections
 from   collections.abc import MutableSet
+from   contextlib import suppress
 
 
 # Classes.
@@ -121,7 +122,5 @@ class CaseFoldSet(MutableSet):
 
 
     def discard(self, value):
-        try:
+        with suppress(KeyError):
             del self._values[self._fold(value)]
-        except KeyError:
-            pass
