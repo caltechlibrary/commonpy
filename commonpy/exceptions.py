@@ -23,7 +23,6 @@ file "LICENSE" for more information.
 
 class CommonPyException(Exception):
     '''Base class for CommonPy exceptions.'''
-    pass
 
 
 # Exception classes.
@@ -31,39 +30,31 @@ class CommonPyException(Exception):
 
 class Interrupted(CommonPyException):
     '''The user elected to cancel/quit the program.'''
-    pass
 
 
 class NetworkFailure(CommonPyException):
     '''Unrecoverable problem involving network operations.'''
-    pass
 
 
 class ServiceFailure(CommonPyException):
     '''Unrecoverable problem involving a remote service.'''
-    pass
 
 
 class AuthenticationFailure(CommonPyException):
     '''Problem obtaining or using authentication credentials.'''
-    pass
 
 
 class NoContent(CommonPyException):
     '''No content found at the given location.'''
-    pass
 
 
 class RateLimitExceeded(CommonPyException):
     '''The service flagged reports that its rate limits have been exceeded.'''
-    pass
 
 
 class ArgumentError(CommonPyException):
     '''Incorrect or invalid argument or argument value.'''
-    pass
 
 
 class InternalError(CommonPyException):
     '''Unrecoverable problem involving commonpy itself.'''
-    pass
