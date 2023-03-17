@@ -39,11 +39,11 @@ def writable(dest):
     '''Returns True if the destination is writable.'''
 
     # Helper function to test if a directory is writable.
-    def dir_writable(dir):
+    def dir_writable(directory):
         # This is based on the following Stack Overflow answer by user "zak":
         # https://stackoverflow.com/a/25868839/743730
         try:
-            testfile = tempfile.TemporaryFile(dir=dir)
+            testfile = tempfile.TemporaryFile(dir=directory)
             testfile.close()
         except (OSError, IOError):
             return False
@@ -65,15 +65,15 @@ def nonempty(dest):
     return os.stat(dest).st_size != 0
 
 
-def files_in_directory(dir, extensions=None, recursive=True):
-    if not isdir(dir):
+def files_in_directory(directory, extensions=None, recursive=True):
+    if not isdir(directory):
         return []
-    if not readable(dir):
+    if not readable(directory):
         return []
-    if __debug__: log(f'reading directory {dir}')
+    if __debug__: log(f'reading directory {directory}')
     files = []
-    for item in os.listdir(dir):
-        full_path = join(dir, item)
+    for item in os.listdir(directory):
+        full_path = join(directory, item)
         if isfile(full_path) and readable(full_path):
             if not extensions or filename_extension(item) in extensions:
                 files.append(full_path)
