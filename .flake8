@@ -36,3 +36,5 @@ ignore =
     # line breaks *should* come before a binary operator, but as of version 4,
     # Flake8 still flags the breaks as bad. So:
     W503
+    # For performance reasons, we use if __debug__: log(...) all over the place.
+    E701
