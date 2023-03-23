@@ -124,3 +124,8 @@ class CaseFoldSet(MutableSet):
     def discard(self, value):
         with suppress(KeyError):
             del self._values[self._fold(value)]
+
+
+    def update(self, values):
+        for v in values:
+            self.add(v)
