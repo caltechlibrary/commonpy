@@ -17,7 +17,7 @@ file "LICENSE" for more information.
 from   ipaddress import ip_address
 from   os import stat
 import socket
-import urllib
+import urllib.parse
 
 if __debug__:
     from sidetrack import log
@@ -71,9 +71,9 @@ def network_available(address="8.8.4.4", port=53, timeout=5):
 
 
 def hostname(url):
-    if url.startswith('http'):
-        parsed = urllib.parse.urlsplit(url)
-        return parsed.hostname
+    parts = urllib.parse.urlsplit(url)
+    if parts.scheme:
+        return parts.hostname
     else:
         # urllib.parse doesn't provide a hostname.  Try a different way.
         import tldextract
