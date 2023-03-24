@@ -22,3 +22,6 @@ freezegun >= 1.2.2
 pytest      >= 6.2.5
 pytest-cov  >= 3.0.0
 pytest-mock >= 3.7.0
+
+twine >= 4.0.0
+

@@ -62,9 +62,10 @@ The following subsections describe the different modules available.
 
 The `data_structures` module provides miscellaneous data classes.
 
-| Function              | Purpose |
-|-----------------------|---------|
-| `CaseInsensitiveDict` | A version of `dict` that compares keys in a case-insensitive manner |
+| Class          | Purpose |
+|----------------|---------|
+| `CaseFoldDict` | A version of `dict` that compares keys in a case-insensitive manner |
+| `CaseFoldSet`  | A version of `set` that compares keys in a case-insensitive manner |
 
 
 ### Data utilities
@@ -73,14 +74,14 @@ The `data_utils` module provides a number of miscellaneous simple functions for 
 
 | Function           | Purpose |
 |--------------------|---------|
+| `expanded_range(string)` | Given a string of the form "X-Y", returns the list of integers it represents |
 | `flattened(thing)` | Takes a list or dictionary and returns a recursively flattened version |
-| `unique(list)`     | Takes a list and return a version without duplicates |
 | `ordinal(integer)` | Returns a string with the number followed by "st", "nd, "rd", or "th" |
-| `slice(list, n)`   | Yields `n` number of slices from the `list` |
-| `timestamp()`      | Returns a string for an easily-readable form of the current time and date |
 | `parsed_datetime(string)` | Returns a date object representing the given date string |
 | `pluralized(word, n, include_num)`  | Returns a plural version of `word` if `n > 1` |
-| `expanded_range(string)` | Given a string of the form "X-Y", returns the list of integers it represents |
+| `sliced(list, n)`  | Yields `n` number of slices from the `list` |
+| `timestamp()`      | Returns a string for an easily-readable form of the current time and date |
+| `unique(list)`     | Takes a list and return a version without duplicates |
 
 
 ### File utilities
@@ -89,20 +90,20 @@ The `file_utils` module provides a number of miscellaneous simple functions for 
 
 | Function           | Purpose |
 |--------------------|---------|
-| `readable(dest)`   | Returns `True` if file or directory `dest` is accessible and readable |
-| `writable(dest)`   | Returns `True` if file or directory `dest` can be written |
-| `nonempty(file)`   | Returns `True` if file `file` is not empty |
-| `relative(file)`   | Returns a path string for `file` relative to the current directory |
+| `alt_extension(file, ext)` | Returns `file` with the extension replaced by `ext` |
+| `copy_file(src, dst)` | Copies file from `src` to `dst` |
+| `delete_existing(file)` | Deletes the given `file` |
 | `filename_basename(file)` | Returns `file` without any extensions |
 | `filename_extension(file)` | Returns the extension of filename `file` |
-| `alt_extension(file, ext)` | Returns `file` with the extension replaced by `ext` |
-| `rename_existing(file)` | Renames `file` to `file.bak` |
-| `delete_existing(file)` | Deletes the given `file` |
-| `copy_file(src, dst)` | Copies file from `src` to `dst` |
+| `files_in_directory(dir, ext, recursive)` | |
+| `filtered_by_extensions(list, endings)` | |
+| `nonempty(file)`   | Returns `True` if file `file` is not empty |
 | `open_file(file)` | Opens the `file` by calling the equivalent of "open" on this system |
 | `open_url(url)` | Opens the `url` in the user's default web browser |
-| `filtered_by_extensions(list, endings)` | |
-| `files_in_directory(dir, ext, recursive)` | |
+| `readable(dest)`   | Returns `True` if file or directory `dest` is accessible and readable |
+| `relative(file)`   | Returns a path string for `file` relative to the current directory |
+| `rename_existing(file)` | Renames `file` to `file.bak` |
+| `writable(dest)`   | Returns `True` if file or directory `dest` can be written |
 
 
 ### Interruptible wait and interruption handling utilities
@@ -112,11 +113,11 @@ The `interrupt` module includes `wait(...)`, a replacement for `sleep(...)` that
 | Function                 | Purpose |
 |--------------------------|---------|
 | `config_interrupt(callback, raise_ex, signal)` | Sets up a callback function |
-| `wait(duration)`         | Waits for `duration` in an interruptible fashion |
 | `interrupt()`            | Interrupts any `wait` in progress |
 | `interrupted() `         | Returns `True` if an interruption has been called |
 | `raise_for_interrupts()` | Raises an exception if `interrupt()` has been invoked |
 | `reset_interrupts()`     | Resets the interruption flag |
+| `wait(duration)`         | Waits for `duration` in an interruptible fashion |
 
 
 ### Module utilities
@@ -125,11 +126,11 @@ The `module_utils` collection of functions is useful for working with paths rela
 
 | Function           | Purpose |
 |--------------------|---------|
-| `desktop_path()`   | Returns the path to the user's Desktop directory on this system |
-| `module_path(module_name)` | Returns the path to the installed module |
-| `installation_path(module_name)` | Returns the path to module's installation directory |
-| `datadir_path(module_name)` | Returns the path to the `/data` subdirectory of the module |
 | `config_path(module_name)` | Returns the path to local config data directory for the module |
+| `datadir_path(module_name)` | Returns the path to the `/data` subdirectory of the module |
+| `desktop_path()`   | Returns the path to the user's Desktop directory on this system |
+| `installation_path(module_name)` | Returns the path to module's installation directory |
+| `module_path(module_name)` | Returns the path to the installed module |
 
 Function `config_path(...)` is useful to use in conjunction with Python's [`configparser`](https://docs.python.org/3/library/configparser.html) module.  It returns `~/.config/modulename/` on Unix-like systems.
 
@@ -146,8 +147,8 @@ The `network_utils` module provides several functions that are useful when perfo
 | `net(...)`                       | See below                                                           |
 | `netlock(url)`                   | Returns the hostname, port number (if any), and login info (if any) |
 | `network_available()`            | Returns `True` if external hosts are reacheable over the network    |
-| `scheme(url)`                    | Returns the protocol portion of the url; e.g., "https"              |
 | `on_localhost(url)`              | Returns `True` if the address of `url` points to the local host     |
+| `scheme(url)`                    | Returns the protocol portion of the url; e.g., "https"              |
 
 
 #### _`net`_
@@ -259,6 +260,7 @@ CommonPy makes use of numerous open-source packages, without which it would have
 * [pywin32](https://github.com/mhammond/pywin32) &ndash; Windows APIs for Python
 * [sidetrack](https://github.com/caltechlibrary/sidetrack) &ndash; simple debug logging/tracing package
 * [tldextract](https://github.com/john-kurkowski/tldextract) &ndash; module to parse domains from URLs
+* [twine](https://twine.readthedocs.io) &ndash; package for publishing Python packages to PyPI
 * [validator-collection](https://pypi.org/project/validator-collection/) &ndash; collection of Python functions for validating data
 
 <div align="center">

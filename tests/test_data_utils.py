@@ -13,9 +13,9 @@ except:
 from commonpy.data_utils import *
 
 
-def test_slice():
-    assert list(slice([1, 2, 3, 4], 2)) == [[1, 3], [2, 4]]
-    assert list(slice([1, 2, 3, 4, 5], 2)) == [[1, 3, 5], [2, 4]]
+def test_sliced():
+    assert list(sliced([1, 2, 3, 4], 2)) == [[1, 3], [2, 4]]
+    assert list(sliced([1, 2, 3, 4, 5], 2)) == [[1, 3, 5], [2, 4]]
 
 
 def test_expanded_range():

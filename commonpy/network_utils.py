@@ -14,11 +14,10 @@ is open-source software released under a 3-clause BSD license.  Please see the
 file "LICENSE" for more information.
 '''
 
-import httpx
 from   ipaddress import ip_address
 from   os import stat
 import socket
-import urllib
+import urllib.parse
 
 if __debug__:
     from sidetrack import log
@@ -44,11 +43,14 @@ _MAX_RETRIES = 5
 '''Maximum number of times we back off and try again.  This also affects the
 maximum wait time that will be reached after repeated retries.'''
 
+_KNOWN_HTTP_METHODS = ['get', 'post', 'head', 'options', 'put', 'delete', 'patch']
+'''Known http methods.'''
+
 
 # Main functions.
 # .............................................................................
 
-def network_available(address = "8.8.8.8", port = 53, timeout = 5):
+def network_available(address="8.8.4.4", port=53, timeout=5):
     '''Return True if it appears we have a network connection, False if not.
     By default, this attempts to contact one of the Google DNS servers (as a
     plain TCP connection, not as an actual DNS lookup).  Argument 'address'
@@ -63,15 +65,15 @@ def network_available(address = "8.8.8.8", port = 53, timeout = 5):
         socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((address, port))
         if __debug__: log('we have a network connection')
         return True
-    except Exception:
-        if __debug__: log('could not connect to https://www.google.com')
+    except (socket.error, socket.timeout):
+        if __debug__: log(f'could not connect to {address} in {timeout} sec')
         return False
 
 
 def hostname(url):
-    if url.startswith('http'):
-        parsed = urllib.parse.urlsplit(url)
-        return parsed.hostname
+    parts = urllib.parse.urlsplit(url)
+    if parts.scheme:
+        return parts.hostname
     else:
         # urllib.parse doesn't provide a hostname.  Try a different way.
         import tldextract
@@ -111,13 +113,13 @@ def on_localhost(url):
             for _, _, _, _, sockaddr in addrinfo:
                 address_part = sockaddr[0]
                 if ip_address(address_part).is_loopback:
-                    log(f'address seems to be on localhost: {url}')
+                    if __debug__: log(f'address seems to be on localhost: {url}')
                     return True
-    log(f'address not on localhost: {url}')
+    if __debug__: log(f'address not on localhost: {url}')
     return False
 
 
-def timed_request(method, url, client = None, **kwargs):
+def timed_request(method, url, client=None, **kwargs):
     '''Perform a network access, automatically retrying if exceptions occur.
 
     The value given to parameter "method" must be a string chosen from among
@@ -135,12 +137,14 @@ def timed_request(method, url, client = None, **kwargs):
     result of temporary server problems or other issues and disappear when a
     second attempt is made after a brief pause.
     '''
+    import httpx
+
     def addurl(text):
         return f'{text} for {url}'
 
     if client is None:
-        timeout = httpx.Timeout(15, connect = 15, read = 15, write = 15)
-        client = httpx.Client(timeout = timeout, http2 = True, verify = False)
+        timeout = httpx.Timeout(15, connect=15, read=15, write=15)
+        client = httpx.Client(timeout=timeout, http2=True, verify=False)
     elif client == 'stream':
         client = httpx.stream
 
@@ -162,7 +166,7 @@ def timed_request(method, url, client = None, **kwargs):
         except KeyboardInterrupt as ex:
             if __debug__: log(addurl(f'network {method} interrupted by {antiformat(ex)}'))
             raise
-        except TypeError as ex:
+        except (TypeError, httpx.UnsupportedProtocol) as ex:
             # Bad arguments to the call, like passing data to a 'get'.
             if __debug__: log(addurl(f'exception {antiformat(ex)}'))
             raise ArgumentError('Bad or invalid arguments in network call')
@@ -176,7 +180,7 @@ def timed_request(method, url, client = None, **kwargs):
                 raise
             failures += 1
             if __debug__: log(addurl('will retry one more time after brief pause'))
-        except Exception as ex:
+        except Exception as ex:         # noqa PIE786
             # Problem might be transient.  Don't quit right away.
             failures += 1
             if __debug__: log(addurl(f'exception (failure #{failures}): {antiformat(ex)}'))
@@ -207,8 +211,8 @@ def timed_request(method, url, client = None, **kwargs):
         raise InternalError(addurl('Unexpected case in timed_request'))
 
 
-def net(method, url, client = None, handle_rate = True,
-        polling = False, recursing = 0, **kwargs):
+def net(method, url, client=None, handle_rate=True,
+        polling=False, recursing=0, **kwargs):
     '''Invoke HTTP "method" on 'url' with optional keyword arguments provided.
 
     Returns a tuple of (response, exception), where the first element is
@@ -235,12 +239,12 @@ def net(method, url, client = None, handle_rate = True,
     This method always passes the argument follow_redirects = True to the
     underlying Python HTTPX library network calls.
     '''
-    known_methods = ['get', 'post', 'head', 'options', 'put', 'delete', 'patch']
-    if method.lower() not in known_methods:
-        raise ValueError(f'HTTP method "{method}" is not'
-                         f' one of {", ".join(known_methods)}.')
+    import httpx
 
-    def info(text, details = ''):
+    if method.lower() not in _KNOWN_HTTP_METHODS:
+        raise ValueError(f'Method must be one of {", ".join(_KNOWN_HTTP_METHODS)}.')
+
+    def info(text, details=''):
         msg = f'{text} for {url}'
         if details:
             msg += (' (' + details + ')')
@@ -248,7 +252,7 @@ def net(method, url, client = None, handle_rate = True,
 
     resp = None
     try:
-        resp = timed_request(method, url, client, follow_redirects = True, **kwargs)
+        resp = timed_request(method, url, client, follow_redirects=True, **kwargs)
     except (httpx.NetworkError, httpx.ProtocolError) as ex:
         # timed_request() will have retried, so if we get here, time to bail.
         if __debug__: log(info(f'network exception: {antiformat(ex)}'))
@@ -263,7 +267,7 @@ def net(method, url, client = None, handle_rate = True,
         else:
             if __debug__: log(info('returning NetworkFailure'))
             return (resp, NetworkFailure(info('Network failure ({reason})')))
-    except Exception as ex:
+    except Exception as ex:             # noqa PIE786
         # Not a network or protocol error, and not a normal server response.
         if __debug__: log(info(f'returning exception: {antiformat(ex)}'))
         return (resp, ex)
@@ -297,9 +301,25 @@ def net(method, url, client = None, handle_rate = True,
     elif not (200 <= code < 400):
         error = NetworkFailure(info(f'Unable to resolve {url}', text))
     # The error msg will have had the URL added already; no need to do it here.
-    if __debug__: log('returning {}'.format(
-            f'error: {error}' if error else f'response for {url}'))
+    if __debug__:                       # noqa SIM102
+        if error:
+            log('returning error ' + str(error))
     return (resp, error)
+
+
+def network(method, url, client=None, handle_rate=True,
+            polling=False, recursing=0, **kwargs):
+    '''Invoke HTTP "method" on 'url' with optional keyword arguments provided.
+
+    This is an alternative to net(). The difference is that this function only
+    returns one value (the response object from HTTPX); if any error occurs,
+    it raises an exception. (Compare this to net(...), which returns 2 values.)
+    '''
+    response, error = net(method, url, client, handle_rate,
+                          polling, recursing, **kwargs)
+    if error:
+        raise error
+    return response
 
 
 def download_file(url, local_destination):
@@ -311,22 +331,23 @@ def download_file(url, local_destination):
 
     try:
         download(url, local_destination)
-    except Exception as ex:
+    except Exception as ex:             # noqa PIE786
         if __debug__: log(f'download exception: {antiformat(ex)}')
         return False
     else:
         return True
 
 
-def download(url, local_destination, recursing = 0):
+def download(url, local_destination, recursing=0):
     '''Download the 'url' to the file 'local_destination'.'''
+    import httpx
 
     def addurl(text):
         return f'{text} for {url}'
 
-    timeout = httpx.Timeout(15, connect = 15, read = 15, write = 15)
-    with httpx.stream('get', url, verify = False, timeout = timeout,
-                      follow_redirects = True) as resp:
+    timeout = httpx.Timeout(15, connect=15, read=15, write=15)
+    with httpx.stream('get', url, verify=False, timeout=timeout,
+                      follow_redirects=True) as resp:
         code = resp.status_code
         if code == 202:
             # Code 202 = Accepted, "received but not yet acted upon."

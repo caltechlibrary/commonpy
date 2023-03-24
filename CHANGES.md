@@ -1,10 +1,32 @@
 # Change log for CommonPy
 
+## Version 1.12.0
+
+Additions in this release:
+* New function `network` in the `network_utils` module. It is a companion to `net` and takes the same arguments, but returns only one value (the response). If an error occurs, it raises the error as an exception. This makes it possible for callers to use `network(...)` in somewhat more Pythonic style than `net(...)`,  by wrapping the call to `network(...)` in `try`-`except`.
+
+Changes in this release:
+* Removed `slice` from `data_utils` module because it shadows a Python built-in.
+* Fixed `hostname`  in `network_utils` to be more general and not hardwire a test for `http`.
+* Fixed a bunch of `flake8` warnings.
+
+
+## Version 1.11.0
+
+Additions in this release:
+* New class `CaseFoldSet`, similar to `CaseFoldDict` but … a set.
+
+Changes in this release:
+* Fixed a bug in the class documentation in the `README.md` file.
+* Added missing dependency for [twine]() in requirements-dev
+* Now using lazy `import`s in more places, for faster load times.
+
+
 ## Version 1.10.0
 
 Changes in this release:
 
-* `data_utils.flattened` now would outputs `[]` as the value of dict or mapping keys whose original values are an empty sequence (e.g., when the value of a dict key is `[]`). Previously, it would output `None` as the value, which was an unexpected transformation of the input.
+* `data_utils.flattened` now outputs `[]` as the value of dict or mapping keys whose original values are an empty sequence (e.g., when the value of a dict key is `[]`). Previously, it would output `None` as the value, which was an unexpected transformation of the input.
 
 Bug fixes in this release:
 

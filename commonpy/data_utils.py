@@ -14,10 +14,8 @@ is open-source software released under a 3-clause BSD license.  Please see the
 file "LICENSE" for more information.
 '''
 
-from   boltons.iterutils import flatten_iter
 from   boltons.strutils import pluralize
 from   collections.abc import MutableMapping
-import datetime
 from   datetime import datetime as dt
 from   dateutil import tz
 from   typing import Sequence, Generator, Iterator, KeysView, ValuesView
@@ -34,15 +32,15 @@ with datetime.strftime().'''
 # Functions.
 # .............................................................................
 
-def slice(lst, n):
+def sliced(lst, n):
     '''Yield n number of slices from lst.'''
     # Original algorithm from Jurgen Strydom posted 2019-02-21 Stack Overflow
     # https://stackoverflow.com/a/54802737/743730
-    for i in range(0, n):
+    for i in range(n):
         yield lst[i::n]
 
 
-def flattened(original, parent_key = False, separator = '.'):
+def flattened(original, parent_key=False, separator='.'):
     '''Return a recursively flattened version of a nested list or dictionary.
 
     :param original: The original to flatten (a dict or a list)
@@ -63,7 +61,7 @@ def flattened(original, parent_key = False, separator = '.'):
                 else:
                     items.extend(flattened(value, new_key, separator).items())
             elif isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
-                if len(value):
+                if len(value) > 0:
                     for k, v in enumerate(value):
                         items.extend(flattened({str(k): v}, new_key, separator).items())
                 else:
@@ -80,11 +78,11 @@ def flattened(original, parent_key = False, separator = '.'):
             if isinstance(el, (str, bytes)):
                 result.append(el)
             elif isinstance(el, Sequence):
-                result.extend(flattened(el, separator = separator))
+                result.extend(flattened(el, separator=separator))
             elif isinstance(el, (KeysView, ValuesView)):
                 result.extend(el)
             else:
-                result.append(flattened(el, separator = separator))
+                result.append(flattened(el, separator=separator))
         return result
 
     # Fallback if we don't know how to deal with this kind of thing.
@@ -102,7 +100,7 @@ def ordinal(n):
     '''Print a number followed by "st" or "nd" or "rd", as appropriate.'''
     # Spectacular algorithm by user "Gareth" at this posting:
     # http://codegolf.stackexchange.com/a/4712
-    return '{}{}'.format(n, 'tsnrhtdd'[(n/10%10!=1)*(n%10<4)*n%10::4])
+    return '{}{}'.format(n, 'tsnrhtdd'[(n/10 % 10 != 1)*(n % 10 < 4)*n % 10::4])
 
 
 def expanded_range(text):
@@ -116,7 +114,7 @@ def expanded_range(text):
         # Malformed cases of x-, where 2nd number missing.  Can't handle this.
         if not range_list[1].isdigit():
             raise ValueError(f'Malformed range expression: "{text}"')
-        range_list.sort(key = int)
+        range_list.sort(key=int)
         return [*map(str, range(int(range_list[0]), int(range_list[1]) + 1))]
     else:
         return text
@@ -124,7 +122,7 @@ def expanded_range(text):
 
 def timestamp():
     '''Return a string describing the date and time right now.'''
-    return dt.now(tz = tz.tzlocal()).strftime(DATE_FORMAT)
+    return dt.now(tz=tz.tzlocal()).strftime(DATE_FORMAT)
 
 
 def parsed_datetime(string):
@@ -133,10 +131,10 @@ function with predefined settings.'''
     # Dateparser imports regex, a large package that takes a long time to load.
     # Delay loading it so that application startup times can be faster.
     import dateparser
-    return dateparser.parse(string, settings = {'RETURN_AS_TIMEZONE_AWARE': True})
+    return dateparser.parse(string, settings={'RETURN_AS_TIMEZONE_AWARE': True})
 
 
-def pluralized(word, count, include_number = False):
+def pluralized(word, count, include_number=False):
     '''Pluralize the "word" if "count" is > 1 or has length > 1.
 
     If "include_number" is true, then the value of "count" will be prepended

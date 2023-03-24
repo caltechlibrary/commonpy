@@ -14,7 +14,6 @@ is open-source software released under a 3-clause BSD license.  Please see the
 file "LICENSE" for more information.
 '''
 
-import inspect
 import os
 from   os.path import exists, isdir, isfile, join, dirname, relpath, realpath
 from   os.path import splitext
@@ -40,13 +39,13 @@ def writable(dest):
     '''Returns True if the destination is writable.'''
 
     # Helper function to test if a directory is writable.
-    def dir_writable(dir):
+    def dir_writable(directory):
         # This is based on the following Stack Overflow answer by user "zak":
         # https://stackoverflow.com/a/25868839/743730
         try:
-            testfile = tempfile.TemporaryFile(dir = dir)
+            testfile = tempfile.TemporaryFile(dir=directory)
             testfile.close()
-        except (OSError, IOError) as e:
+        except OSError:
             return False
         return True
 
@@ -66,15 +65,15 @@ def nonempty(dest):
     return os.stat(dest).st_size != 0
 
 
-def files_in_directory(dir, extensions = None, recursive = True):
-    if not isdir(dir):
+def files_in_directory(directory, extensions=None, recursive=True):
+    if not isdir(directory):
         return []
-    if not readable(dir):
+    if not readable(directory):
         return []
-    if __debug__: log(f'reading directory {dir}')
+    if __debug__: log(f'reading directory {directory}')
     files = []
-    for item in os.listdir(dir):
-        full_path = join(dir, item)
+    for item in os.listdir(directory):
+        full_path = join(directory, item)
         if isfile(full_path) and readable(full_path):
             if not extensions or filename_extension(item) in extensions:
                 files.append(full_path)
@@ -132,7 +131,7 @@ def relative(file):
     try:
         # This can fail on Windows if we're on a network-mapped drive.
         candidate = relpath(file, os.getcwd())
-    except Exception as ex:
+    except (ValueError, OSError):
         return file
     else:
         if not candidate.startswith('../..'):
@@ -150,11 +149,11 @@ def rename_existing(file):
         try:
             os.rename(f, backup)
             if __debug__: log(f'renamed {file} to {backup}')
-        except:
+        except OSError:
             try:
                 delete_existing(backup)
                 os.rename(f, backup)
-            except:
+            except OSError:
                 if __debug__: log(f'failed to delete {backup}')
                 if __debug__: log(f'failed to rename {file} to {backup}')
 
@@ -174,11 +173,11 @@ def delete_existing(file):
         if __debug__: log(f'doing rmtree on directory {file}')
         try:
             shutil.rmtree(file)
-        except:
+        except OSError:
             if __debug__: log(f'unable to rmtree {file}; will try renaming')
             try:
                 rename_existing(file)
-            except:
+            except OSError:
                 if __debug__: log(f'unable to rmtree or rename {file}')
     else:
         if __debug__: log(f'doing os.remove on file {file}')
@@ -196,7 +195,7 @@ def file_in_use(file):
         try:
             os.rename(file, file)
             return False
-        except:
+        except OSError:
             return True
     return False
 
@@ -204,7 +203,7 @@ def file_in_use(file):
 def copy_file(src, dst):
     '''Copies a file from "src" to "dst".'''
     if __debug__: log(f'copying file {src} to {dst}')
-    shutil.copy2(src, dst, follow_symlinks = True)
+    shutil.copy2(src, dst, follow_symlinks=True)
 
 
 def open_file(file):

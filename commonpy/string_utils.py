@@ -36,7 +36,7 @@ def antiformat(s):
 # The version below uses pure ASCII characters so that it will format normally
 # in, e.g., server log files.
 
-def print_boxed(msg, indent = 1, width = None, title = None):
+def print_boxed(msg, indent=1, width=None, title=None):
     '''Print a boxed message with optional title.
 
     If optional parameter "width" is not set, this will use the width of

@@ -63,6 +63,7 @@ __pycache__
 .cache
 .pytest_cache
 .coverage
+.eggs
 
 # Project-specific things to ignore:
 # .............................................................................
@@ -71,3 +72,4 @@ build
 dist
 commonpy.egg-info
 *.bak
+*.tmp

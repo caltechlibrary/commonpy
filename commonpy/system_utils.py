@@ -21,7 +21,7 @@ import yaml
 # Functions.
 # .............................................................................
 
-def system_profile(anonymize = False, as_dict = False):
+def system_profile(anonymize=False, as_dict=False):
     '''Return a summary of this system.
 
     The default output format is a string that is more or less human readable.
@@ -37,5 +37,5 @@ def system_profile(anonymize = False, as_dict = False):
     printed for human consumption.
     '''
 
-    details = ecoutils.get_profile(scrub = anonymize)
+    details = ecoutils.get_profile(scrub=anonymize)
     return details if as_dict else yaml.dump(details)

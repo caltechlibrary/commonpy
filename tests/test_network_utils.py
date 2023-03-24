@@ -47,15 +47,17 @@ def test_net_bad_args():
 
 
 def test_hostname():
-    assert hostname('https://foo.com')            == 'foo.com'
-    assert hostname('http://a.b.c')               == 'a.b.c'
-    assert hostname('file://a.b.c')               == 'a.b.c'
-    assert hostname('ftp://a.b.c')                == 'a.b.c'
-    assert hostname('gopher://a.b.c')             == 'a.b.c'
-    assert hostname('http://8server.com')         == '8server.com'
-    assert hostname('8server.com')                == '8server.com'
-    assert hostname('http://9292.nl/boo')         == '9292.nl'
-    assert hostname('http://123.345.234.655/a/b') == '123.345.234.655'
+    assert hostname('https://foo.com')             == 'foo.com'
+    assert hostname('http://a.b.c')                == 'a.b.c'
+    assert hostname('file://a.b.c')                == 'a.b.c'
+    assert hostname('ftp://a.b.c')                 == 'a.b.c'
+    assert hostname('gopher://a.b.c')              == 'a.b.c'
+    assert hostname('http://aserver.com')          == 'aserver.com'
+    assert hostname('aserver.com')                 == 'aserver.com'
+    assert hostname('aserver.com/some/path')       == 'aserver.com'
+    assert hostname('http://9292.nl/boo')          == '9292.nl'
+    assert hostname('http://123.345.234.655/a/b')  == '123.345.234.655'
+    assert hostname('//mywebsite.com/resource.js') == 'mywebsite.com'
 
 
 def test_scheme():
@@ -64,10 +66,10 @@ def test_scheme():
     assert scheme('file://a.b.c')    == 'file'
     assert scheme('ftp://a.b.c')     == 'ftp'
     assert scheme('gopher://a.b.c')  == 'gopher'
-    assert scheme('8server.com')     == ''
+    assert scheme('aserver.com')     == ''
 
 
 def test_netloc():
     assert netloc('https://foo.com') == 'foo.com'
-    assert netloc('8server.com')     == '8server.com'
+    assert netloc('aserver.com')     == 'aserver.com'
     assert netloc('ftp://a.b.c')     == 'a.b.c'
