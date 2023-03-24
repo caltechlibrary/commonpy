@@ -77,7 +77,7 @@ The `data_utils` module provides a number of miscellaneous simple functions for 
 | `flattened(thing)` | Takes a list or dictionary and returns a recursively flattened version |
 | `unique(list)`     | Takes a list and return a version without duplicates |
 | `ordinal(integer)` | Returns a string with the number followed by "st", "nd, "rd", or "th" |
-| `slice(list, n)`   | Yields `n` number of slices from the `list` |
+| `sliced(list, n)`  | Yields `n` number of slices from the `list` |
 | `timestamp()`      | Returns a string for an easily-readable form of the current time and date |
 | `parsed_datetime(string)` | Returns a date object representing the given date string |
 | `pluralized(word, n, include_num)`  | Returns a plural version of `word` if `n > 1` |

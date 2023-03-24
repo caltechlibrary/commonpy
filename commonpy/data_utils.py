@@ -32,11 +32,11 @@ with datetime.strftime().'''
 # Functions.
 # .............................................................................
 
-def slice(lst, n):
+def sliced(lst, n):
     '''Yield n number of slices from lst.'''
     # Original algorithm from Jurgen Strydom posted 2019-02-21 Stack Overflow
     # https://stackoverflow.com/a/54802737/743730
-    for i in range(0, n):
+    for i in range(n):
         yield lst[i::n]
 
 
