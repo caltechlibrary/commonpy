@@ -61,7 +61,7 @@ def flattened(original, parent_key=False, separator='.'):
                 else:
                     items.extend(flattened(value, new_key, separator).items())
             elif isinstance(value, Sequence) and not isinstance(value, (str, bytes)):
-                if len(value):
+                if len(value) > 0:
                     for k, v in enumerate(value):
                         items.extend(flattened({str(k): v}, new_key, separator).items())
                 else:
