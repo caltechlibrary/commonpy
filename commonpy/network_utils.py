@@ -307,6 +307,21 @@ def net(method, url, client=None, handle_rate=True,
     return (resp, error)
 
 
+def network(method, url, client=None, handle_rate=True,
+            polling=False, recursing=0, **kwargs):
+    '''Invoke HTTP "method" on 'url' with optional keyword arguments provided.
+
+    This is an alternative to net(). The difference is that this function only
+    returns one value (the response object from HTTPX); if any error occurs,
+    it raises an exception. (Compare this to net(...), which returns 2 values.)
+    '''
+    response, error = net(method, url, client, handle_rate,
+                          polling, recursing, **kwargs)
+    if error:
+        raise error
+    return response
+
+
 def download_file(url, local_destination):
     '''Returns True if the content at 'url' could be downloaded to the file
     'local_destination', and False otherwise. It does not throw an exception.'''
