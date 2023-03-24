@@ -1,5 +1,16 @@
 # Change log for CommonPy
 
+## Version 1.12.0
+
+Additions in this release:
+* New function `network` in the `network_utils` module. It is a companion to `net` and takes the same arguments, but returns only one value (the response). If an error occurs, it raises the error as an exception. This makes it possible for callers to use `network(...)` in somewhat more Pythonic style than `net(...)`,  by wrapping the call to `network(...)` in `try`-`except`.
+
+Changes in this release:
+* Removed `slice` from `data_utils` module because it shadows a Python built-in.
+* Fixed `hostname`  in `network_utils` to be more general and not hardwire a test for `http`.
+* Fixed a bunch of `flake8` warnings.
+
+
 ## Version 1.11.0
 
 Additions in this release:
@@ -7,8 +18,8 @@ Additions in this release:
 
 Changes in this release:
 * Fixed a bug in the class documentation in the `README.md` file.
-* Add missing dependency for [twine]() in requirements-dev
-* Use lazy `import`s in more places, for faster load times.
+* Added missing dependency for [twine]() in requirements-dev
+* Now using lazy `import`s in more places, for faster load times.
 
 
 ## Version 1.10.0
