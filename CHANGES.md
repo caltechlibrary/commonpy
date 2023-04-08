@@ -1,5 +1,10 @@
 # Change log for CommonPy
 
+## Version 1.12.1
+
+This version prevents certain exceptions from being buried and ignored, and improves the network failure retry algorithm.
+
+
 ## Version 1.12.0
 
 Additions in this release:
