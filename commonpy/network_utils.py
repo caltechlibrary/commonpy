@@ -162,6 +162,11 @@ def timed_request(method, url, client=None, **kwargs):
         except KeyboardInterrupt as ex:
             if __debug__: log(addurl(f'network {method} interrupted by {antiformat(ex)}'))
             raise
+        except ImportError as ex:
+            # Explicit test needed b/c httpx depends on other things that don't
+            # always declare all their dependencies properly.
+            log('import error: ' + str(ex))
+            raise
         except (TypeError, httpx.UnsupportedProtocol) as ex:
             # Bad arguments to the call, like passing data to a 'get'.
             if __debug__: log(addurl(f'exception {antiformat(ex)}'))
