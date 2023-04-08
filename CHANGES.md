@@ -1,5 +1,10 @@
 # Change log for CommonPy
 
+## Version 1.12.2
+
+This release updates the versions of dependencies in `requirements.txt`.
+
+
 ## Version 1.12.1
 
 This version prevents certain exceptions from being buried and ignored, and improves the network failure retry algorithm.
