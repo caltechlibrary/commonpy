@@ -1,5 +1,10 @@
 # Change log for CommonPy
 
+## Version 1.12.3
+
+This release updates the version of the `dateparser` package in `requirements.txt`, to avoid a deprecation warning when using CommonPy's `parsed_datetime(...)` function.
+
+
 ## Version 1.12.2
 
 This release updates the versions of dependencies in `requirements.txt`.
