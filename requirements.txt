@@ -8,7 +8,7 @@
 
 PyYAML               >= 5.3.1
 boltons              == 21.0.0
-dateparser           == 1.0.0
+dateparser           == 1.1.8
 deprecation          == 2.1.0
 h2                   == 4.0.0
 httpx                == 0.23.1
@@ -22,6 +22,7 @@ pywin32              >= 301; sys_platform == 'win32'
 # to Stack Overflow at https://stackoverflow.com/a/71504213/743730.
 regex                <= 2022.3.2
 
+setuptools           >= 67.5.1
 sidetrack            >= 2.0.0
 tldextract           == 3.0.2
 validator-collection == 1.5.0
