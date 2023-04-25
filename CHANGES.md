@@ -1,5 +1,13 @@
 # Change log for CommonPy
 
+## Version 1.12.4
+
+Changes in this release:
+* Revise the retry algorithm in `timed_request()` again.
+* Make `timed_request()` print the response text in case of failures
+* Remove `extra_requires` from `setup.py` because it caused installation problems due to the syntax of the requirements file and I don't have patience for figuring out what `setuptools` needs this time.
+
+
 ## Version 1.12.3
 
 This release updates the version of the `dateparser` package in `requirements.txt`, to avoid a deprecation warning when using CommonPy's `parsed_datetime(...)` function.
