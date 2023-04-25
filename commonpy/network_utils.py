@@ -37,9 +37,6 @@ _MAX_RECURSIVE_CALLS = 10
 encountering a network error before they stop and give up.'''
 
 _MAX_CONSECUTIVE_FAILS = 3
-'''Maximum number of consecutive failures before pause and try another round.'''
-
-_MAX_RETRIES = 5
 '''Maximum number of times we back off and try again.  This also affects the
 maximum wait time that will be reached after repeated retries.'''
 
@@ -148,10 +145,10 @@ def timed_request(method, url, client=None, **kwargs):
     elif client == 'stream':
         client = httpx.stream
 
+    response = None
     failures = 0
-    retries = 0
     error = None
-    while failures < _MAX_CONSECUTIVE_FAILS and not interrupted():
+    while failures <= _MAX_CONSECUTIVE_FAILS and not interrupted():
         try:
             if __debug__: log(addurl(f'doing http {method}'))
             func = getattr(client, method)
@@ -159,12 +156,14 @@ def timed_request(method, url, client=None, **kwargs):
             # For some statuses, retry once, in case it's a transient problem.
             code = response.status_code
             if __debug__: log(addurl(f'got response with code {code}'))
-            if code not in [400, 409, 502, 503, 504] or failures > 0:
+            if code not in [400, 409, 502, 503, 504] or failures > _MAX_CONSECUTIVE_FAILS:
                 return response
-            else:
-                failures += 1
         except KeyboardInterrupt as ex:
             if __debug__: log(addurl(f'network {method} interrupted by {antiformat(ex)}'))
+            raise
+        except ImportError as ex:
+            # This can happen if the installation environment has inconsistecies.
+            log('import error: ' + str(ex))
             raise
         except (TypeError, httpx.UnsupportedProtocol) as ex:
             # Bad arguments to the call, like passing data to a 'get'.
@@ -178,7 +177,6 @@ def timed_request(method, url, client=None, **kwargs):
             if __debug__: log(addurl(f'exception {antiformat(ex)}'))
             if failures > 0:
                 raise
-            failures += 1
             if __debug__: log(addurl('will retry one more time after brief pause'))
         except Exception as ex:         # noqa PIE786
             # Problem might be transient.  Don't quit right away.
@@ -189,20 +187,27 @@ def timed_request(method, url, client=None, **kwargs):
             # about being unable to reconnect and not the original problem.
             if not error:
                 error = ex
-        if failures >= _MAX_CONSECUTIVE_FAILS:
+        # If there's response text, it may contain diagnostic info.
+        if __debug__ and response:
+            text = response.text[:500] + (' ...' if len(response.text) > 500 else '')
+            log('response text: ' + text)
+        if failures == 0:
+            # Pause briefly b/c it's rarely a good idea to retry immediately.
+            if __debug__: log(addurl('pausing briefly before retrying'))
+            wait(0.5)
+            failures += 1
+        elif failures < _MAX_CONSECUTIVE_FAILS:
             # Pause with exponential back-off, reset failure count & try again.
-            if retries < _MAX_RETRIES:
-                retries += 1
-                failures = 0
-                pause = 10 * retries * retries
-                if __debug__: log(addurl('pausing due to consecutive failures'))
-                wait(pause)
-            else:
-                if __debug__: log(addurl('exceeded max failures and max retries'))
+            pause = 5 * failures * failures
+            if __debug__: log(addurl('pausing due to consecutive failures'))
+            wait(pause)
+            failures += 1
+        else:
+            if __debug__: log(addurl('exceeded max failures'))
+            if error:
                 raise error
-        # Pause briefly b/c it's rarely a good idea to retry immediately.
-        if __debug__: log(addurl('pausing briefly before retrying'))
-        wait(0.5)
+            else:
+                return response
     if interrupted():
         if __debug__: log(addurl('interrupted'))
         raise Interrupted(addurl('Network request has been interrupted'))

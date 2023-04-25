@@ -13,6 +13,7 @@
 
 from setuptools import setup
 
+
 def requirements(file):
     from os import path
     required = []
@@ -33,8 +34,8 @@ def requirements(file):
                 pass
     return required
 
+
 setup(
     setup_requires=['wheel'],
     install_requires=requirements('requirements.txt'),
-    extras_require={'dev': requirements('requirements-dev.txt')},
 )
