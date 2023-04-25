@@ -145,6 +145,7 @@ def timed_request(method, url, client=None, **kwargs):
     elif client == 'stream':
         client = httpx.stream
 
+    response = None
     failures = 0
     error = None
     while failures <= _MAX_CONSECUTIVE_FAILS and not interrupted():
@@ -187,7 +188,7 @@ def timed_request(method, url, client=None, **kwargs):
             if not error:
                 error = ex
         # If there's response text, it may contain diagnostic info.
-        if __debug__:
+        if __debug__ and response:
             text = response.text[:500] + (' ...' if len(response.text) > 500 else '')
             log('response text: ' + text)
         if failures == 0:
@@ -243,7 +244,7 @@ def net(method, url, client=None, handle_rate=True,
     This method always passes the argument follow_redirects = True to the
     underlying Python HTTPX library network calls.
     '''
-    import httpx 
+    import httpx
 
     if method.lower() not in _KNOWN_HTTP_METHODS:
         raise ValueError(f'Method must be one of {", ".join(_KNOWN_HTTP_METHODS)}.')
