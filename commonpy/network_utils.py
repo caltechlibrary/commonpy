@@ -147,7 +147,7 @@ def timed_request(method, url, client=None, **kwargs):
 
     failures = 0
     error = None
-    while failures < _MAX_CONSECUTIVE_FAILS and not interrupted():
+    while failures <= _MAX_CONSECUTIVE_FAILS and not interrupted():
         try:
             if __debug__: log(addurl(f'doing http {method}'))
             func = getattr(client, method)
@@ -157,8 +157,6 @@ def timed_request(method, url, client=None, **kwargs):
             if __debug__: log(addurl(f'got response with code {code}'))
             if code not in [400, 409, 502, 503, 504] or failures > _MAX_CONSECUTIVE_FAILS:
                 return response
-            else:
-                failures += 1
         except KeyboardInterrupt as ex:
             if __debug__: log(addurl(f'network {method} interrupted by {antiformat(ex)}'))
             raise
@@ -188,19 +186,27 @@ def timed_request(method, url, client=None, **kwargs):
             # about being unable to reconnect and not the original problem.
             if not error:
                 error = ex
+        # If there's response text, it may contain diagnostic info.
+        if __debug__:
+            text = response.text[:500] + (' ...' if len(response.text) > 500 else '')
+            log('response text: ' + text)
         if failures == 0:
             # Pause briefly b/c it's rarely a good idea to retry immediately.
             if __debug__: log(addurl('pausing briefly before retrying'))
             wait(0.5)
             failures += 1
-        elif failures <= _MAX_CONSECUTIVE_FAILS:
+        elif failures < _MAX_CONSECUTIVE_FAILS:
             # Pause with exponential back-off, reset failure count & try again.
-            pause = 10 * failures * failures
+            pause = 5 * failures * failures
             if __debug__: log(addurl('pausing due to consecutive failures'))
             wait(pause)
+            failures += 1
         else:
             if __debug__: log(addurl('exceeded max failures'))
-            raise error
+            if error:
+                raise error
+            else:
+                return response
     if interrupted():
         if __debug__: log(addurl('interrupted'))
         raise Interrupted(addurl('Network request has been interrupted'))
