@@ -378,7 +378,7 @@ def download(url, local_destination, recursing=0):
             raise NoContent(addurl('No content found'))
         elif code in [405, 406, 409, 411, 412, 414, 417, 428, 431, 505, 510]:
             raise InternalError(addurl(f'Server returned code {code}'))
-        elif code in [415, 416]:
+        elif code in [415, 416, 422]:
             raise ServiceFailure(addurl('Server rejected the request'))
         elif code == 429:
             raise RateLimitExceeded('Server blocking further requests due to rate limits')
