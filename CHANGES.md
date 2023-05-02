@@ -1,5 +1,11 @@
 # Change log for CommonPy
 
+## Version 1.13.0
+
+Changes in this release:
+* HTTP code 422 is now more accurately returned as a `ServiceFailure` error instead of a `NetworkFailure`.
+
+
 ## Version 1.12.4
 
 Changes in this release:
