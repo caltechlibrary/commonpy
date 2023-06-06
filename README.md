@@ -146,28 +146,37 @@ The `network_utils` module provides several functions that are useful when perfo
 | `hostname(url)`                  | Returns the hostname portion of a URL                               |
 | `net(...)`                       | See below                                                           |
 | `netlock(url)`                   | Returns the hostname, port number (if any), and login info (if any) |
+| `network(...)`                   | See below                                                           |
 | `network_available()`            | Returns `True` if external hosts are reacheable over the network    |
 | `on_localhost(url)`              | Returns `True` if the address of `url` points to the local host     |
 | `scheme(url)`                    | Returns the protocol portion of the url; e.g., "https"              |
 
 
-#### _`net`_
+#### _`network` and `net`_
 
-The `net` function in the `network_utils` module implements a fairly high-level network operation interface that internally handles timeouts, rate limits, polling, HTTP/2, and more. The function signature is:
+The `network` and `net` functions in the `network_utils` module implements a fairly high-level network operation interface that internally handles timeouts, rate limits, polling, HTTP/2, and more. The function signatures are identical to this:
 
 ```python
-net(method, url, client = None, handle_rate = True, polling = False, recursing = 0, **kwargs)
+network(method, url, client = None, handle_rate = True, polling = False, **kwargs)
 ```
 
-The `method` parameter should have a value such as `'get'`, `'post'`, `'head'`, or similar.  The function returns a tuple of (response, exception), where the first element is the response from the get or post HTTP call, and the second element is an exception object if an exception occurred.  If no exception occurred, the second element will be `None`.  This allows the caller to inspect the response even in cases where exceptions are raised.
+The difference between the two functions is their behavior with respect to exceptions. The function `network` returns only a `response` object, and raises an exception if any error occurs. The `net` function returns two values: `response, error` and does not raise exceptions except in the case of bad arguments; instead, any exceptions are returned as the `error` value in the list of return values. This allows the caller to inspect the `response` object even in cases where exceptions are raised.
 
-If keyword `client` is not `None`, it's assumed to be a [Python HTTPX Client](https://www.python-httpx.org) object to use for the network call.  Settings such as timeouts should be done by the caller creating appropriately-configured [Client](https://www.python-httpx.org/api/#client) objects.
+The `response` object returned by both `net` and `network` is the response from the get or post HTTP call. This object comes from the Python [HTTPX](https://www.python-httpx.org) module used by
 
-If keyword `handle_rate` is `True`, this function will automatically pause and retry if it receives an HTTP code 429 ("too many requests") from the server.  If `False`, it will return the exception `CommonPy.RateLimitExceeded` instead.
+The `method` parameter value must be a string chosen from the list of known HTTP methods: `"get"`, `"post"`, `"head"`, `"options"`, `"put"`, `"delete"`, or `"patch"`.
+
+The `url` parameter value must be the URL to which the HTTP method will be applied.
+
+If keyword `client` is not `None`, it's assumed to be a [HTTPX Client](https://www.python-httpx.org/api/#client)  object to use for the network call.  Settings such as timeouts should be done by the caller creating appropriately-configured [Client](https://www.python-httpx.org/api/#client) objects.
+
+If keyword `handle_rate` is `True`, both functions will automatically pause and retry if it receives an HTTP code 429 ("too many requests") from the server.  If `False`, it will return the exception `CommonPy.RateLimitExceeded` instead.
 
 If keyword `polling` is `True`, certain statuses like 404 are ignored and the response is returned; otherwise, they are considered errors.  The behavior when `True` is useful in situations where a URL does not exist until something is ready at the server, and the caller is repeatedly checking the URL.  It is up to the caller to implement the polling schedule and call this function (with `polling = True`) as needed.
 
-This method always passes the argument `allow_redirects = True` to the underlying Python HTTPX library network calls.
+Additional keyword arguments understood by [HTTPX](https://www.python-httpx.org) can be passed to both `network` and `net`.
+
+Both methods always pass the argument `allow_redirects = True` to the underlying Python HTTPX library network calls.
 
 
 #### _`download` and `download_file`_
