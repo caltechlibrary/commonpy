@@ -170,7 +170,7 @@ The `url` parameter value must be the URL to which the HTTP method will be appli
 
 If keyword `client` is not `None`, it's assumed to be a [HTTPX Client](https://www.python-httpx.org/api/#client)  object to use for the network call.  Settings such as timeouts should be done by the caller creating appropriately-configured [Client](https://www.python-httpx.org/api/#client) objects.
 
-If keyword `handle_rate` is `True`, both functions will automatically pause and retry if it receives an HTTP code 429 ("too many requests") from the server.  If `False`, it will return the exception `CommonPy.RateLimitExceeded` instead.
+If keyword `handle_rate` is `True`, both functions will automatically pause and retry if it receives an HTTP code 429 ("too many requests") from the server.  If `False`, it will return the exception `CommonPy.exceptions.RateLimitExceeded` instead.
 
 If keyword `polling` is `True`, certain statuses like 404 are ignored and the response is returned; otherwise, they are considered errors.  The behavior when `True` is useful in situations where a URL does not exist until something is ready at the server, and the caller is repeatedly checking the URL.  It is up to the caller to implement the polling schedule and call this function (with `polling = True`) as needed.
 
