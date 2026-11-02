@@ -9,9 +9,15 @@
 #
 # Reads the current version from setup.cfg, computes the next one, writes it
 # into setup.cfg, commonpy/__init__.py, codemeta.json, and CITATION.cff, sets
-# date-released in CITATION.cff to today, and prints the new version. It
-# changes nothing else and commits nothing. The "Release" workflow runs it,
-# and it can be run by hand from the top of the repository.
+# date-released in CITATION.cff to today, and prints the new version.
+#
+# It also turns the "## [Unreleased]" section of CHANGELOG.md into a section
+# for the new version, leaving an empty [Unreleased] above it, and updates the
+# compare links at the bottom of the file. It refuses to run if [Unreleased]
+# is empty, because a release with nothing in the change log is a mistake.
+#
+# It commits nothing. The "Release" workflow runs it, and it can be run by
+# hand from the top of the repository.
 #
 # Edits are line-based substitutions rather than parse-and-rewrite, so the
 # files keep their formatting (and codemeta.json need not be valid JSON).
@@ -32,6 +38,8 @@ VERSION_FIELDS = [
     ('CITATION.cff',         r'''^(version:\s*["']?)([^"'\s]+)(["']?)'''),
 ]
 DATE_FIELD = ('CITATION.cff', r'^(date-released:\s*)(\S+)()$')
+CHANGELOG = 'CHANGELOG.md'
+REPO_URL = 'https://github.com/caltechlibrary/commonpy'
 
 
 def fail(message):
@@ -74,6 +82,27 @@ def next_version(current, bump):
     fail(f'expected patch, minor, major, or X.Y.Z, got {bump}')
 
 
+def stamp_changelog(old, new, today):
+    text = read(CHANGELOG)
+    section = re.search(r'^## \[Unreleased\]\n(.*?)(?=^## |^\[|\Z)',
+                        text, re.M | re.S)
+    if not section:
+        fail(f'no "## [Unreleased]" section in {CHANGELOG}')
+    if not section[1].strip():
+        fail(f'nothing under "## [Unreleased]" in {CHANGELOG}; '
+             'describe the changes there first')
+    text = (text[:section.start()]
+            + f'## [Unreleased]\n\n## [{new}] - {today}\n'
+            + text[section.start(1):])
+    unreleased = f'[Unreleased]: {REPO_URL}/compare/v{old}...HEAD'
+    if unreleased not in text:
+        fail(f'no "{unreleased}" link in {CHANGELOG}')
+    text = text.replace(unreleased,
+                        f'[Unreleased]: {REPO_URL}/compare/v{new}...HEAD\n'
+                        f'[{new}]: {REPO_URL}/compare/v{old}...v{new}')
+    write(CHANGELOG, text)
+
+
 def main(args):
     if len(args) != 1:
         fail('usage: bump_version.py patch|minor|major|X.Y.Z')
@@ -82,9 +111,11 @@ def main(args):
     if not current:
         fail(f'no version field found in {file}')
     version = next_version(current[2], args[0])
+    today = date.today().isoformat()
+    stamp_changelog(current[2], version, today)
     for file, pattern in VERSION_FIELDS:
         replace_field(file, pattern, version)
-    replace_field(*DATE_FIELD, date.today().isoformat())
+    replace_field(*DATE_FIELD, today)
     print(version)
 
 

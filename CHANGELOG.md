@@ -1,25 +1,32 @@
-# Change log for CommonPy
+# Changelog
 
-## Version 1.13.2
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [1.13.2] - 2026-11-02
 
 Changes in this release:
 * Require `httpx` version 0.28.1 or later instead of exactly 0.23.1. This lets dependent projects install `h11` 0.16.0 or later, which fixes security advisory [GHSA-vqfr-h8mv-ghfj](https://github.com/advisories/GHSA-vqfr-h8mv-ghfj). Callers that pass their own `httpx.Client` objects or extra keyword arguments to `net()`, `network()`, or `timed_request()` should check them against the [`httpx` 0.28 changes](https://github.com/encode/httpx/blob/master/CHANGELOG.md): the `proxies` and `app` arguments no longer exist, and passing a path string as `verify` is deprecated in favor of an `ssl.SSLContext`.
 
 
-## Version 1.13.1
+## [1.13.1] - 2026-11-02
 
 Changes in this release:
 * Require `h2` version 4.4.1 or later, which fixes security issues in earlier versions.
 * Require Python 3.10 or later, because `h2` 4.4 does not support older versions.
 
 
-## Version 1.13.0
+## [1.13.0] - 2023-05-02
 
 Changes in this release:
 * HTTP code 422 is now more accurately returned as a `ServiceFailure` error instead of a `NetworkFailure`.
 
 
-## Version 1.12.4
+## [1.12.4] - 2023-04-24
 
 Changes in this release:
 * Revise the retry algorithm in `timed_request()` again.
@@ -27,22 +34,22 @@ Changes in this release:
 * Remove `extra_requires` from `setup.py` because it caused installation problems due to the syntax of the requirements file and I don't have patience for figuring out what `setuptools` needs this time.
 
 
-## Version 1.12.3
+## [1.12.3] - 2023-04-09
 
 This release updates the version of the `dateparser` package in `requirements.txt`, to avoid a deprecation warning when using CommonPy's `parsed_datetime(...)` function.
 
 
-## Version 1.12.2
+## [1.12.2] - 2023-04-07
 
 This release updates the versions of dependencies in `requirements.txt`.
 
 
-## Version 1.12.1
+## [1.12.1] - 2023-04-07
 
 This version prevents certain exceptions from being buried and ignored, and improves the network failure retry algorithm.
 
 
-## Version 1.12.0
+## [1.12.0] - 2023-03-24
 
 Additions in this release:
 * New function `network` in the `network_utils` module. It is a companion to `net` and takes the same arguments, but returns only one value (the response). If an error occurs, it raises the error as an exception. This makes it possible for callers to use `network(...)` in somewhat more Pythonic style than `net(...)`,  by wrapping the call to `network(...)` in `try`-`except`.
@@ -53,7 +60,7 @@ Changes in this release:
 * Fixed a bunch of `flake8` warnings.
 
 
-## Version 1.11.0
+## [1.11.0] - 2023-02-14
 
 Additions in this release:
 * New class `CaseFoldSet`, similar to `CaseFoldDict` but … a set.
@@ -64,7 +71,7 @@ Changes in this release:
 * Now using lazy `import`s in more places, for faster load times.
 
 
-## Version 1.10.0
+## [1.10.0] - 2023-01-23
 
 Changes in this release:
 
@@ -77,34 +84,34 @@ Bug fixes in this release:
 * Pin the imported version of regex 2022.3.2, because more recent versions cause calls to `dateparser` to encounter an error ("regex._regex_core.error: bad escape \d at position 7").
 
 
-## Version 1.9.5
+## [1.9.5] - 2022-07-07
 
 The main functional change in this release is that error objects returned by `net(...)` will have error message bodies returned by network services, where possible.
 
 Internally, there has been some refactoring of the Makefile and addition of things like GitHub template files.
 
 
-## Version 1.9.4
+## [1.9.4] - 2022-06-03
 
 This release merely changes the version of httpx required by `requirements.txt`. No other changes.
 
 
-## Version 1.9.3
+## [1.9.3] - 2022-04-25
 
 This version adds a missing internal function definition in `download(...)`.
 
 
-## Version 1.9.2
+## [1.9.2] - 2022-04-22
 
 This version changes `pluralized` so that it outputs `0 items` instead of `0 item` if the number of its argument has length 0.
 
 
-## Version 1.9.1
+## [1.9.1] - 2022-03-14
 
 This version adds more test cases and splits out the requirements for testing/development into a separate requirements file, [`requirements-dev.txt`](requirements-dev.txt).
 
 
-## Version 1.9.0
+## [1.9.0] - 2022-03-11
 
 Changes in this release:
 * New exception `ArgumentError`.
@@ -114,12 +121,12 @@ Changes in this release:
 * `CITATION.cff` has been corrected and no longer describes the wrong repository.
 
 
-## Version 1.8.2
+## [1.8.2] - 2022-01-10
 
 This version merely changes a version dependency in `requirements.txt`. No other changes.
 
 
-## Version 1.8.1
+## [1.8.1] - 2022-01-04
 
 Changes in this release:
 
@@ -128,12 +135,12 @@ Changes in this release:
 * The copyright year has been updated in various files.
 
 
-## Version 1.8.0
+## [1.8.0] - 2022-01-03
 
 This version introduces the `data_structures` module, and a new class, `CaseFoldDict`.
 
 
-## Version 1.7.3
+## [1.7.3] - 2022-01-03
 
 Changes in this release:
 
@@ -142,17 +149,17 @@ Changes in this release:
 * Updated the `Makefile`.
 
 
-## Version 1.7.2
+## [1.7.2] - 2021-12-01
 
 Improve `flattened` to handle lists of dict keys.
 
 
-## Version 1.7.1
+## [1.7.1] - 2021-11-22
 
 Add missing `deprecation` package to `requirements.txt`.
 
 
-## Version 1.7.0
+## [1.7.0] - 2021-11-22
 
 Changes in this release:
 
@@ -160,32 +167,32 @@ Changes in this release:
 * The function `wait()` resets the interrupt state before it begins waiting.
 
 
-## Version 1.6.3
+## [1.6.3] - 2021-11-17
 
 This release fixes some unexpected failures in `flattened(...)`.
 
 
-## Version 1.6.2
+## [1.6.2] - 2021-11-02
 
 This release expands `flattened(...)` to deal with iterators and generators.
 
 
-## Version 1.6.1
+## [1.6.1] - 2021-11-02
 
 This release fixes a bug in version 1.6.0.
 
 
-## Version 1.6.0
+## [1.6.0] - 2021-11-02
 
 This release adds the new function `flattened(...)`
 
 
-## Version 1.5.0
+## [1.5.0] - 2021-09-21
 
 This release adds the new function `print_boxed(...)`.
 
 
-## Version 1.4.0
+## [1.4.0] - 2021-09-17
 
 Changes in this version:
 * In `net(...)`, in case of a connection error, don't do exponential back-off and retry. Retry only once and then give up, because connection errors often mean the server is not available and long waits are unhelpful to callers.
@@ -195,58 +202,58 @@ Changes in this version:
 Note: the previous release, 1.3.10, should not have added new functions in a patch release &ndash; API changes should result in changing the minor release number, not merely the patch number. The previous release number was a mistake; it should have been 1.4.0, but since it wasn't, this release is 1.4.0.
 
 
-## Version 1.3.10
+## [1.3.10] - 2021-07-23
 
 * Add new functions `download(...)` and `download_file(...)`.
 
 
-## Version 1.3.9
+## [1.3.9] - 2021-06-28
 
 * Don't import packages `dateparser` and `validator_collection` until actually necessary, to reduce application startup times.
 
 
-## Version 1.3.8
+## [1.3.8] - 2021-06-21
 
 * Fix problems on Windows involving the interrupt handler configured by `config_interrupt(...)`. First, the internal function used did not have a signature that was correct for `win32api.SetConsoleCtrlHandler` on Windows. Second, the proper usage is to return a value, not raise an exception.
 
 
-## Version 1.3.7
+## [1.3.7] - 2021-06-21
 
 * Make `relative(...)` from `file_utils` more robust against a problem on Windows, in which Python's `os.path.relpath` generates an error when you try to use it on a network-mapped drive.
 
 
-## Version 1.3.6
+## [1.3.6] - 2021-06-21
 
 * Fix missing `requirements.txt` entry for `pywin32` on Windows.
 
 
-## Version 1.3.5
+## [1.3.5] - 2021-06-07
 
 * Fix reference to missing function called by `relative(...)`.
 
 
-## Version 1.3.4
+## [1.3.4] - 2021-03-25
 
 * Fix undefined exceptions in network_utils due to a missing import.
 
 
-## Version 1.3.3
+## [1.3.3] - 2021-03-22
 
 * Fix broken references to os.path functions.
 
 
-## Version 1.3.2
+## [1.3.2] - 2021-03-22
 
 * Add a check for a common mistake in parameters to `net(...)`.
 
 
-## Version 1.3.1
+## [1.3.1] - 2021-03-22
 
 * Remove reference to HTTPX exception `RequestBodyUnavailable`, which no longer seems to exist in current versions of the HTTPX package.
 * Remove use of exception `UserCancelled` in `network_utils.py`, because its definition no longer existed elsewhere and on review it seemed unecessary in the context where it was used.
 
 
-## Version 1.3.0
+## [1.3.0] - 2021-01-28
 
 * Fixed issue #2: httpx Timeout needs a default value.
 * Bump the required version of [httpx](https://www.python-httpx.org) to 0.16.
@@ -254,23 +261,23 @@ Note: the previous release, 1.3.10, should not have added new functions in a pat
 * Made trivial changes to the Makefile
 
 
-## Version 1.2.0
+## [1.2.0] - 2020-12-31
 
 * Added new function `config_path(...)`
 * Added more unit tests
 
 
-## Version 1.1.1
+## [1.1.1] - 2020-12-05
 
 This version makes `antiformat(...)` more robust against values that are not strings, by applying `str(...)` to the incoming value.
 
 
-## Version 1.1.0
+## [1.1.0] - 2020-11-28
 
 This version adds a start at a module of string utilities, and introduces `antiformat(..)`: a function that will quote instances of `{` and `}` braces in a string so that the string can be passed safely to `format`.
 
 
-## Version 1.0.0
+## [1.0.0] - 2020-11-23
 
 * Rename a few functions to follow a more consistent naming convention.
 * Update `requirements.txt` file.
@@ -278,7 +285,7 @@ This version adds a start at a module of string utilities, and introduces `antif
 * Call this a 1.0.0 release.
 
 
-## Version 0.0.7
+## [0.0.7] - 2020-11-19
 
 * Fix bug in `filename_basename(...)`.
 * Improve `plural(...)` by using `pluralize(...)` from [Boltons](https://github.com/mahmoud/boltons) package.
@@ -286,35 +293,88 @@ This version adds a start at a module of string utilities, and introduces `antif
 * Miscellaneous other minor fixes and tweaks.
 
 
-## Version 0.0.6
+## [0.0.6] - 2020-11-19
 
 * Add a new module, `network_utils`.
 * Start a collection of exceptions that may be returned by this package.
 * Add additional dependency requirements to `requirements.txt`.
 
 
-## Version 0.0.5
+## [0.0.5] - 2020-11-18
 
 * Add a new module, `module_utils`.
 * Add functions to the `file_utils` module.
 * The package `__init__.py` file no longer imports the individual modules.  (Users are expected to use the approach `from commonpy.modulename import functionname`.)
 
 
-## Version 0.0.4
+## [0.0.4] - 2020-11-17
 
 Changed the order of arguments to function `config_interrupt` in the `interrupt` module to be in a more convenient order for most use cases.
 
 
-## Version 0.0.3
+## [0.0.3] - 2020-11-17
 
 This release adds the module `interrupt`.  This module includes `wait(...)`, a replacement for `sleep(...)` that is interruptible and works with multiple threads.  It also provides methods to cause an interruption (including doing it by issuing a <kbd>^C</kbd> to the program), check whether an interruption occurred, and other related operations.
 
 
-## Version 0.0.2
+## [0.0.2] - 2020-11-17
 
 Fixed some issues with the `README.md` file and started adding some documentation about the functions.
 
 
-## Version 0.0.1
+## [0.0.1] - 2020-11-16
 
 First release of various utilities developed for other Caltech Library projects over the last couple of years.
+
+[Unreleased]: https://github.com/caltechlibrary/commonpy/compare/v1.13.2...HEAD
+[1.13.2]: https://github.com/caltechlibrary/commonpy/compare/v1.13.1...v1.13.2
+[1.13.1]: https://github.com/caltechlibrary/commonpy/compare/v1.13.0...v1.13.1
+[1.13.0]: https://github.com/caltechlibrary/commonpy/compare/v1.12.4...v1.13.0
+[1.12.4]: https://github.com/caltechlibrary/commonpy/compare/v1.12.3...v1.12.4
+[1.12.3]: https://github.com/caltechlibrary/commonpy/compare/v1.12.2...v1.12.3
+[1.12.2]: https://github.com/caltechlibrary/commonpy/compare/v1.12.1...v1.12.2
+[1.12.1]: https://github.com/caltechlibrary/commonpy/compare/v1.12.0...v1.12.1
+[1.12.0]: https://github.com/caltechlibrary/commonpy/compare/v1.11.0...v1.12.0
+[1.11.0]: https://github.com/caltechlibrary/commonpy/compare/v1.10.0...v1.11.0
+[1.10.0]: https://github.com/caltechlibrary/commonpy/compare/v1.9.5...v1.10.0
+[1.9.5]: https://github.com/caltechlibrary/commonpy/compare/v1.9.4...v1.9.5
+[1.9.4]: https://github.com/caltechlibrary/commonpy/compare/v1.9.3...v1.9.4
+[1.9.3]: https://github.com/caltechlibrary/commonpy/compare/v1.9.2...v1.9.3
+[1.9.2]: https://github.com/caltechlibrary/commonpy/compare/v1.9.1...v1.9.2
+[1.9.1]: https://github.com/caltechlibrary/commonpy/compare/v1.9.0...v1.9.1
+[1.9.0]: https://github.com/caltechlibrary/commonpy/compare/v1.8.2...v1.9.0
+[1.8.2]: https://github.com/caltechlibrary/commonpy/compare/v1.8.1...v1.8.2
+[1.8.1]: https://github.com/caltechlibrary/commonpy/compare/v1.8.0...v1.8.1
+[1.8.0]: https://github.com/caltechlibrary/commonpy/compare/v1.7.3...v1.8.0
+[1.7.3]: https://github.com/caltechlibrary/commonpy/compare/v1.7.2...v1.7.3
+[1.7.2]: https://github.com/caltechlibrary/commonpy/compare/v1.7.1...v1.7.2
+[1.7.1]: https://github.com/caltechlibrary/commonpy/compare/v1.7.0...v1.7.1
+[1.7.0]: https://github.com/caltechlibrary/commonpy/compare/v1.6.3...v1.7.0
+[1.6.3]: https://github.com/caltechlibrary/commonpy/compare/v1.6.2...v1.6.3
+[1.6.2]: https://github.com/caltechlibrary/commonpy/compare/v1.6.1...v1.6.2
+[1.6.1]: https://github.com/caltechlibrary/commonpy/compare/v1.6.0...v1.6.1
+[1.6.0]: https://github.com/caltechlibrary/commonpy/compare/v1.5.0...v1.6.0
+[1.5.0]: https://github.com/caltechlibrary/commonpy/compare/v1.4.0...v1.5.0
+[1.4.0]: https://github.com/caltechlibrary/commonpy/compare/v1.3.10...v1.4.0
+[1.3.10]: https://github.com/caltechlibrary/commonpy/compare/v1.3.9...v1.3.10
+[1.3.9]: https://github.com/caltechlibrary/commonpy/compare/v1.3.8...v1.3.9
+[1.3.8]: https://github.com/caltechlibrary/commonpy/compare/v1.3.7...v1.3.8
+[1.3.7]: https://github.com/caltechlibrary/commonpy/compare/v1.3.6...v1.3.7
+[1.3.6]: https://github.com/caltechlibrary/commonpy/compare/v1.3.5...v1.3.6
+[1.3.5]: https://github.com/caltechlibrary/commonpy/compare/v1.3.4...v1.3.5
+[1.3.4]: https://github.com/caltechlibrary/commonpy/compare/v1.3.3...v1.3.4
+[1.3.3]: https://github.com/caltechlibrary/commonpy/compare/v1.3.2...v1.3.3
+[1.3.2]: https://github.com/caltechlibrary/commonpy/compare/v1.3.1...v1.3.2
+[1.3.1]: https://github.com/caltechlibrary/commonpy/compare/v1.3.0...v1.3.1
+[1.3.0]: https://github.com/caltechlibrary/commonpy/compare/v1.2.0...v1.3.0
+[1.2.0]: https://github.com/caltechlibrary/commonpy/compare/v1.1.1...v1.2.0
+[1.1.1]: https://github.com/caltechlibrary/commonpy/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/caltechlibrary/commonpy/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/caltechlibrary/commonpy/compare/v0.0.7...v1.0.0
+[0.0.7]: https://github.com/caltechlibrary/commonpy/compare/v0.0.6...v0.0.7
+[0.0.6]: https://github.com/caltechlibrary/commonpy/compare/v0.0.5...v0.0.6
+[0.0.5]: https://github.com/caltechlibrary/commonpy/compare/v0.0.4...v0.0.5
+[0.0.4]: https://github.com/caltechlibrary/commonpy/compare/v0.0.3...v0.0.4
+[0.0.3]: https://github.com/caltechlibrary/commonpy/compare/v0.0.2...v0.0.3
+[0.0.2]: https://github.com/caltechlibrary/commonpy/compare/v0.0.1...v0.0.2
+[0.0.1]: https://github.com/caltechlibrary/commonpy/releases/tag/v0.0.1

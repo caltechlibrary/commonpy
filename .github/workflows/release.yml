@@ -4,11 +4,16 @@
 # @license Please see the file named LICENSE in the project directory
 # @website https://github.com/caltechlibrary/commonpy
 #
-# Cuts a release. The human does three things: writes the CHANGES.md entry,
-# starts this workflow with a bump, and then writes the notes and publishes
-# the draft release it produces. Publishing the draft starts the "Publish to
-# PyPI" workflow (publish.yml), which waits for approval in the "pypi"
-# environment before uploading.
+# Cuts a release. The human does three things: describes the changes under
+# "## [Unreleased]" in CHANGELOG.md, starts this workflow with a bump, and then
+# writes the notes and publishes the draft release it produces. Publishing the
+# draft starts the "Publish to PyPI" workflow (publish.yml), which waits for
+# approval in the "pypi" environment before uploading.
+#
+# dev/bump_version.py does the version bump: it writes the new version into
+# setup.cfg, commonpy/__init__.py, codemeta.json, and CITATION.cff, and turns
+# the [Unreleased] section of CHANGELOG.md into the new version's section. It
+# fails if [Unreleased] is empty.
 #
 # The draft has to be published by a person. A release published with this
 # workflow's GITHUB_TOKEN would not start publish.yml, because GitHub does not
@@ -90,14 +95,6 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
           git diff
 
-      - name: Check that CHANGES.md describes this version
-        env:
-          VERSION: ${{ steps.bump.outputs.version }}
-        run: |
-          if ! grep -qx "## Version $VERSION" CHANGES.md; then
-            echo "::warning::CHANGES.md has no \"## Version $VERSION\" section"
-          fi
-
       - name: Check versions and build
         uses: caltechlibrary/workflows/.github/actions/build-python-dist@v1
         with:
@@ -111,7 +108,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add setup.cfg commonpy/__init__.py codemeta.json CITATION.cff
+          git add setup.cfg commonpy/__init__.py codemeta.json CITATION.cff CHANGELOG.md
           git commit -m "Release v$VERSION"
           git push
           echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
