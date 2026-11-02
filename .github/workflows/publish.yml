@@ -1,17 +1,21 @@
 # =============================================================================
 # @file    publish.yml
-# @brief   Build the sdist and wheel and publish them to TestPyPI and PyPI
+# @brief   Build the sdist and wheel and publish them to PyPI
 # @license Please see the file named LICENSE in the project directory
 # @website https://github.com/caltechlibrary/commonpy
 #
-# Publishing uses PyPI Trusted Publishing (OIDC), so no API token is stored
-# in this repository. Publishing a GitHub release uploads to PyPI. Running the
-# workflow by hand ("Run workflow" on the Actions page) uploads to TestPyPI
-# instead, which is useful for checking a build beforehand.
+# Publishing a GitHub release builds the package and uploads it to PyPI using
+# Trusted Publishing (OIDC), so no API token is stored in this repository.
+# Running the workflow by hand ("Run workflow" on the Actions page) builds and
+# checks the package without uploading anything.
 #
-# The version in setup.cfg is the one that gets published. The build fails if
-# the version in commonpy/__init__.py, codemeta.json, or CITATION.cff differs
-# from it, or if the release tag is not "v" followed by it.
+# The build uses the shared build-python-dist action, which fails before
+# anything is uploaded if the version in setup.cfg disagrees with
+# commonpy/__init__.py, codemeta.json, CITATION.cff, or the release tag. See
+# https://github.com/caltechlibrary/workflows#python-packages
+#
+# The PyPI trusted publisher for commonpy must name this workflow file
+# (publish.yml) and the environment "pypi".
 # =============================================================================
 
 name: Publish to PyPI
@@ -34,82 +38,12 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up Python
-        uses: actions/setup-python@v7
+      - name: Check versions, build, and save the distribution files
+        uses: caltechlibrary/workflows/.github/actions/build-python-dist@v1
         with:
-          python-version: '3.12'
+          tag: ${{ github.event_name == 'release' && github.event.release.tag_name || '' }}
 
-      - name: Check that the version numbers agree
-        env:
-          TAG: ${{ github.event_name == 'release' && github.event.release.tag_name || '' }}
-        shell: python
-        run: |
-          import configparser, os, re, sys
-
-          cfg = configparser.ConfigParser()
-          cfg.read('setup.cfg')
-          version = cfg['metadata']['version'].strip()
-          print(f'Version in setup.cfg: {version}')
-
-          with open('commonpy/__init__.py') as f:
-              init = re.search(r"^__version__\s*=\s*['\"]([^'\"]+)", f.read(), re.M)
-          with open('codemeta.json') as f:
-              codemeta = re.search(r'^\s*"version"\s*:\s*"([^"]+)"', f.read(), re.M)
-          with open('CITATION.cff') as f:
-              citation = re.search(r'^version:\s*["\']?([^"\'\s]+)', f.read(), re.M)
-
-          found = {
-              'commonpy/__init__.py': init.group(1) if init else None,
-              'codemeta.json': codemeta.group(1) if codemeta else None,
-              'CITATION.cff': citation.group(1) if citation else None,
-          }
-          errors = [f'{file} has version {value}, but setup.cfg has {version}'
-                    for file, value in found.items() if value != version]
-          tag = os.environ['TAG']
-          if tag and tag != f'v{version}':
-              errors.append(f'Release tag {tag} does not match v{version}')
-          for message in errors:
-              print(f'::error::{message}')
-          sys.exit(1 if errors else 0)
-
-      - name: Build the sdist and wheel
-        run: |
-          python -m pip install --upgrade build twine
-          python -m build
-          python -m twine check --strict dist/*
-
-      - name: Save the distribution files
-        uses: actions/upload-artifact@v7
-        with:
-          name: dist
-          path: dist/
-          if-no-files-found: error
-
-  publish-testpypi:
-    name: Publish to TestPyPI
-    if: github.event_name == 'workflow_dispatch'
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: testpypi
-      url: https://test.pypi.org/project/commonpy/
-    permissions:
-      id-token: write
-    steps:
-      - name: Retrieve the distribution files
-        uses: actions/download-artifact@v8
-        with:
-          name: dist
-          path: dist/
-
-      - name: Upload to TestPyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
-          # An earlier manual run may already have uploaded this version.
-          skip-existing: true
-
-  publish-pypi:
+  publish:
     name: Publish to PyPI
     if: github.event_name == 'release'
     needs: build

@@ -3,6 +3,9 @@
 # @brief   Run the test suite on pull requests and pushes to main
 # @license Please see the file named LICENSE in the project directory
 # @website https://github.com/caltechlibrary/commonpy
+#
+# Uses the shared python-tests workflow. See
+# https://github.com/caltechlibrary/workflows#python-packages
 # =============================================================================
 
 name: Tests
@@ -18,36 +21,12 @@ permissions:
   contents: read
 
 jobs:
-  pytest:
-    name: Python ${{ matrix.python-version }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        python-version: ['3.10', '3.12']
-    steps:
-      - name: Check out the code
-        uses: actions/checkout@v7
-        with:
-          persist-credentials: false
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v7
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: pip
-          cache-dependency-path: |
-            requirements.txt
-            requirements-dev.txt
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements-dev.txt
-          python -m pip install -e .
-
-      - name: Run pytest
-        # Some tests in test_data_utils.py expect US Pacific local time.
-        env:
-          TZ: America/Los_Angeles
-        run: pytest -v --cov=commonpy -l tests/
+  tests:
+    uses: caltechlibrary/workflows/.github/workflows/python-tests.yml@v1
+    with:
+      python-versions: '["3.10", "3.12"]'
+      requirements: requirements-dev.txt
+      pytest-args: -v --cov=commonpy -l tests/
+      # Some tests in test_data_utils.py expect US Pacific local time.
+      env: |
+        TZ=America/Los_Angeles
