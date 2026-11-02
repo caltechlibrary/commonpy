@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A “Release” workflow in GitHub Actions. Run it from the Actions page with a patch, minor, or major bump: it runs the tests, updates the version everywhere it is stored, commits, and opens a draft GitHub release. A dry run, the default, does everything but commit and create the release.
+- A “Publish to PyPI” workflow. Publishing a GitHub release builds the package and uploads it to PyPI with Trusted Publishing, after a reviewer approves it in the `pypi` environment.
+- A “Tests” workflow that runs the test suite on Python 3.10 and 3.12 for every pull request and push to `main`.
+- `dev/bump_version.py`, which writes a new version into `setup.cfg`, `commonpy/__init__.py`, `codemeta.json`, and `CITATION.cff`, and moves the `[Unreleased]` entries in this file under the new version.
+
+### Changed
+
+- This change log is now `CHANGELOG.md` and follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Each release heading links to its changes on GitHub.
+- `make packages` builds with `python -m build` and only checks the result; it no longer leads to a manual upload.
+- `make release` also commits `setup.cfg` and `CHANGELOG.md`.
+
+### Removed
+
+- The `make test-pypi` and `make pypi` targets. Uploads to PyPI happen in the “Publish to PyPI” workflow.
+
 ## [1.13.2] - 2026-11-02
 
 Changes in this release:
