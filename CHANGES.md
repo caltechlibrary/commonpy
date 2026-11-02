@@ -1,5 +1,12 @@
 # Change log for CommonPy
 
+## Version 1.13.1
+
+Changes in this release:
+* Require `h2` version 4.4.1 or later, which fixes security issues in earlier versions.
+* Require Python 3.10 or later, because `h2` 4.4 does not support older versions.
+
+
 ## Version 1.13.0
 
 Changes in this release:
