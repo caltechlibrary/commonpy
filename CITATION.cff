@@ -11,7 +11,7 @@ message: "If you use this software, please cite it using these metadata."
 repository-code: "https://github.com/caltechlibrary/commonpy"
 title: "CommonPy: assortment of Python helper functions and utility classes"
 date-released: 2026-11-02
-version: "1.13.1"
+version: "1.13.2"
 keywords:
   - Python
   - utilities
