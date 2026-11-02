@@ -47,4 +47,7 @@ jobs:
           python -m pip install -e .
 
       - name: Run pytest
+        # Some tests in test_data_utils.py expect US Pacific local time.
+        env:
+          TZ: America/Los_Angeles
         run: pytest -v --cov=commonpy -l tests/
