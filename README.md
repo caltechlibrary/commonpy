@@ -256,6 +256,7 @@ The [vector artwork](https://thenounproject.com/term/toolbox/3030990/) of a tool
 CommonPy makes use of numerous open-source packages, without which it would have been effectively impossible to develop CommonPy with the resources we had.  I want to acknowledge this debt.  In alphabetical order, the packages are:
 
 * [boltons](https://github.com/mahmoud/boltons/) &ndash; package of miscellaneous Python utilities
+* [build](https://build.pypa.io) &ndash; builder for Python distribution packages
 * [dateparser](https://pypi.org/project/dateparser/) &ndash; parse dates in almost any string format
 * [deprecation]() &ndash; a library to handle deprecation of code in your Python packages
 * [h2](https://pypi.org/project/h2) &ndash; HTTP/2 support library used by [HTTPX](https://www.python-httpx.org)

@@ -1,0 +1,64 @@
+# =============================================================================
+# @file    publish.yml
+# @brief   Build the sdist and wheel and publish them to PyPI
+# @license Please see the file named LICENSE in the project directory
+# @website https://github.com/caltechlibrary/commonpy
+#
+# Publishing a GitHub release builds the package and uploads it to PyPI using
+# Trusted Publishing (OIDC), so no API token is stored in this repository.
+# Running the workflow by hand ("Run workflow" on the Actions page) builds and
+# checks the package without uploading anything.
+#
+# The build uses the shared build-python-dist action, which fails before
+# anything is uploaded if the version in setup.cfg disagrees with
+# commonpy/__init__.py, codemeta.json, CITATION.cff, or the release tag. See
+# https://github.com/caltechlibrary/workflows#python-packages
+#
+# The PyPI trusted publisher for commonpy must name this workflow file
+# (publish.yml) and the environment "pypi".
+# =============================================================================
+
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build distribution files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Check versions, build, and save the distribution files
+        uses: caltechlibrary/workflows/.github/actions/build-python-dist@v1
+        with:
+          tag: ${{ github.event_name == 'release' && github.event.release.tag_name || '' }}
+
+  publish:
+    name: Publish to PyPI
+    if: github.event_name == 'release'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/commonpy/
+    permissions:
+      id-token: write
+    steps:
+      - name: Retrieve the distribution files
+        uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist/
+
+      - name: Upload to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1

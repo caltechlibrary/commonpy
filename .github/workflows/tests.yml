@@ -1,0 +1,32 @@
+# =============================================================================
+# @file    tests.yml
+# @brief   Run the test suite on pull requests and pushes to main
+# @license Please see the file named LICENSE in the project directory
+# @website https://github.com/caltechlibrary/commonpy
+#
+# Uses the shared python-tests workflow. See
+# https://github.com/caltechlibrary/workflows#python-packages
+# =============================================================================
+
+name: Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    uses: caltechlibrary/workflows/.github/workflows/python-tests.yml@v1
+    with:
+      python-versions: '["3.10", "3.12"]'
+      requirements: requirements-dev.txt
+      pytest-args: -v --cov=commonpy -l tests/
+      # Some tests in test_data_utils.py expect US Pacific local time.
+      env: |
+        TZ=America/Los_Angeles

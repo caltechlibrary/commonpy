@@ -1,0 +1,122 @@
+# =============================================================================
+# @file    release.yml
+# @brief   Bump the version and open a draft GitHub release
+# @license Please see the file named LICENSE in the project directory
+# @website https://github.com/caltechlibrary/commonpy
+#
+# Cuts a release. The human does three things: describes the changes under
+# "## [Unreleased]" in CHANGELOG.md, starts this workflow with a bump, and then
+# writes the notes and publishes the draft release it produces. Publishing the
+# draft starts the "Publish to PyPI" workflow (publish.yml), which waits for
+# approval in the "pypi" environment before uploading.
+#
+# dev/bump_version.py does the version bump: it writes the new version into
+# setup.cfg, commonpy/__init__.py, codemeta.json, and CITATION.cff, and turns
+# the [Unreleased] section of CHANGELOG.md into the new version's section. It
+# fails if [Unreleased] is empty.
+#
+# The draft has to be published by a person. A release published with this
+# workflow's GITHUB_TOKEN would not start publish.yml, because GitHub does not
+# trigger workflows from events that GITHUB_TOKEN causes.
+#
+# Run it with Dry Run first. It bumps the version, runs the tests, and builds
+# and checks the package for real, and reports what would be released,
+# without committing, tagging, or creating anything.
+# =============================================================================
+
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: |
+          Which part of the version to increment.
+          *Major:* backward-incompatible changes.
+          *Minor:* new features or behaviors.
+          *Patch:* bug fix or internal-facing change.
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+        required: true
+      dry_run:
+        description: "Dry Run: Bump, test, and build, but commit, tag, and create nothing."
+        type: boolean
+        default: true
+
+run-name: >-
+  Release (${{ inputs.bump }})${{ inputs.dry_run && ' — dry run' || '' }}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  tests:
+    uses: caltechlibrary/workflows/.github/workflows/python-tests.yml@v1
+    with:
+      python-versions: '["3.10", "3.12"]'
+      requirements: requirements-dev.txt
+      pytest-args: -v tests/
+      # Some tests in test_data_utils.py expect US Pacific local time.
+      env: |
+        TZ=America/Los_Angeles
+
+  release:
+    name: Bump the version and create the draft release
+    needs: tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Refuse to release from a branch other than main
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::Run this workflow on main, not ${GITHUB_REF#refs/heads/}"
+          exit 1
+
+      - name: Check out the code
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Bump the version
+        id: bump
+        env:
+          BUMP: ${{ inputs.bump }}
+        run: |
+          version=$(python dev/bump_version.py "$BUMP")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          git diff
+
+      - name: Check versions and build
+        uses: caltechlibrary/workflows/.github/actions/build-python-dist@v1
+        with:
+          tag: v${{ steps.bump.outputs.version }}
+
+      - name: Commit and push the new version
+        id: commit
+        if: ${{ !inputs.dry_run }}
+        env:
+          VERSION: ${{ steps.bump.outputs.version }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add setup.cfg commonpy/__init__.py codemeta.json CITATION.cff CHANGELOG.md
+          git commit -m "Release v$VERSION"
+          git push
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Create the draft release
+        uses: caltechlibrary/workflows/.github/actions/create-release@v1
+        with:
+          tag: v${{ steps.bump.outputs.version }}
+          title: Release ${{ steps.bump.outputs.version }}
+          target: ${{ steps.commit.outputs.sha || github.sha }}
+          dry-run: ${{ inputs.dry_run }}
