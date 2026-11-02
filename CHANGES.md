@@ -1,5 +1,11 @@
 # Change log for CommonPy
 
+## Version 1.13.2
+
+Changes in this release:
+* Require `httpx` version 0.28.1 or later instead of exactly 0.23.1. This lets dependent projects install `h11` 0.16.0 or later, which fixes security advisory [GHSA-vqfr-h8mv-ghfj](https://github.com/advisories/GHSA-vqfr-h8mv-ghfj). Callers that pass their own `httpx.Client` objects or extra keyword arguments to `net()`, `network()`, or `timed_request()` should check them against the [`httpx` 0.28 changes](https://github.com/encode/httpx/blob/master/CHANGELOG.md): the `proxies` and `app` arguments no longer exist, and passing a path string as `verify` is deprecated in favor of an `ssl.SSLContext`.
+
+
 ## Version 1.13.1
 
 Changes in this release:
