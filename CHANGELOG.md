@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.14.0] - 2026-11-02
+
 ### Added
 
 - A “Release” workflow in GitHub Actions. Run it from the Actions page with a patch, minor, or major bump: it runs the tests, updates the version everywhere it is stored, commits, and opens a draft GitHub release. A dry run, the default, does everything but commit and create the release.
@@ -343,7 +345,8 @@ Fixed some issues with the `README.md` file and started adding some documentatio
 
 First release of various utilities developed for other Caltech Library projects over the last couple of years.
 
-[Unreleased]: https://github.com/caltechlibrary/commonpy/compare/v1.13.2...HEAD
+[Unreleased]: https://github.com/caltechlibrary/commonpy/compare/v1.14.0...HEAD
+[1.14.0]: https://github.com/caltechlibrary/commonpy/compare/v1.13.2...v1.14.0
 [1.13.2]: https://github.com/caltechlibrary/commonpy/compare/v1.13.1...v1.13.2
 [1.13.1]: https://github.com/caltechlibrary/commonpy/compare/v1.13.0...v1.13.1
 [1.13.0]: https://github.com/caltechlibrary/commonpy/compare/v1.12.4...v1.13.0
