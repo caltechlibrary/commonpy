@@ -1,0 +1,103 @@
+# =============================================================================
+# @file    publish.yml
+# @brief   Build the sdist and wheel and publish them to TestPyPI and PyPI
+# @license Please see the file named LICENSE in the project directory
+# @website https://github.com/caltechlibrary/commonpy
+#
+# Publishing uses PyPI Trusted Publishing (OIDC), so no API token is stored
+# in this repository. Publishing a GitHub release uploads to TestPyPI and then
+# to PyPI. Running the workflow by hand ("Run workflow" on the Actions page)
+# uploads to TestPyPI only, which is useful for checking a build beforehand.
+# =============================================================================
+
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build distribution files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Check that the release tag matches the version in setup.cfg
+        if: github.event_name == 'release'
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          version=$(awk -F '=' '/^version/ {gsub(/ /, "", $2); print $2}' setup.cfg)
+          if [ "$TAG" != "v$version" ]; then
+            echo "::error::Release tag $TAG does not match version $version in setup.cfg"
+            exit 1
+          fi
+
+      - name: Build the sdist and wheel
+        run: |
+          python -m pip install --upgrade build twine
+          python -m build
+          python -m twine check --strict dist/*
+
+      - name: Save the distribution files
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
+
+  publish-testpypi:
+    name: Publish to TestPyPI
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/project/commonpy/
+    permissions:
+      id-token: write
+    steps:
+      - name: Retrieve the distribution files
+        uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist/
+
+      - name: Upload to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+          # A manual run may already have uploaded this version.
+          skip-existing: true
+
+  publish-pypi:
+    name: Publish to PyPI
+    if: github.event_name == 'release'
+    needs: publish-testpypi
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/project/commonpy/
+    permissions:
+      id-token: write
+    steps:
+      - name: Retrieve the distribution files
+        uses: actions/download-artifact@v8
+        with:
+          name: dist
+          path: dist/
+
+      - name: Upload to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
