@@ -5,9 +5,13 @@
 # @website https://github.com/caltechlibrary/commonpy
 #
 # Publishing uses PyPI Trusted Publishing (OIDC), so no API token is stored
-# in this repository. Publishing a GitHub release uploads to TestPyPI and then
-# to PyPI. Running the workflow by hand ("Run workflow" on the Actions page)
-# uploads to TestPyPI only, which is useful for checking a build beforehand.
+# in this repository. Publishing a GitHub release uploads to PyPI. Running the
+# workflow by hand ("Run workflow" on the Actions page) uploads to TestPyPI
+# instead, which is useful for checking a build beforehand.
+#
+# The version in setup.cfg is the one that gets published. The build fails if
+# the version in commonpy/__init__.py, codemeta.json, or CITATION.cff differs
+# from it, or if the release tag is not "v" followed by it.
 # =============================================================================
 
 name: Publish to PyPI
@@ -35,16 +39,38 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Check that the release tag matches the version in setup.cfg
-        if: github.event_name == 'release'
+      - name: Check that the version numbers agree
         env:
-          TAG: ${{ github.event.release.tag_name }}
+          TAG: ${{ github.event_name == 'release' && github.event.release.tag_name || '' }}
+        shell: python
         run: |
-          version=$(awk -F '=' '/^version/ {gsub(/ /, "", $2); print $2}' setup.cfg)
-          if [ "$TAG" != "v$version" ]; then
-            echo "::error::Release tag $TAG does not match version $version in setup.cfg"
-            exit 1
-          fi
+          import configparser, os, re, sys
+
+          cfg = configparser.ConfigParser()
+          cfg.read('setup.cfg')
+          version = cfg['metadata']['version'].strip()
+          print(f'Version in setup.cfg: {version}')
+
+          with open('commonpy/__init__.py') as f:
+              init = re.search(r"^__version__\s*=\s*['\"]([^'\"]+)", f.read(), re.M)
+          with open('codemeta.json') as f:
+              codemeta = re.search(r'^\s*"version"\s*:\s*"([^"]+)"', f.read(), re.M)
+          with open('CITATION.cff') as f:
+              citation = re.search(r'^version:\s*["\']?([^"\'\s]+)', f.read(), re.M)
+
+          found = {
+              'commonpy/__init__.py': init.group(1) if init else None,
+              'codemeta.json': codemeta.group(1) if codemeta else None,
+              'CITATION.cff': citation.group(1) if citation else None,
+          }
+          errors = [f'{file} has version {value}, but setup.cfg has {version}'
+                    for file, value in found.items() if value != version]
+          tag = os.environ['TAG']
+          if tag and tag != f'v{version}':
+              errors.append(f'Release tag {tag} does not match v{version}')
+          for message in errors:
+              print(f'::error::{message}')
+          sys.exit(1 if errors else 0)
 
       - name: Build the sdist and wheel
         run: |
@@ -61,6 +87,7 @@ jobs:
 
   publish-testpypi:
     name: Publish to TestPyPI
+    if: github.event_name == 'workflow_dispatch'
     needs: build
     runs-on: ubuntu-latest
     environment:
@@ -79,13 +106,13 @@ jobs:
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://test.pypi.org/legacy/
-          # A manual run may already have uploaded this version.
+          # An earlier manual run may already have uploaded this version.
           skip-existing: true
 
   publish-pypi:
     name: Publish to PyPI
     if: github.event_name == 'release'
-    needs: publish-testpypi
+    needs: build
     runs-on: ubuntu-latest
     environment:
       name: pypi
