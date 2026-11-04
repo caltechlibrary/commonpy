@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.14.1] - 2026-11-04
+
 ### Fixed
 
 - The 1.14.0 wheel declared no dependencies, so installing it left out the packages CommonPy imports, and importing modules such as `commonpy.network_utils` failed with errors like “No module named 'deprecation'”. The source distribution now includes `requirements.txt`, which the wheel is built from, and the build fails if that file is missing.
@@ -349,7 +351,8 @@ Fixed some issues with the `README.md` file and started adding some documentatio
 
 First release of various utilities developed for other Caltech Library projects over the last couple of years.
 
-[Unreleased]: https://github.com/caltechlibrary/commonpy/compare/v1.14.0...HEAD
+[Unreleased]: https://github.com/caltechlibrary/commonpy/compare/v1.14.1...HEAD
+[1.14.1]: https://github.com/caltechlibrary/commonpy/compare/v1.14.0...v1.14.1
 [1.14.0]: https://github.com/caltechlibrary/commonpy/compare/v1.13.2...v1.14.0
 [1.13.2]: https://github.com/caltechlibrary/commonpy/compare/v1.13.1...v1.13.2
 [1.13.1]: https://github.com/caltechlibrary/commonpy/compare/v1.13.0...v1.13.1
