@@ -1,0 +1,12 @@
+# =============================================================================
+# @file    MANIFEST.in
+# @brief   Files to include in the source distribution
+# @license Please see the file named LICENSE in the project directory
+# @website https://github.com/caltechlibrary/commonpy
+#
+# setup.py reads the dependencies from requirements.txt. "python -m build"
+# builds the wheel from the unpacked source distribution, so requirements.txt
+# has to be in it, or the wheel would declare no dependencies.
+# =============================================================================
+
+include requirements.txt

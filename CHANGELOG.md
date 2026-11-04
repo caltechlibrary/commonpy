@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- The 1.14.0 wheel declared no dependencies, so installing it left out the packages CommonPy imports, and importing modules such as `commonpy.network_utils` failed with errors like “No module named 'deprecation'”. The source distribution now includes `requirements.txt`, which the wheel is built from, and the build fails if that file is missing.
+
 ## [1.14.0] - 2026-11-02
 
 ### Added

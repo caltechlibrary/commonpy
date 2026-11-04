@@ -16,22 +16,26 @@ from setuptools import setup
 
 def requirements(file):
     from os import path
-    required = []
     requirements_file = path.join(path.abspath(path.dirname(__file__)), file)
-    if path.exists(requirements_file):
-        with open(requirements_file, encoding='utf-8') as f:
-            required = [ln for ln in filter(str.strip, f.read().splitlines())
-                        if not ln.startswith('#')]
-        if any(item.startswith(('-', '.', '/')) for item in required):
-            # The requirements.txt uses pip features. Try to use pip's parser.
-            try:
-                from pip._internal.req import parse_requirements
-                from pip._internal.network.session import PipSession
-                parsed = parse_requirements(requirements_file, PipSession())
-                required = [item.requirement for item in parsed]
-            except ImportError:
-                # No pip, or not the expected version. Give up & return as-is.
-                pass
+    # Without the file, the package would build and declare no dependencies,
+    # and installing it would leave out everything it imports. MANIFEST.in
+    # puts the file in the source distribution, which the wheel is built from.
+    if not path.exists(requirements_file):
+        raise FileNotFoundError(f'{file} is missing, so the dependencies'
+                                ' are unknown; is it listed in MANIFEST.in?')
+    with open(requirements_file, encoding='utf-8') as f:
+        required = [ln for ln in filter(str.strip, f.read().splitlines())
+                    if not ln.startswith('#')]
+    if any(item.startswith(('-', '.', '/')) for item in required):
+        # The requirements.txt uses pip features. Try to use pip's parser.
+        try:
+            from pip._internal.req import parse_requirements
+            from pip._internal.network.session import PipSession
+            parsed = parse_requirements(requirements_file, PipSession())
+            required = [item.requirement for item in parsed]
+        except ImportError:
+            # No pip, or not the expected version. Give up & return as-is.
+            pass
     return required
 
 
